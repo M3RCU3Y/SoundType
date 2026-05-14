@@ -5,28 +5,120 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SoundType" Height="760" Width="1120" MinHeight="680" MinWidth="980"
-        Background="{StaticResource WindowBackgroundBrush}">
+        Title="SoundType" Height="860" Width="1360" MinHeight="760" MinWidth="1120"
+        Background="#05070D">
     <Window.Resources>
+        <LinearGradientBrush x:Key="HeroPanelBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#18333E" Offset="0"/>
+            <GradientStop Color="#101725" Offset="0.52"/>
+            <GradientStop Color="#07101C" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="SidebarBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#111A2A" Offset="0"/>
+            <GradientStop Color="#070B17" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="FeatureCardBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#112646" Offset="0"/>
+            <GradientStop Color="#0B1327" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GreenCardBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0E4D3F" Offset="0"/>
+            <GradientStop Color="#0A1E2B" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="DangerButtonBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#EF4444" Offset="0"/>
+            <GradientStop Color="#991B1B" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="22"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Background" Value="{StaticResource FeatureCardBrush}"/>
+            <Setter Property="BorderBrush" Value="#34435C"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadowEffect}"/>
+        </Style>
+
+        <Style x:Key="CompactPanelStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Background" Value="#1D2637"/>
+            <Setter Property="BorderBrush" Value="#4A556B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="NavButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="58"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+
+        <Style x:Key="PrimaryNavButtonStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="#04120D"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
+        </Style>
+
+        <Style x:Key="PowerToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="18">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Chrome" Property="Opacity" Value="0.72"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TinyPillStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
         <Style x:Key="EqVerticalRepeatButtonStyle" TargetType="RepeatButton">
             <Setter Property="Focusable" Value="False"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border Width="6" Background="{TemplateBinding Background}" CornerRadius="4"/>
+                        <Border Width="7" Background="{TemplateBinding Background}" CornerRadius="5"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <Style x:Key="EqVerticalThumbStyle" TargetType="Thumb">
-            <Setter Property="Width" Value="24"/>
-            <Setter Property="Height" Value="14"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Border Background="#F6FFF9" BorderBrush="#39F184" BorderThickness="2" CornerRadius="7">
+                        <Border Background="#13C989" BorderBrush="#84FFD0" BorderThickness="2" CornerRadius="11">
                             <Border.Effect>
-                                <DropShadowEffect BlurRadius="14" ShadowDepth="0" Opacity="0.32" Color="#39F184"/>
+                                <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.55" Color="#10B981"/>
                             </Border.Effect>
                         </Border>
                     </ControlTemplate>
@@ -39,14 +131,14 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
-                        <Grid Width="36" Height="128">
-                            <Border Width="8" HorizontalAlignment="Center" Background="#122A1C" CornerRadius="5"/>
+                        <Grid Width="48" Height="190">
+                            <Border Width="8" HorizontalAlignment="Center" Background="#283449" CornerRadius="6"/>
                             <Track x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
                                 <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource EqVerticalRepeatButtonStyle}" Background="#39F184"/>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource EqVerticalRepeatButtonStyle}" Background="#10B981"/>
                                 </Track.DecreaseRepeatButton>
                                 <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource EqVerticalRepeatButtonStyle}" Background="#29302B"/>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource EqVerticalRepeatButtonStyle}" Background="#2C3650"/>
                                 </Track.IncreaseRepeatButton>
                                 <Track.Thumb>
                                     <Thumb Style="{StaticResource EqVerticalThumbStyle}"/>
@@ -58,267 +150,418 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Margin="26">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" Margin="0,0,0,20">
-            <StackPanel DockPanel.Dock="Left">
-                <TextBlock Text="SoundType" FontSize="34" FontWeight="SemiBold"/>
-                <TextBlock Text="Craft the sound of your keyboard." Foreground="{StaticResource MutedTextBrush}" FontSize="15"/>
-            </StackPanel>
-            <Border DockPanel.Dock="Right" Padding="14,9" CornerRadius="8" Background="{StaticResource StatusBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Effect="{StaticResource SoftShadowEffect}">
-                <StackPanel Orientation="Horizontal">
-                    <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource AccentBrush}" Margin="0,0,9,0"/>
-                    <TextBlock x:Name="StatusText" Text="Loading" FontWeight="SemiBold"/>
+    <Grid Background="#05070D">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="340"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="{StaticResource SidebarBrush}" BorderBrush="#273246" BorderThickness="0,0,1,0" Padding="28">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="0,0,0,24">
+                    <TextBlock Text="SoundType" FontSize="32" FontWeight="Bold"/>
+                    <TextBlock Text="Keyboard sound studio" Foreground="{StaticResource MutedTextBrush}" FontSize="14" Margin="0,4,0,0"/>
                 </StackPanel>
-            </Border>
-        </DockPanel>
 
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.12*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+                <ToggleButton Grid.Row="1" x:Name="EnabledToggle" Style="{StaticResource PowerToggleStyle}" Height="70" Click="EnabledToggle_Click" Margin="0,0,0,22" Background="{StaticResource DangerBrush}" BorderBrush="#F87171">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="||" FontWeight="Bold" FontSize="20" Margin="0,0,14,0"/>
+                        <TextBlock Text="DISABLE" FontSize="20" FontWeight="Bold"/>
+                    </StackPanel>
+                </ToggleButton>
 
-            <Border Grid.Row="0" Grid.ColumnSpan="2" CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
-                <StackPanel>
-                    <DockPanel Margin="0,0,0,12" LastChildFill="False">
-                        <StackPanel DockPanel.Dock="Left">
-                            <TextBlock Text="Key Rules" FontSize="22" FontWeight="SemiBold"/>
-                            <TextBlock x:Name="ExcludedKeysText" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,0"/>
-                        </StackPanel>
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Content="Enable all keys" Click="EnableAllKeys_Click"/>
-                            <Button Content="Restore defaults" Click="RestoreDefaultKeyRules_Click" Margin="0"/>
-                        </StackPanel>
-                    </DockPanel>
-                    <controls:VisualKeyboardControl x:Name="VisualKeyboard" KeyToggled="VisualKeyboard_KeyToggled"/>
+                <Border Grid.Row="2" Style="{StaticResource CompactPanelStyle}" Margin="0,0,0,24">
+                    <StackPanel>
+                        <TextBlock Text="VOLUME" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" FontSize="13"/>
+                        <DockPanel Margin="0,14,0,0">
+                            <TextBlock DockPanel.Dock="Left" Text="Keyboard" Foreground="{StaticResource MutedTextBrush}"/>
+                            <TextBlock x:Name="VolumeText" DockPanel.Dock="Right" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold"/>
+                        </DockPanel>
+                        <Slider x:Name="MasterVolumeSlider" Minimum="0" Maximum="1" TickFrequency="0.05" ValueChanged="MasterVolumeSlider_ValueChanged"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Row="3">
+                    <Button Content="Library" Style="{StaticResource PrimaryNavButtonStyle}" Click="ShowLibrary_Click"/>
+                    <Button Content="Audio Effects" Style="{StaticResource NavButtonStyle}" Click="ShowAudio_Click"/>
+                    <Button Content="Keyboard Rules" Style="{StaticResource NavButtonStyle}" Click="ShowKeyboard_Click"/>
+                    <Button Content="Application Rules" Style="{StaticResource NavButtonStyle}" Click="ShowRules_Click"/>
+                    <Button Content="Settings" Style="{StaticResource NavButtonStyle}" Click="ShowSettings_Click"/>
                 </StackPanel>
-            </Border>
 
-            <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="0,0,18,0" VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
-                        <StackPanel>
-                            <TextBlock Text="Main Control" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                            <DockPanel Margin="0,10,0,4">
-                                <TextBlock DockPanel.Dock="Left" Text="Typing sounds" FontSize="24" FontWeight="SemiBold"/>
-                                <ToggleButton x:Name="EnabledToggle" DockPanel.Dock="Right" Width="120" Height="42" Content="ON" FontWeight="Bold" Click="EnabledToggle_Click"/>
-                            </DockPanel>
-                            <TextBlock Text="SoundType reacts to local key events only. It does not record what you type." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap"/>
-                            <TextBlock Text="Master volume" Margin="0,20,0,0" FontWeight="SemiBold"/>
-                            <Slider x:Name="MasterVolumeSlider" Minimum="0" Maximum="1" TickFrequency="0.05" ValueChanged="MasterVolumeSlider_ValueChanged"/>
-                            <TextBlock x:Name="VolumeText" Foreground="{StaticResource MutedTextBrush}"/>
-                            <DockPanel Margin="0,12,0,0">
-                                <TextBlock DockPanel.Dock="Left" Text="Variation" FontWeight="SemiBold"/>
-                                <TextBlock x:Name="PitchVariationText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </DockPanel>
-                            <Slider x:Name="PitchVariationSlider" Minimum="0" Maximum="0.12" TickFrequency="0.01" ValueChanged="PitchVariationSlider_ValueChanged"/>
-                        </StackPanel>
-                    </Border>
+                <Border Grid.Row="4" Style="{StaticResource CompactPanelStyle}">
+                    <StackPanel>
+                        <DockPanel>
+                            <Ellipse x:Name="StatusDot" DockPanel.Dock="Left" Width="11" Height="11" Fill="{StaticResource AccentBrush}" Margin="0,0,10,0"/>
+                            <TextBlock x:Name="StatusText" Text="Loading" FontWeight="SemiBold"/>
+                        </DockPanel>
+                        <TextBlock Text="Ctrl+Alt+K toggles sounds." Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
 
-                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
-                        <StackPanel>
-                            <DockPanel>
-                                <StackPanel DockPanel.Dock="Left">
-                                    <TextBlock Text="Sound Library" FontSize="22" FontWeight="SemiBold"/>
-                                    <TextBlock x:Name="PackCountText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,14"/>
+        <TabControl x:Name="MainTabs" Grid.Column="1" Background="{StaticResource HeroPanelBrush}" BorderThickness="0" TabStripPlacement="Top" Padding="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </TabControl.Resources>
+
+            <TabItem>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="46,42">
+                        <DockPanel Margin="0,0,0,22">
+                            <StackPanel DockPanel.Dock="Left">
+                                <TextBlock Text="Library" FontSize="42" FontWeight="Bold"/>
+                                <Rectangle Width="70" Height="5" Fill="{StaticResource AccentBrush}" RadiusX="3" RadiusY="3" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+                                <TextBox x:Name="PackSearchTextBox" Width="290" Height="42" Margin="0,0,12,0" TextChanged="PackSearchTextBox_TextChanged"/>
+                                <ComboBox x:Name="PackTypeComboBox" Width="170" Height="42" SelectionChanged="PackTypeComboBox_SelectionChanged"/>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Margin="0,0,14,0">
+                                <StackPanel>
+                                    <TextBlock Text="Sound Packs" FontSize="15" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="PackCountText" FontSize="30" FontWeight="Bold" Margin="0,6,0,0"/>
                                 </StackPanel>
-                                <Border DockPanel.Dock="Right" Background="{StaticResource AccentSoftBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" CornerRadius="8" Padding="10,5" VerticalAlignment="Top">
-                                    <TextBlock Text="Switches + Typewriters" Foreground="{StaticResource AccentHoverBrush}" FontWeight="SemiBold" FontSize="12"/>
-                                </Border>
-                            </DockPanel>
-                            <Grid Margin="0,0,0,12">
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource SectionCardStyle}" Margin="7,0">
+                                <StackPanel>
+                                    <TextBlock Text="Keyboard Profiles" FontSize="15" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Switches + Typewriters" FontSize="24" FontWeight="Bold" Margin="0,8,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}" Margin="14,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Active Tone" FontSize="15" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="SelectedPackNameText" FontSize="24" FontWeight="Bold" TextTrimming="CharacterEllipsis" Margin="0,8,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <ListBox x:Name="PacksList" MinHeight="360" MaxHeight="520" SelectionChanged="PacksList_SelectionChanged" HorizontalContentAlignment="Stretch">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#0D1730" BorderBrush="#3B4762" BorderThickness="2" CornerRadius="22" Padding="22" Margin="0,0,0,14">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="54"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="44" Height="44" CornerRadius="13" Background="#1F2C64" BorderBrush="#4858A8" BorderThickness="1">
+                                                <TextBlock Text="KB" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource AccentHoverBrush}"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="16,0,18,0">
+                                                <TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Description}" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,8"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding TagsText}" Foreground="{StaticResource AccentHoverBrush}" FontWeight="SemiBold" FontSize="12"/>
+                                                    <TextBlock Text="  /  " Foreground="{StaticResource SubtleTextBrush}"/>
+                                                    <TextBlock Text="{Binding DetailLine}" Foreground="{StaticResource SubtleTextBrush}" FontSize="12"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Border Grid.Column="2" Style="{StaticResource TinyPillStyle}" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding TypeLabel}" Foreground="{StaticResource AccentHoverBrush}" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,20,0,0">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="156"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="PackSearchTextBox" Grid.Column="0" Height="34" Margin="0,0,10,0" TextChanged="PackSearchTextBox_TextChanged"/>
-                                <ComboBox x:Name="PackTypeComboBox" Grid.Column="1" Height="34" SelectionChanged="PackTypeComboBox_SelectionChanged"/>
-                            </Grid>
-                            <ListBox x:Name="PacksList" Height="265" SelectionChanged="PacksList_SelectionChanged" HorizontalContentAlignment="Stretch">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <DockPanel Grid.Row="0">
-                                                    <Border DockPanel.Dock="Right" Background="{StaticResource InputBrush}" CornerRadius="6" Padding="8,3" Margin="8,0,0,0">
-                                                        <TextBlock Text="{Binding TypeLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" FontWeight="SemiBold"/>
-                                                    </Border>
-                                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                </DockPanel>
-                                                <TextBlock Grid.Row="1" Text="{Binding Description}" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,5,0,6"/>
-                                                <DockPanel Grid.Row="2">
-                                                    <TextBlock DockPanel.Dock="Left" Text="{Binding TagsText}" Foreground="{StaticResource AccentHoverBrush}" FontSize="12" FontWeight="SemiBold"/>
-                                                    <TextBlock DockPanel.Dock="Right" Text="{Binding DetailLine}" Foreground="{StaticResource SubtleTextBrush}" FontSize="12"/>
-                                                </DockPanel>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                            <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                <Button Content="Normal" Click="PreviewNormal_Click"/>
-                                <Button Content="Enter" Click="PreviewEnter_Click"/>
-                                <Button Content="Space" Click="PreviewSpace_Click"/>
-                                <Button Content="Backspace" Click="PreviewBackspace_Click"/>
-                                <Button Content="Tab" Click="PreviewTab_Click"/>
-                            </StackPanel>
-                            <Border Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,14,0,0">
                                 <StackPanel>
                                     <DockPanel>
-                                        <TextBlock x:Name="SelectedPackNameText" DockPanel.Dock="Left" FontSize="16" FontWeight="SemiBold"/>
-                                        <TextBlock x:Name="SelectedPackTypeText" DockPanel.Dock="Right" Foreground="{StaticResource AccentHoverBrush}" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock x:Name="SelectedPackTypeText" DockPanel.Dock="Right" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                                        <TextBlock Text="Selected Pack" FontSize="22" FontWeight="Bold"/>
                                     </DockPanel>
-                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,5,0,8"/>
+                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,8"/>
                                     <TextBlock x:Name="SelectedPackDetailsText" Foreground="{StaticResource SubtleTextBrush}" TextWrapping="Wrap" FontSize="12"/>
+                                    <TextBlock x:Name="PackValidationText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
                                 </StackPanel>
-                            </Border>
-                            <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                <Button Content="Open pack folder" Click="OpenPackFolder_Click"/>
-                                <Button Content="Import .soundpack" Click="ImportSoundPack_Click"/>
-                                <Button Content="Export active" Click="ExportActivePack_Click"/>
-                            </StackPanel>
-                            <TextBlock x:Name="PackValidationText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
-                        </StackPanel>
-                    </Border>
-
-                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Effect="{StaticResource CardShadowEffect}">
-                        <StackPanel>
-                            <TextBlock Text="Mixer / EQ" FontSize="22" FontWeight="SemiBold"/>
-                            <DockPanel Margin="0,14,0,0">
-                                <TextBlock DockPanel.Dock="Left" Text="Normal keys" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock x:Name="NormalVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </DockPanel>
-                            <Slider x:Name="NormalVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left" Text="Enter ding" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock x:Name="EnterVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </DockPanel>
-                            <Slider x:Name="EnterVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left" Text="Space" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock x:Name="SpaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </DockPanel>
-                            <Slider x:Name="SpaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left" Text="Backspace" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock x:Name="BackspaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </DockPanel>
-                            <Slider x:Name="BackspaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
-                            <Border Margin="0,18,0,0" Padding="18" CornerRadius="8" Background="#0E1512" BorderBrush="#244833" BorderThickness="1">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <DockPanel Grid.Row="0">
-                                        <StackPanel DockPanel.Dock="Left">
-                                            <TextBlock Text="Equalizer" FontSize="18" FontWeight="SemiBold"/>
-                                            <TextBlock x:Name="EqPresetText" Text="Flat" Foreground="{StaticResource MutedTextBrush}" FontSize="12"/>
-                                        </StackPanel>
-                                        <CheckBox x:Name="EqEnabledCheck" DockPanel.Dock="Right" Content="On" Checked="EqChanged" Unchecked="EqChanged"/>
-                                    </DockPanel>
-                                    <Grid Grid.Row="1" Margin="0,18,0,10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                            <TextBlock x:Name="BassValueText" Text="+0 dB" HorizontalAlignment="Center" Foreground="#39F184" FontWeight="SemiBold"/>
-                                            <Slider x:Name="BassSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,8"/>
-                                            <TextBlock Text="Warmth" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                            <TextBlock x:Name="MidValueText" Text="+0 dB" HorizontalAlignment="Center" Foreground="#39F184" FontWeight="SemiBold"/>
-                                            <Slider x:Name="MidSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,8"/>
-                                            <TextBlock Text="Body" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                            <TextBlock x:Name="TrebleValueText" Text="+0 dB" HorizontalAlignment="Center" Foreground="#39F184" FontWeight="SemiBold"/>
-                                            <Slider x:Name="TrebleSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,8"/>
-                                            <TextBlock Text="Crispness" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                    <WrapPanel Grid.Row="2" HorizontalAlignment="Center">
-                                        <Button Content="Flat" Click="PresetFlat_Click"/>
-                                        <Button Content="Warm" Click="PresetWarm_Click"/>
-                                        <Button Content="Thock" Click="PresetThock_Click"/>
-                                        <Button Content="Crisp" Click="PresetCrisp_Click"/>
-                                        <Button Content="Soft Night" Click="PresetSoftNight_Click"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                                    <WrapPanel Margin="0,0,0,12">
+                                        <Button Content="Normal" Click="PreviewNormal_Click"/>
+                                        <Button Content="Enter" Click="PreviewEnter_Click"/>
+                                        <Button Content="Space" Click="PreviewSpace_Click"/>
+                                        <Button Content="Backspace" Click="PreviewBackspace_Click"/>
+                                        <Button Content="Tab" Click="PreviewTab_Click"/>
                                     </WrapPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="Open folder" Click="OpenPackFolder_Click"/>
+                                        <Button Content="Import" Click="ImportSoundPack_Click"/>
+                                        <Button Content="Export" Click="ExportActivePack_Click"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="46,42">
+                        <DockPanel Margin="0,0,0,22">
+                            <StackPanel DockPanel.Dock="Left">
+                                <TextBlock Text="Audio Effects" FontSize="42" FontWeight="Bold"/>
+                                <Rectangle Width="70" Height="5" Fill="{StaticResource AccentBrush}" RadiusX="3" RadiusY="3" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                            </StackPanel>
+                            <Border DockPanel.Dock="Right" Style="{StaticResource TinyPillStyle}" VerticalAlignment="Top">
+                                <TextBlock Text="Keyboard" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                            </Border>
+                        </DockPanel>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,24">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock Text="Pitch Shift" FontSize="22" FontWeight="Bold"/>
+                                    <TextBlock x:Name="PitchVariationText" DockPanel.Dock="Right" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                                </DockPanel>
+                                <Slider x:Name="PitchVariationSlider" Minimum="0" Maximum="0.12" TickFrequency="0.01" ValueChanged="PitchVariationSlider_ValueChanged" Margin="0,26,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,24">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,20">
+                                    <StackPanel DockPanel.Dock="Left">
+                                        <TextBlock Text="Equalizer" FontSize="26" FontWeight="Bold"/>
+                                        <TextBlock x:Name="EqPresetText" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="EqEnabledCheck" DockPanel.Dock="Right" Content="On" Checked="EqChanged" Unchecked="EqChanged"/>
+                                </DockPanel>
+
+                                <Grid Background="#293348" Height="290">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock x:Name="BassValueText" HorizontalAlignment="Center" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                                        <Slider x:Name="BassSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,10"/>
+                                        <TextBlock Text="Bass" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock x:Name="MidValueText" HorizontalAlignment="Center" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                                        <Slider x:Name="MidSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,10"/>
+                                        <TextBlock Text="Body" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TrebleValueText" HorizontalAlignment="Center" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                                        <Slider x:Name="TrebleSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,10"/>
+                                        <TextBlock Text="Treble" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    </StackPanel>
                                 </Grid>
-                            </Border>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
 
-            <ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
-                        <StackPanel>
-                            <TextBlock Text="App Rules" FontSize="22" FontWeight="SemiBold"/>
-                            <TextBlock Text="Control SoundType by foreground process name." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,12"/>
-                            <DockPanel>
-                                <TextBox x:Name="ProcessRuleTextBox" DockPanel.Dock="Left" Height="32" MinWidth="220"/>
-                                <Button Content="Add/update rule" Click="AddAppRule_Click" Margin="10,0,0,0"/>
-                            </DockPanel>
-                            <TextBlock Text="Mode" Foreground="{StaticResource MutedTextBrush}" Margin="0,12,0,4"/>
-                            <ComboBox x:Name="RuleModeComboBox" Height="32"/>
-                            <TextBlock Text="Pack override" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,4"/>
-                            <ComboBox x:Name="RulePackComboBox" Height="32"/>
-                            <DockPanel Margin="0,10,0,0">
-                                <TextBlock DockPanel.Dock="Left" Text="Volume override" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock x:Name="RuleVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </DockPanel>
-                            <Slider x:Name="RuleVolumeSlider" Minimum="0" Maximum="1.5" Value="1" TickFrequency="0.05" ValueChanged="RuleVolumeSlider_ValueChanged"/>
-                            <TextBlock x:Name="CurrentAppText" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,8"/>
-                            <TextBlock Text="Recently detected apps" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,4"/>
-                            <ListBox x:Name="RecentAppsList" Height="76" SelectionChanged="RecentAppsList_SelectionChanged"/>
-                            <TextBlock Text="Rules" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,4"/>
-                            <ListBox x:Name="AppRulesList" Height="120" SelectionChanged="AppRulesList_SelectionChanged"/>
-                            <Button Content="Remove selected rule" Click="RemoveAppRule_Click" Margin="0,12,0,0"/>
-                        </StackPanel>
-                    </Border>
+                                <WrapPanel Margin="0,18,0,0">
+                                    <Button Content="Flat" Click="PresetFlat_Click"/>
+                                    <Button Content="Warm" Click="PresetWarm_Click"/>
+                                    <Button Content="Thock" Click="PresetThock_Click"/>
+                                    <Button Content="Crisp" Click="PresetCrisp_Click"/>
+                                    <Button Content="Soft Night" Click="PresetSoftNight_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
 
-                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Effect="{StaticResource CardShadowEffect}">
-                        <StackPanel>
-                            <TextBlock Text="Advanced" FontSize="22" FontWeight="SemiBold"/>
-                            <CheckBox x:Name="IgnoreRepeatsCheck" Content="Ignore held-key repeats" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" Margin="0,12,0,4"/>
-                            <Border Margin="0,10,0,0" Padding="14" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                        <Border Style="{StaticResource SectionCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Mixer" FontSize="26" FontWeight="Bold" Margin="0,0,0,14"/>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="Normal keys" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="NormalVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                                </DockPanel>
+                                <Slider x:Name="NormalVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                                <DockPanel Margin="0,10,0,0">
+                                    <TextBlock DockPanel.Dock="Left" Text="Enter ding" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="EnterVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                                </DockPanel>
+                                <Slider x:Name="EnterVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                                <DockPanel Margin="0,10,0,0">
+                                    <TextBlock DockPanel.Dock="Left" Text="Space" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="SpaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                                </DockPanel>
+                                <Slider x:Name="SpaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                                <DockPanel Margin="0,10,0,0">
+                                    <TextBlock DockPanel.Dock="Left" Text="Backspace" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="BackspaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                                </DockPanel>
+                                <Slider x:Name="BackspaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="46,42">
+                        <DockPanel Margin="0,0,0,22">
+                            <StackPanel DockPanel.Dock="Left">
+                                <TextBlock Text="Keyboard Rules" FontSize="42" FontWeight="Bold"/>
+                                <Rectangle Width="70" Height="5" Fill="{StaticResource AccentBrush}" RadiusX="3" RadiusY="3" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+                                <Button Content="Enable all keys" Click="EnableAllKeys_Click"/>
+                                <Button Content="Restore defaults" Click="RestoreDefaultKeyRules_Click"/>
+                            </StackPanel>
+                        </DockPanel>
+                        <Border Style="{StaticResource SectionCardStyle}">
+                            <StackPanel>
+                                <TextBlock x:Name="ExcludedKeysText" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,18"/>
+                                <controls:VisualKeyboardControl x:Name="VisualKeyboard" KeyToggled="VisualKeyboard_KeyToggled"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="46,42">
+                        <DockPanel Margin="0,0,0,22">
+                            <StackPanel DockPanel.Dock="Left">
+                                <TextBlock Text="Application Rules" FontSize="42" FontWeight="Bold"/>
+                                <Rectangle Width="90" Height="5" Fill="{StaticResource AccentBrush}" RadiusX="3" RadiusY="3" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                            </StackPanel>
+                            <Button DockPanel.Dock="Right" Content="+ Add" Width="92" Height="48" VerticalAlignment="Top" Click="FocusNewRule_Click"/>
+                        </DockPanel>
+
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Margin="0,0,12,0">
                                 <StackPanel>
-                                    <CheckBox x:Name="MinimizeToTrayCheck" Content="Keep SoundType running in the tray when closed" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
-                                    <TextBlock x:Name="TrayStatusText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,10"/>
-                                    <Button Content="Hide to tray now" Click="HideToTray_Click" HorizontalAlignment="Left"/>
+                                    <TextBlock Text="Rules" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="App Profiles" FontSize="26" FontWeight="Bold" Margin="0,6,0,0"/>
                                 </StackPanel>
                             </Border>
-                            <Border Margin="0,12,0,0" Padding="14" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                            <Border Grid.Column="1" Style="{StaticResource SectionCardStyle}" Margin="6,0">
                                 <StackPanel>
-                                    <CheckBox x:Name="StartWithWindowsCheck" Content="Start SoundType when I sign in to Windows" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged"/>
-                                    <TextBlock x:Name="StartupStatusText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                    <TextBlock Text="Current App" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="CurrentAppText" FontSize="20" FontWeight="Bold" TextTrimming="CharacterEllipsis" Margin="0,8,0,0"/>
                                 </StackPanel>
                             </Border>
-                            <TextBlock Text="Tray menu includes Open, Hide, Enabled, the active sound pack, and Exit." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
-                            <TextBlock Text="Privacy: SoundType does not record words, characters, or key history. It only reacts locally to key events for sound playback." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,14,0,0"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
+                            <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}" Margin="12,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Volume Override" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="RuleVolumeText" FontSize="26" FontWeight="Bold" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,24">
+                            <StackPanel>
+                                <TextBlock Text="Default Profile" FontSize="24" FontWeight="Bold" Margin="0,0,0,16"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                        <TextBlock Text="Process name" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <TextBox x:Name="ProcessRuleTextBox" Height="42" Margin="0,6,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="0,0,16,0">
+                                        <TextBlock Text="Mode" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <ComboBox x:Name="RuleModeComboBox" Height="42" Margin="0,6,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Pack override" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <ComboBox x:Name="RulePackComboBox" Height="42" Margin="0,6,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Text="Volume override" Foreground="{StaticResource MutedTextBrush}" Margin="0,18,0,0"/>
+                                <Slider x:Name="RuleVolumeSlider" Minimum="0" Maximum="1.5" Value="1" TickFrequency="0.05" ValueChanged="RuleVolumeSlider_ValueChanged"/>
+                                <Button Content="Add/update rule" Click="AddAppRule_Click" HorizontalAlignment="Right" Margin="0,14,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Margin="0,0,12,0">
+                                <StackPanel>
+                                    <TextBlock Text="Recently detected apps" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
+                                    <ListBox x:Name="RecentAppsList" Height="160" SelectionChanged="RecentAppsList_SelectionChanged"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource SectionCardStyle}" Margin="12,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Rules" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
+                                    <ListBox x:Name="AppRulesList" Height="160" SelectionChanged="AppRulesList_SelectionChanged"/>
+                                    <Button Content="Remove selected rule" Click="RemoveAppRule_Click" HorizontalAlignment="Right" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="46,42">
+                        <TextBlock Text="Settings" FontSize="42" FontWeight="Bold"/>
+                        <Rectangle Width="70" Height="5" Fill="{StaticResource AccentBrush}" RadiusX="3" RadiusY="3" HorizontalAlignment="Left" Margin="0,12,0,22"/>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,24">
+                            <StackPanel>
+                                <TextBlock Text="Keyboard" FontSize="24" FontWeight="Bold" Margin="0,0,0,16"/>
+                                <CheckBox x:Name="IgnoreRepeatsCheck" Content="Ignore held-key repeats" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,24">
+                            <StackPanel>
+                                <TextBlock Text="Tray" FontSize="24" FontWeight="Bold" Margin="0,0,0,16"/>
+                                <CheckBox x:Name="MinimizeToTrayCheck" Content="Keep SoundType running in the tray when closed" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
+                                <TextBlock x:Name="TrayStatusText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,10,0,14"/>
+                                <Button Content="Hide to tray now" Click="HideToTray_Click" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SectionCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Windows Startup" FontSize="24" FontWeight="Bold" Margin="0,0,0,16"/>
+                                <CheckBox x:Name="StartWithWindowsCheck" Content="Start SoundType when I sign in to Windows" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged"/>
+                                <TextBlock x:Name="StartupStatusText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                                <TextBlock Text="SoundType does not record words, characters, or key history." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,18,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

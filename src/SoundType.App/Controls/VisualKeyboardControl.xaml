@@ -2,11 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="KeyboardSurfaceBrush" Color="#101318"/>
-        <SolidColorBrush x:Key="KeyboardZoneBrush" Color="#15191F"/>
-        <SolidColorBrush x:Key="KeyboardKeyBrush" Color="#1B2028"/>
-        <SolidColorBrush x:Key="KeyboardKeyBorderBrush" Color="#303844"/>
-        <SolidColorBrush x:Key="KeyboardKeyExcludedBrush" Color="#2A171D"/>
+        <SolidColorBrush x:Key="KeyboardSurfaceBrush" Color="#07101C"/>
+        <SolidColorBrush x:Key="KeyboardZoneBrush" Color="#111A2A"/>
+        <SolidColorBrush x:Key="KeyboardKeyBrush" Color="#172238"/>
+        <SolidColorBrush x:Key="KeyboardKeyBorderBrush" Color="#3B4762"/>
+        <SolidColorBrush x:Key="KeyboardKeyExcludedBrush" Color="#3A1720"/>
         <SolidColorBrush x:Key="KeyboardKeyExcludedBorderBrush" Color="#F87171"/>
         <SolidColorBrush x:Key="KeyboardKeyExcludedTextBrush" Color="#FCA5A5"/>
         <Style x:Key="KeyboardKeyButton" TargetType="Button">
@@ -28,7 +28,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="9"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
@@ -63,10 +63,10 @@
                       VerticalScrollBarVisibility="Disabled"
                       CanContentScroll="False">
             <Border Background="{StaticResource KeyboardSurfaceBrush}"
-                    BorderBrush="#2B313B"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12">
+                    BorderBrush="#3B4762"
+                    BorderThickness="2"
+                    CornerRadius="18"
+                    Padding="16">
                 <Grid x:Name="KeyboardGrid"/>
             </Border>
         </ScrollViewer>

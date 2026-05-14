@@ -193,7 +193,6 @@ public partial class MainWindow : Window
     private void BindSettingsToUi()
     {
         EnabledToggle.IsChecked = _settings.Enabled;
-        EnabledToggle.Content = _settings.Enabled ? "ON" : "OFF";
         MasterVolumeSlider.Value = _settings.MasterVolume;
         PitchVariationSlider.Value = _settings.PitchVariation;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
@@ -251,7 +250,7 @@ public partial class MainWindow : Window
     {
         StatusText.Text = _settings.Enabled ? "Listening" : "Muted";
         StatusDot.Fill = (MediaBrush)FindResource(_settings.Enabled ? "AccentBrush" : "DangerBrush");
-        EnabledToggle.Content = _settings.Enabled ? "ON" : "OFF";
+        UpdateEnableButton();
         VolumeText.Text = $"{Math.Round(_settings.MasterVolume * 100)}%";
         PitchVariationText.Text = $"+/- {Math.Round(_settings.PitchVariation * 100)}%";
         _trayIcon.Text = $"SoundType - {StatusText.Text}";
@@ -279,6 +278,26 @@ public partial class MainWindow : Window
         StartupStatusText.Text = _settings.StartWithWindows
             ? "Enabled. Windows will launch SoundType after you sign in."
             : "Off. SoundType only starts when you open it.";
+    }
+
+    private void UpdateEnableButton()
+    {
+        EnabledToggle.IsChecked = _settings.Enabled;
+        EnabledToggle.Content = _settings.Enabled ? "||  DISABLE" : ">  ENABLE";
+        EnabledToggle.Background = (MediaBrush)FindResource(_settings.Enabled ? "DangerBrush" : "AccentBrush");
+        EnabledToggle.BorderBrush = (MediaBrush)FindResource(_settings.Enabled ? "DangerBrush" : "AccentHoverBrush");
+        EnabledToggle.Foreground = (MediaBrush)FindResource("TextBrush");
+    }
+
+    private void ShowLibrary_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 0;
+    private void ShowAudio_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 1;
+    private void ShowKeyboard_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 2;
+    private void ShowRules_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 3;
+    private void ShowSettings_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 4;
+    private void FocusNewRule_Click(object sender, RoutedEventArgs e)
+    {
+        MainTabs.SelectedIndex = 3;
+        ProcessRuleTextBox.Focus();
     }
 
     private void RegisterGlobalHotkey()

@@ -1,0 +1,28 @@
+{
+  "id": "ksp-mx-blue",
+  "name": "Cherry MX Blue",
+  "author": "kbsim / KeyboardSounds Pro",
+  "version": "1.0.0",
+  "description": "MIT-licensed kbsim Cherry MX Blue clicky switch samples.",
+  "license": "MIT. Source: keyboard-sounds/keyboardsounds-pro desktop/bundled-profiles/mx-blue. Preserve bundled LICENSE where present.",
+  "tags": [
+    "switch",
+    "mechanical",
+    "keyboardsounds-pro"
+  ],
+  "groups": {
+    "normal": [
+      "normal/press_key1.mp3",
+      "normal/press_key2.mp3",
+      "normal/press_key3.mp3",
+      "normal/press_key4.mp3",
+      "normal/press_key5.mp3"
+    ]
+  },
+  "keyOverrides": {},
+  "defaults": {
+    "volume": 0.72,
+    "pitchVariation": 0.02,
+    "randomize": true
+  }
+}

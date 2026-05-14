@@ -1,0 +1,41 @@
+{
+  "id": "ksp-mx-brown",
+  "name": "Cherry MX Brown",
+  "author": "kbsim / KeyboardSounds Pro",
+  "version": "1.0.0",
+  "description": "MIT-licensed kbsim Cherry MX Brown tactile switch samples.",
+  "license": "MIT. Source: keyboard-sounds/keyboardsounds-pro desktop/bundled-profiles/mx-brown. Preserve bundled LICENSE where present.",
+  "tags": [
+    "switch",
+    "mechanical",
+    "keyboardsounds-pro"
+  ],
+  "groups": {
+    "normal": [
+      "normal/press_key1.mp3",
+      "normal/press_key2.mp3",
+      "normal/press_key3.mp3",
+      "normal/press_key4.mp3",
+      "normal/press_key5.mp3"
+    ],
+    "enter": [
+      "enter/enter.mp3"
+    ],
+    "space": [
+      "space/space.mp3"
+    ],
+    "backspace": [
+      "backspace/backspace.mp3"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.72,
+    "pitchVariation": 0.02,
+    "randomize": true
+  }
+}
