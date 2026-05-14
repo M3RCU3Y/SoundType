@@ -1,6 +1,7 @@
 <Window x:Class="SoundType.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:SoundType.App.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
@@ -26,12 +27,32 @@
         </DockPanel>
 
         <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.12*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer Grid.Column="0" Margin="0,0,18,0" VerticalScrollBarVisibility="Auto">
+            <Border Grid.Row="0" Grid.ColumnSpan="2" CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,12" LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Left">
+                            <TextBlock Text="Key Rules" FontSize="22" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="ExcludedKeysText" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="Enable all keys" Click="EnableAllKeys_Click"/>
+                            <Button Content="Restore defaults" Click="RestoreDefaultKeyRules_Click" Margin="0"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <controls:VisualKeyboardControl x:Name="VisualKeyboard" KeyToggled="VisualKeyboard_KeyToggled"/>
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="0,0,18,0" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
                         <StackPanel>
@@ -103,18 +124,8 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
-                        <StackPanel>
-                            <TextBlock Text="Key Rules" FontSize="22" FontWeight="SemiBold"/>
-                            <TextBlock Text="Unchecked keys are ignored by the playback rules." Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,10"/>
-                            <ScrollViewer Height="210">
-                                <WrapPanel x:Name="KeyRulesPanel"/>
-                            </ScrollViewer>
-                        </StackPanel>
-                    </Border>
-
                     <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
                         <StackPanel>
                             <TextBlock Text="App Rules" FontSize="22" FontWeight="SemiBold"/>
