@@ -88,6 +88,46 @@ public sealed class AudioProcessingTests
         Assert.Equal(1.0f, buffer[2], precision: 5);
     }
 
+    [Fact]
+    public void AudioSampleTrimmer_RemovesLeadingSilentFrames()
+    {
+        float[] samples =
+        [
+            0f, 0f,
+            0.0001f, -0.0001f,
+            0.08f, -0.07f,
+            0.04f, -0.03f
+        ];
+
+        float[] trimmed = AudioSampleTrimmer.TrimLeadingSilence(samples, channels: 2, threshold: 0.001f);
+
+        Assert.Equal([0.08f, -0.07f, 0.04f, -0.03f], trimmed);
+    }
+
+    [Fact]
+    public void LoadedSoundSampleProvider_StartsEachPlaybackFromBeginning()
+    {
+        WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+        LoadedSoundSample sample = new(
+            "normal/key.wav",
+            SoundSampleFormat.Wav,
+            [1, 2, 3],
+            [0.2f, -0.2f, 0.4f, -0.4f],
+            format);
+
+        LoadedSoundSampleProvider first = new(sample);
+        LoadedSoundSampleProvider second = new(sample);
+        float[] firstBuffer = new float[2];
+        float[] secondBuffer = new float[2];
+
+        int firstRead = first.Read(firstBuffer, 0, firstBuffer.Length);
+        int secondRead = second.Read(secondBuffer, 0, secondBuffer.Length);
+
+        Assert.Equal(2, firstRead);
+        Assert.Equal(2, secondRead);
+        Assert.Equal(firstBuffer, secondBuffer);
+    }
+
     private static float[] CreateSineWave(int count)
     {
         float[] samples = new float[count];

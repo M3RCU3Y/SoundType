@@ -4,6 +4,7 @@ public sealed class AppSettings
 {
     public bool Enabled { get; set; } = true;
     public bool StartWithWindows { get; set; }
+    public bool StartHiddenInTray { get; set; }
     public bool MinimizeToTray { get; set; } = true;
     public bool ShowStartupNotification { get; set; }
     public double MasterVolume { get; set; } = 0.75;

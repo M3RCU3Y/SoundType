@@ -1,10 +1,13 @@
 using System.Text.Json;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using SoundType.Core.Models;
 
 namespace SoundType.Audio;
 
 public sealed class SoundPackLoader
 {
+    private static readonly WaveFormat PlaybackWaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private static readonly IReadOnlyDictionary<string, SoundSampleFormat> SupportedSampleFormats =
         new Dictionary<string, SoundSampleFormat>(StringComparer.OrdinalIgnoreCase)
         {
@@ -116,14 +119,65 @@ public sealed class SoundPackLoader
         foreach ((string group, List<string> files) in metadata.Groups)
         {
             samples[group] = files
-                .Select(path => new LoadedSoundSample(
-                    path,
-                    GetSampleFormat(path),
-                    File.ReadAllBytes(Path.Combine(metadata.FolderPath, path))))
+                .Select(path => LoadSample(metadata.FolderPath, path))
                 .ToList();
         }
 
         return new LoadedSoundPack(metadata, samples);
+    }
+
+    private static LoadedSoundSample LoadSample(string folderPath, string relativePath)
+    {
+        string absolutePath = Path.Combine(folderPath, relativePath);
+        SoundSampleFormat format = GetSampleFormat(relativePath);
+        byte[] data = File.ReadAllBytes(absolutePath);
+        float[] decoded = DecodeToPlaybackFormat(format, data);
+        return new LoadedSoundSample(relativePath, format, data, decoded, PlaybackWaveFormat);
+    }
+
+    private static float[] DecodeToPlaybackFormat(SoundSampleFormat format, byte[] data)
+    {
+        try
+        {
+            using MemoryStream stream = new(data, writable: false);
+            using WaveStream reader = format switch
+            {
+                SoundSampleFormat.Wav => new WaveFileReader(stream),
+                SoundSampleFormat.Mp3 => new Mp3FileReader(stream),
+                _ => throw new InvalidOperationException("Unsupported audio format.")
+            };
+
+            ISampleProvider provider = reader.ToSampleProvider();
+            provider = EnsureStereo(provider);
+            if (provider.WaveFormat.SampleRate != PlaybackWaveFormat.SampleRate)
+            {
+                provider = new WdlResamplingSampleProvider(provider, PlaybackWaveFormat.SampleRate);
+            }
+
+            List<float> samples = [];
+            float[] buffer = new float[PlaybackWaveFormat.SampleRate / 10 * PlaybackWaveFormat.Channels];
+            int read;
+            while ((read = provider.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                samples.AddRange(buffer.Take(read));
+            }
+
+            return AudioSampleTrimmer.TrimLeadingSilence(samples.ToArray(), PlaybackWaveFormat.Channels);
+        }
+        catch (Exception ex) when (ex is InvalidDataException or EndOfStreamException or IOException)
+        {
+            return [];
+        }
+    }
+
+    private static ISampleProvider EnsureStereo(ISampleProvider provider)
+    {
+        return provider.WaveFormat.Channels switch
+        {
+            1 => new MonoToStereoSampleProvider(provider),
+            2 => provider,
+            _ => throw new InvalidOperationException("SoundType supports mono or stereo samples.")
+        };
     }
 
     private static bool TryGetSampleFormat(string relativePath, out SoundSampleFormat format) =>

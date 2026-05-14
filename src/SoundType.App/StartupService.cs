@@ -21,14 +21,16 @@ public sealed class StartupService
         return key?.GetValue(AppName) as string;
     }
 
-    public void SetEnabled(bool enabled)
+    public void SetEnabled(bool enabled) => SetEnabled(enabled, startHiddenInTray: false);
+
+    public void SetEnabled(bool enabled, bool startHiddenInTray)
     {
         using RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKeyPath, writable: true)
             ?? Registry.CurrentUser.CreateSubKey(RunKeyPath, writable: true);
 
         if (enabled)
         {
-            key.SetValue(AppName, BuildStartupCommand());
+            key.SetValue(AppName, BuildStartupCommand(startHiddenInTray));
         }
         else
         {
@@ -36,11 +38,14 @@ public sealed class StartupService
         }
     }
 
-    public bool TrySetEnabled(bool enabled, out string? errorMessage)
+    public bool TrySetEnabled(bool enabled, out string? errorMessage) =>
+        TrySetEnabled(enabled, startHiddenInTray: false, out errorMessage);
+
+    public bool TrySetEnabled(bool enabled, bool startHiddenInTray, out string? errorMessage)
     {
         try
         {
-            SetEnabled(enabled);
+            SetEnabled(enabled, startHiddenInTray);
             errorMessage = null;
             return true;
         }
@@ -51,12 +56,12 @@ public sealed class StartupService
         }
     }
 
-    internal static string BuildStartupCommand()
+    internal static string BuildStartupCommand(bool startHiddenInTray = false)
     {
         string exePath = Environment.ProcessPath
             ?? System.Reflection.Assembly.GetEntryAssembly()?.Location
             ?? AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
 
-        return $"\"{exePath}\"";
+        return startHiddenInTray ? $"\"{exePath}\" --tray" : $"\"{exePath}\"";
     }
 }

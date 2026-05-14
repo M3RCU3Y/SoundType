@@ -30,6 +30,8 @@ public sealed class SettingsTests
             Enabled = false,
             MasterVolume = 0.25,
             PitchVariation = 0.08,
+            StartWithWindows = true,
+            StartHiddenInTray = true,
             ActiveSoundPackId = "soft-laptop"
         };
         original.ExcludedKeys.Add("Tab");
@@ -41,6 +43,8 @@ public sealed class SettingsTests
         Assert.False(restored.Enabled);
         Assert.Equal(0.25, restored.MasterVolume);
         Assert.Equal(0.08, restored.PitchVariation);
+        Assert.True(restored.StartWithWindows);
+        Assert.True(restored.StartHiddenInTray);
         Assert.Equal("soft-laptop", restored.ActiveSoundPackId);
         Assert.Contains("Tab", restored.ExcludedKeys);
         Assert.Contains(restored.AppRules, rule => rule.ProcessName == "Code.exe");

@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Threading.Channels;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -10,16 +9,26 @@ public sealed class AudioEngine : IAsyncDisposable
 {
     private readonly Channel<PlaybackRequest> _queue = Channel.CreateUnbounded<PlaybackRequest>(
         new UnboundedChannelOptions { SingleReader = true, SingleWriter = false });
-    private readonly ConcurrentBag<WaveOutEvent> _activeOutputs = [];
     private readonly Random _random = new();
     private readonly CancellationTokenSource _shutdown = new();
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
+    private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+    private readonly MixingSampleProvider _mixer;
+    private readonly WaveOutEvent _output;
     private readonly Task _worker;
     private LoadedSoundPack? _activePack;
 
     public AudioEngine()
     {
+        _mixer = new MixingSampleProvider(_playbackFormat) { ReadFully = true };
+        _output = new WaveOutEvent
+        {
+            DesiredLatency = 20,
+            NumberOfBuffers = 2
+        };
+        _output.Init(_mixer);
+        _output.Play();
         _worker = Task.Run(ProcessQueueAsync);
     }
 
@@ -98,9 +107,12 @@ public sealed class AudioEngine : IAsyncDisposable
         }
 
         LoadedSoundSample sample = SelectSample(pack.Metadata, request.SoundGroup, samples);
-        MemoryStream stream = new(sample.Data, writable: false);
-        WaveStream reader = CreateReader(sample, stream);
-        ISampleProvider sampleProvider = reader.ToSampleProvider();
+        if (sample.DecodedSamples.Length == 0)
+        {
+            return;
+        }
+
+        ISampleProvider sampleProvider = new LoadedSoundSampleProvider(sample);
         double pitchFactor = ResolvePitchFactor(pack.Metadata.Defaults.PitchVariation);
         if (Math.Abs(pitchFactor - 1.0) > 0.001)
         {
@@ -121,17 +133,7 @@ public sealed class AudioEngine : IAsyncDisposable
         };
         sampleProvider = new LimiterSampleProvider(sampleProvider);
 
-        WaveOutEvent output = new() { DesiredLatency = 60 };
-        output.PlaybackStopped += (_, _) =>
-        {
-            output.Dispose();
-            reader.Dispose();
-            stream.Dispose();
-        };
-
-        _activeOutputs.Add(output);
-        output.Init(sampleProvider.ToWaveProvider());
-        output.Play();
+        _mixer.AddMixerInput(sampleProvider);
     }
 
     private LoadedSoundPack? ResolvePack(string? soundPackId)
@@ -144,14 +146,6 @@ public sealed class AudioEngine : IAsyncDisposable
 
         return _activePack;
     }
-
-    private static WaveStream CreateReader(LoadedSoundSample sample, Stream stream) =>
-        sample.Format switch
-        {
-            SoundSampleFormat.Wav => new WaveFileReader(stream),
-            SoundSampleFormat.Mp3 => new Mp3FileReader(stream),
-            _ => throw new InvalidOperationException($"{sample.RelativePath} has unsupported audio format.")
-        };
 
     private LoadedSoundSample SelectSample(SoundPackMetadata metadata, string group, IReadOnlyList<LoadedSoundSample> samples)
     {
@@ -207,11 +201,7 @@ public sealed class AudioEngine : IAsyncDisposable
             // Shutdown is best-effort.
         }
 
-        foreach (WaveOutEvent output in _activeOutputs)
-        {
-            output.Dispose();
-        }
-
+        _output.Dispose();
         _shutdown.Dispose();
     }
 }

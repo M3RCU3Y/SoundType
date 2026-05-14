@@ -40,6 +40,7 @@ public partial class MainWindow : Window
     private bool _loading = true;
     private bool _exitRequested;
     private bool _packFiltersConfigured;
+    private bool _refreshingPackLibrary;
 
     public MainWindow()
     {
@@ -67,6 +68,10 @@ public partial class MainWindow : Window
         RefreshStatus();
         RefreshCurrentApp();
         RegisterGlobalHotkey();
+        if (ShouldStartHiddenInTray())
+        {
+            HideToTray(showBalloon: false);
+        }
     }
 
     private void KeyboardHook_KeyPressed(object? sender, KeyPressedEvent e)
@@ -198,6 +203,7 @@ public partial class MainWindow : Window
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         MinimizeToTrayCheck.IsChecked = _settings.MinimizeToTray;
         StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
+        StartHiddenInTrayCheck.IsChecked = _settings.StartHiddenInTray;
         EqEnabledCheck.IsChecked = _settings.Eq.Enabled;
         NormalVolumeSlider.Value = _settings.GroupVolumes.Normal;
         EnterVolumeSlider.Value = _settings.GroupVolumes.Enter;
@@ -275,10 +281,22 @@ public partial class MainWindow : Window
     private void RefreshStartupStatus()
     {
         StartupStatusText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-        StartupStatusText.Text = _settings.StartWithWindows
-            ? "Enabled. Windows will launch SoundType after you sign in."
-            : "Off. SoundType only starts when you open it.";
+        if (!_settings.StartWithWindows)
+        {
+            StartupStatusText.Text = "Off. SoundType only starts when you open it.";
+            return;
+        }
+
+        StartupStatusText.Text = _settings.StartHiddenInTray
+            ? "Enabled. Windows will launch SoundType directly into the system tray."
+            : "Enabled. Windows will launch SoundType after you sign in.";
     }
+
+    private static bool ShouldStartHiddenInTray() =>
+        Environment.GetCommandLineArgs().Any(arg =>
+            arg.Equals("--tray", StringComparison.OrdinalIgnoreCase) ||
+            arg.Equals("--hidden", StringComparison.OrdinalIgnoreCase) ||
+            arg.Equals("--minimized", StringComparison.OrdinalIgnoreCase));
 
     private void UpdateEnableButton()
     {
@@ -289,15 +307,32 @@ public partial class MainWindow : Window
         EnabledToggle.Foreground = (MediaBrush)FindResource("TextBrush");
     }
 
-    private void ShowLibrary_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 0;
-    private void ShowAudio_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 1;
-    private void ShowKeyboard_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 2;
-    private void ShowRules_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 3;
-    private void ShowSettings_Click(object sender, RoutedEventArgs e) => MainTabs.SelectedIndex = 4;
+    private void ShowLibrary_Click(object sender, RoutedEventArgs e) => ShowPage(LibraryPage);
+    private void ShowAudio_Click(object sender, RoutedEventArgs e) => ShowPage(AudioPage);
+    private void ShowKeyboard_Click(object sender, RoutedEventArgs e) => ShowPage(KeyboardPage);
+    private void ShowRules_Click(object sender, RoutedEventArgs e) => ShowPage(RulesPage);
+    private void ShowSettings_Click(object sender, RoutedEventArgs e) => ShowPage(SettingsPage);
     private void FocusNewRule_Click(object sender, RoutedEventArgs e)
     {
-        MainTabs.SelectedIndex = 3;
+        ShowPage(RulesPage);
         ProcessRuleTextBox.Focus();
+    }
+
+    private void ShowPage(FrameworkElement activePage)
+    {
+        FrameworkElement[] pages =
+        [
+            LibraryPage,
+            AudioPage,
+            KeyboardPage,
+            RulesPage,
+            SettingsPage,
+        ];
+
+        foreach (FrameworkElement page in pages)
+        {
+            page.Visibility = ReferenceEquals(page, activePage) ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 
     private void RegisterGlobalHotkey()
@@ -460,7 +495,7 @@ public partial class MainWindow : Window
     private void PacksList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         RefreshSelectedPackDetails((PacksList.SelectedItem as PackListItem)?.Metadata);
-        if (_loading) return;
+        if (_loading || _refreshingPackLibrary) return;
         if (PacksList.SelectedItem is PackListItem item)
         {
             ActivatePack(item.Metadata);
@@ -793,11 +828,13 @@ public partial class MainWindow : Window
     {
         if (_loading) return;
         bool requested = StartWithWindowsCheck.IsChecked == true;
-        if (!_startup.TrySetEnabled(requested, out string? errorMessage))
+        bool startHidden = StartHiddenInTrayCheck.IsChecked == true;
+        if (!_startup.TrySetEnabled(requested, startHidden, out string? errorMessage))
         {
             _loading = true;
             _settings.StartWithWindows = _startup.IsEnabled();
             StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
+            StartHiddenInTrayCheck.IsChecked = _settings.StartHiddenInTray;
             _loading = false;
             StartupStatusText.Foreground = (MediaBrush)FindResource("DangerBrush");
             StartupStatusText.Text = $"Windows startup could not be updated: {errorMessage}";
@@ -805,6 +842,7 @@ public partial class MainWindow : Window
         }
 
         _settings.StartWithWindows = requested;
+        _settings.StartHiddenInTray = startHidden;
         RefreshStartupStatus();
         _ = SaveSettingsAsync();
     }
@@ -975,22 +1013,30 @@ public partial class MainWindow : Window
             .Select(pack => new PackListItem(pack))
             .ToList();
 
-        PacksList.Items.Clear();
-        foreach (PackListItem item in visiblePacks)
+        _refreshingPackLibrary = true;
+        try
         {
-            PacksList.Items.Add(item);
+            PacksList.Items.Clear();
+            foreach (PackListItem item in visiblePacks)
+            {
+                PacksList.Items.Add(item);
+            }
+
+            PackListItem? selected = visiblePacks.FirstOrDefault(item =>
+                !string.IsNullOrWhiteSpace(previousSelection) &&
+                item.Metadata.Id.Equals(previousSelection, StringComparison.OrdinalIgnoreCase))
+                ?? visiblePacks.FirstOrDefault();
+            PacksList.SelectedItem = selected;
+            RefreshSelectedPackDetails(selected?.Metadata);
+        }
+        finally
+        {
+            _refreshingPackLibrary = false;
         }
 
         PackCountText.Text = visiblePacks.Count == _packs.Count
             ? (_packs.Count == 1 ? "1 pack available." : $"{_packs.Count} packs available.")
             : $"{visiblePacks.Count} of {_packs.Count} packs shown.";
-
-        PackListItem? selected = visiblePacks.FirstOrDefault(item =>
-            !string.IsNullOrWhiteSpace(previousSelection) &&
-            item.Metadata.Id.Equals(previousSelection, StringComparison.OrdinalIgnoreCase))
-            ?? visiblePacks.FirstOrDefault();
-        PacksList.SelectedItem = selected;
-        RefreshSelectedPackDetails(selected?.Metadata);
     }
 
     private bool PackMatchesCurrentFilters(SoundPackMetadata pack)
