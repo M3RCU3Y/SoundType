@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using SoundType.Core.Models;
 
 namespace SoundType.Audio;
@@ -81,25 +82,31 @@ public sealed class AudioEngine : IAsyncDisposable
         byte[] sample = SelectSample(pack.Metadata, request.SoundGroup, samples);
         MemoryStream stream = new(sample, writable: false);
         WaveFileReader reader = new(stream);
-        WaveChannel32 volumeStream = new(reader)
+        ISampleProvider sampleProvider = reader.ToSampleProvider();
+        if (Eq.Enabled)
+        {
+            sampleProvider = new ThreeBandEqSampleProvider(sampleProvider, Eq);
+        }
+
+        sampleProvider = new VolumeSampleProvider(sampleProvider)
         {
             Volume = (float)Math.Clamp(
                 MasterVolume * pack.Metadata.Defaults.Volume * request.VolumeMultiplier * EqOutputTrim(),
                 0.0,
                 1.0)
         };
+        sampleProvider = new LimiterSampleProvider(sampleProvider);
 
         WaveOutEvent output = new() { DesiredLatency = 60 };
         output.PlaybackStopped += (_, _) =>
         {
             output.Dispose();
-            volumeStream.Dispose();
             reader.Dispose();
             stream.Dispose();
         };
 
         _activeOutputs.Add(output);
-        output.Init(volumeStream);
+        output.Init(sampleProvider.ToWaveProvider());
         output.Play();
     }
 
