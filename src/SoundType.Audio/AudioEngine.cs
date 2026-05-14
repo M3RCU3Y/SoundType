@@ -24,6 +24,7 @@ public sealed class AudioEngine : IAsyncDisposable
     }
 
     public double MasterVolume { get; set; } = 0.75;
+    public double PitchVariation { get; set; } = 0.02;
     public EqSettings Eq { get; set; } = new();
 
     public void LoadPack(LoadedSoundPack pack, bool makeActive = true)
@@ -100,6 +101,12 @@ public sealed class AudioEngine : IAsyncDisposable
         MemoryStream stream = new(sample.Data, writable: false);
         WaveStream reader = CreateReader(sample, stream);
         ISampleProvider sampleProvider = reader.ToSampleProvider();
+        double pitchFactor = ResolvePitchFactor(pack.Metadata.Defaults.PitchVariation);
+        if (Math.Abs(pitchFactor - 1.0) > 0.001)
+        {
+            sampleProvider = new PitchVariationSampleProvider(sampleProvider, pitchFactor);
+        }
+
         if (Eq.Enabled)
         {
             sampleProvider = new ThreeBandEqSampleProvider(sampleProvider, Eq);
@@ -160,6 +167,20 @@ public sealed class AudioEngine : IAsyncDisposable
         int next = _roundRobin.TryGetValue(roundRobinKey, out int value) ? value : 0;
         _roundRobin[roundRobinKey] = (next + 1) % samples.Count;
         return samples[next];
+    }
+
+    private double ResolvePitchFactor(double packVariation)
+    {
+        double variation = Math.Clamp(Math.Max(PitchVariation, packVariation), 0.0, 0.12);
+        if (variation <= 0.0001)
+        {
+            return 1.0;
+        }
+
+        lock (_random)
+        {
+            return 1.0 + ((_random.NextDouble() * 2.0) - 1.0) * variation;
+        }
     }
 
     private double EqOutputTrim()

@@ -194,6 +194,7 @@ public partial class MainWindow : Window
         EnabledToggle.IsChecked = _settings.Enabled;
         EnabledToggle.Content = _settings.Enabled ? "ON" : "OFF";
         MasterVolumeSlider.Value = _settings.MasterVolume;
+        PitchVariationSlider.Value = _settings.PitchVariation;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         MinimizeToTrayCheck.IsChecked = _settings.MinimizeToTray;
         StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
@@ -206,6 +207,7 @@ public partial class MainWindow : Window
         MidSlider.Value = _settings.Eq.MidGainDb;
         TrebleSlider.Value = _settings.Eq.TrebleGainDb;
         _audio.MasterVolume = _settings.MasterVolume;
+        _audio.PitchVariation = _settings.PitchVariation;
         _audio.Eq = _settings.Eq;
         RefreshAppRules();
         RefreshGroupVolumeText();
@@ -247,6 +249,7 @@ public partial class MainWindow : Window
         StatusDot.Fill = (MediaBrush)FindResource(_settings.Enabled ? "AccentBrush" : "DangerBrush");
         EnabledToggle.Content = _settings.Enabled ? "ON" : "OFF";
         VolumeText.Text = $"{Math.Round(_settings.MasterVolume * 100)}%";
+        PitchVariationText.Text = $"+/- {Math.Round(_settings.PitchVariation * 100)}%";
         _trayIcon.Text = $"SoundType - {StatusText.Text}";
         if (_trayIcon.ContextMenuStrip?.Items["enabled"] is Forms.ToolStripMenuItem enabledItem)
         {
@@ -378,6 +381,15 @@ public partial class MainWindow : Window
         if (_loading) return;
         _settings.MasterVolume = Math.Clamp(MasterVolumeSlider.Value, 0.0, 1.0);
         _audio.MasterVolume = _settings.MasterVolume;
+        RefreshStatus();
+        _ = SaveSettingsAsync();
+    }
+
+    private void PitchVariationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading) return;
+        _settings.PitchVariation = Math.Clamp(PitchVariationSlider.Value, 0.0, 0.12);
+        _audio.PitchVariation = _settings.PitchVariation;
         RefreshStatus();
         _ = SaveSettingsAsync();
     }

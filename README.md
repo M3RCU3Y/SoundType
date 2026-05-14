@@ -11,6 +11,7 @@ SoundType runs locally and does not record what you type.
 - Non-blocking audio queue backed by preloaded WAV/MP3 sound packs.
 - Normal, Enter, Space, and Backspace sound groups.
 - Enable/mute toggle, master volume, key exclusions, app exclusions, tray menu, and start-with-Windows setting.
+- Pitch variation control to keep repeated key sounds from feeling robotic.
 - Global `Ctrl+Alt+K` mute toggle hotkey.
 - `.soundpack` archive import/export with safe zip extraction.
 - Per-app rule modes for disabled/default/enabled-only behavior, pack override, and volume override.

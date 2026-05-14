@@ -14,7 +14,7 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV or MP3 assets
 - Tags for library grouping, such as `switch`, `typewriter`, `clicky`, or `thock`
 - Key overrides
 - Default volume
-- Random sample selection
+- Random sample selection and pitch variation
 
 ## Example
 
