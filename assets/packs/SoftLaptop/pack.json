@@ -1,0 +1,34 @@
+{
+  "id": "soft-laptop",
+  "name": "Soft Laptop",
+  "author": "SoundType",
+  "version": "0.1.0",
+  "description": "Quiet, soft, modern taps for long writing sessions.",
+  "license": "Placeholder development audio",
+  "groups": {
+    "normal": [
+      "normal/key01.wav",
+      "normal/key02.wav",
+      "normal/key03.wav"
+    ],
+    "enter": [
+      "enter/ding.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "backspace": [
+      "backspace/backspace.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.55,
+    "pitchVariation": 0.0,
+    "randomize": true
+  }
+}

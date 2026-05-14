@@ -1,0 +1,34 @@
+{
+  "id": "classic-typewriter",
+  "name": "Classic Typewriter",
+  "author": "SoundType",
+  "version": "0.1.0",
+  "description": "Vintage, tactile, and lightly metallic.",
+  "license": "Placeholder development audio",
+  "groups": {
+    "normal": [
+      "normal/key01.wav",
+      "normal/key02.wav",
+      "normal/key03.wav"
+    ],
+    "enter": [
+      "enter/ding.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "backspace": [
+      "backspace/backspace.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.75,
+    "pitchVariation": 0.0,
+    "randomize": true
+  }
+}

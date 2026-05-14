@@ -1,0 +1,124 @@
+<Window x:Class="SoundType.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="SoundType" Height="760" Width="1120" MinHeight="680" MinWidth="980"
+        Background="{StaticResource AppBackgroundBrush}">
+    <Grid Margin="26">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="SoundType" FontSize="34" FontWeight="SemiBold"/>
+                <TextBlock Text="Craft the sound of your keyboard." Foreground="{StaticResource MutedTextBrush}" FontSize="15"/>
+            </StackPanel>
+            <Border DockPanel.Dock="Right" Padding="14,9" CornerRadius="8" Background="{StaticResource PanelBrush}" BorderBrush="#2D313B" BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource AccentBrush}" Margin="0,0,9,0"/>
+                    <TextBlock x:Name="StatusText" Text="Loading" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.12*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" Margin="0,0,18,0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Main Control" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
+                            <DockPanel Margin="0,10,0,4">
+                                <TextBlock DockPanel.Dock="Left" Text="Typing sounds" FontSize="24" FontWeight="SemiBold"/>
+                                <ToggleButton x:Name="EnabledToggle" DockPanel.Dock="Right" Width="120" Height="42" Content="ON" FontWeight="Bold" Click="EnabledToggle_Click"/>
+                            </DockPanel>
+                            <TextBlock Text="SoundType reacts to local key events only. It does not record what you type." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap"/>
+                            <TextBlock Text="Master volume" Margin="0,20,0,0" FontWeight="SemiBold"/>
+                            <Slider x:Name="MasterVolumeSlider" Minimum="0" Maximum="1" TickFrequency="0.05" ValueChanged="MasterVolumeSlider_ValueChanged"/>
+                            <TextBlock x:Name="VolumeText" Foreground="{StaticResource MutedTextBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Sound Packs" FontSize="22" FontWeight="SemiBold"/>
+                            <TextBlock Text="Choose the active typing personality. Packs are loaded from assets/packs." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,14"/>
+                            <ListBox x:Name="PacksList" Height="190" SelectionChanged="PacksList_SelectionChanged" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                <Button Content="Preview" Click="PreviewPack_Click"/>
+                                <Button Content="Open pack folder" Click="OpenPackFolder_Click"/>
+                            </StackPanel>
+                            <TextBlock x:Name="PackValidationText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Mixer / EQ" FontSize="22" FontWeight="SemiBold"/>
+                            <CheckBox x:Name="EqEnabledCheck" Content="Enable EQ trim" Checked="EqChanged" Unchecked="EqChanged" Margin="0,12,0,4"/>
+                            <TextBlock Text="Warmth" Foreground="{StaticResource MutedTextBrush}"/>
+                            <Slider x:Name="BassSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
+                            <TextBlock Text="Body" Foreground="{StaticResource MutedTextBrush}"/>
+                            <Slider x:Name="MidSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
+                            <TextBlock Text="Crispness" Foreground="{StaticResource MutedTextBrush}"/>
+                            <Slider x:Name="TrebleSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Flat" Click="PresetFlat_Click"/>
+                                <Button Content="Warm" Click="PresetWarm_Click"/>
+                                <Button Content="Crisp" Click="PresetCrisp_Click"/>
+                                <Button Content="Soft Night" Click="PresetSoftNight_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Key Rules" FontSize="22" FontWeight="SemiBold"/>
+                            <TextBlock Text="Unchecked keys are ignored by the playback rules." Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,10"/>
+                            <ScrollViewer Height="210">
+                                <WrapPanel x:Name="KeyRulesPanel"/>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+
+                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="App Rules" FontSize="22" FontWeight="SemiBold"/>
+                            <TextBlock Text="Disable typing sounds for noisy or sensitive apps by process name." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,12"/>
+                            <DockPanel>
+                                <TextBox x:Name="ProcessRuleTextBox" DockPanel.Dock="Left" Height="32" MinWidth="220" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45" Padding="8,4"/>
+                                <Button Content="Disable app" Click="AddAppRule_Click" Margin="10,0,0,0"/>
+                            </DockPanel>
+                            <TextBlock x:Name="CurrentAppText" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,8"/>
+                            <ListBox x:Name="AppRulesList" Height="120" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
+                            <Button Content="Remove selected rule" Click="RemoveAppRule_Click" Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Advanced" FontSize="22" FontWeight="SemiBold"/>
+                            <CheckBox x:Name="IgnoreRepeatsCheck" Content="Ignore held-key repeats" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" Margin="0,12,0,4"/>
+                            <CheckBox x:Name="MinimizeToTrayCheck" Content="Minimize to tray on close" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
+                            <CheckBox x:Name="StartWithWindowsCheck" Content="Start SoundType when I sign in" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged"/>
+                            <TextBlock Text="Tray menu includes Open SoundType, Enabled, and Exit." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+                            <TextBlock Text="Privacy: SoundType does not record words, characters, or key history. It only reacts locally to key events for sound playback." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,14,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

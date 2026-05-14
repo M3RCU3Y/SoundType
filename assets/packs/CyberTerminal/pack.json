@@ -1,0 +1,34 @@
+{
+  "id": "cyber-terminal",
+  "name": "Cyber Terminal",
+  "author": "SoundType",
+  "version": "0.1.0",
+  "description": "Subtle glassy terminal ticks and a compact confirm beep.",
+  "license": "Placeholder development audio",
+  "groups": {
+    "normal": [
+      "normal/key01.wav",
+      "normal/key02.wav",
+      "normal/key03.wav"
+    ],
+    "enter": [
+      "enter/ding.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "backspace": [
+      "backspace/backspace.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.62,
+    "pitchVariation": 0.0,
+    "randomize": true
+  }
+}
