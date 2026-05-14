@@ -65,7 +65,7 @@ public sealed class MechvibesImporterTests
     }
 
     [Fact]
-    public void Import_FailsWithUsefulErrorWhenOnlyUnsupportedAudioIsAvailable()
+    public void Import_CopiesMp3SamplesWhenPackUsesMp3()
     {
         string source = CreateMechvibesPack("""
             {
@@ -84,12 +84,13 @@ public sealed class MechvibesImporterTests
             "BACKSPACE.mp3");
         string output = CreateEmptyDirectory();
 
-        var ex = Assert.Throws<InvalidOperationException>(() => new MechvibesPackImporter().Import(source, output));
+        MechvibesImportResult result = new MechvibesPackImporter().Import(source, output);
 
-        Assert.Contains("SoundType currently validates imported packs as .wav-only", ex.Message);
-        Assert.Contains("GENERIC_R0.mp3", ex.Message);
-        Assert.Contains("BACKSPACE.mp3", ex.Message);
-        Assert.False(File.Exists(Path.Combine(output, "pack.json")));
+        Assert.Empty(result.Warnings);
+        Assert.Equal(["samples/generic-r0.mp3", "samples/generic-r1.mp3"], result.Metadata.Groups["normal"]);
+        Assert.Equal(["samples/backspace.mp3"], result.Metadata.Groups["backspace"]);
+        Assert.True(File.Exists(Path.Combine(output, "samples", "generic-r0.mp3")));
+        Assert.True(File.Exists(Path.Combine(output, "samples", "backspace.mp3")));
     }
 
     [Fact]
@@ -103,22 +104,50 @@ public sealed class MechvibesImporterTests
               "sound": "normal.wav",
               "defines": {
                 "30": "a.wav",
-                "31": "b.mp3"
+                "31": "b.ogg"
               },
               "version": 2
             }
             """,
             "normal.wav",
             "a.wav",
-            "b.mp3");
+            "b.ogg");
         string output = CreateEmptyDirectory();
 
         MechvibesImportResult result = new MechvibesPackImporter().Import(source, output);
 
         string warning = Assert.Single(result.Warnings);
-        Assert.Contains("SoundType currently validates imported packs as .wav-only", warning);
-        Assert.Contains("b.mp3", warning);
-        Assert.DoesNotContain(result.Metadata.Groups["normal"], sample => sample.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains("SoundType imports .wav and .mp3 samples only", warning);
+        Assert.Contains("b.ogg", warning);
+        Assert.DoesNotContain(result.Metadata.Groups["normal"], sample => sample.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Import_FailsWithUsefulErrorWhenOnlyUnsupportedAudioIsAvailable()
+    {
+        string source = CreateMechvibesPack("""
+            {
+              "id": "ogg-pack",
+              "name": "OGG Pack",
+              "key_define_type": "multi",
+              "sound": "GENERIC_R{0-1}.ogg",
+              "defines": {
+                "14": "BACKSPACE.ogg"
+              },
+              "version": 2
+            }
+            """,
+            "GENERIC_R0.ogg",
+            "GENERIC_R1.ogg",
+            "BACKSPACE.ogg");
+        string output = CreateEmptyDirectory();
+
+        var ex = Assert.Throws<InvalidOperationException>(() => new MechvibesPackImporter().Import(source, output));
+
+        Assert.Contains("SoundType supports imported .wav and .mp3 samples only", ex.Message);
+        Assert.Contains("GENERIC_R0.ogg", ex.Message);
+        Assert.Contains("BACKSPACE.ogg", ex.Message);
+        Assert.False(File.Exists(Path.Combine(output, "pack.json")));
     }
 
     [Fact]

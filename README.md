@@ -70,7 +70,7 @@ Developers can convert a Mechvibes folder pack that contains `config.json` into 
 .\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.MechvibesImporter\SoundType.MechvibesImporter.csproj -- C:\path\to\mechvibes-pack .\dist\ConvertedPack
 ```
 
-The importer supports practical multi-file Mechvibes packs and writes `pack.json` plus copied samples into the output folder. SoundType currently validates imported packs as `.wav`-only, so `.mp3` and `.ogg` references are skipped with warnings or reported as errors when no playable normal samples remain. Single-file Mechvibes sprite packs are not converted yet because they require slicing timing ranges out of one source audio file.
+The importer supports practical multi-file Mechvibes packs and writes `pack.json` plus copied WAV/MP3 samples into the output folder. OGG references are skipped with warnings or reported as errors when no playable normal samples remain. Single-file Mechvibes sprite packs are not converted yet because they require slicing timing ranges out of one source audio file.
 
 Only convert and redistribute packs when the original pack license allows it. The generated manifest includes a license reminder; it does not grant rights to third-party assets.
 

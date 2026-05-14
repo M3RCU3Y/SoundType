@@ -73,14 +73,14 @@ public sealed class MechvibesPackImporter
         if (!accepted.Any(reference => string.Equals(reference.Group, "normal", StringComparison.OrdinalIgnoreCase)))
         {
             string details = unsupported.Count == 0
-                ? "No supported normal .wav samples were found."
-                : $"SoundType currently validates imported packs as .wav-only. Unsupported referenced samples: {string.Join(", ", unsupported.Distinct(StringComparer.OrdinalIgnoreCase))}.";
+                ? "No supported normal .wav or .mp3 samples were found."
+                : $"SoundType supports imported .wav and .mp3 samples only. Unsupported referenced samples: {string.Join(", ", unsupported.Distinct(StringComparer.OrdinalIgnoreCase))}.";
             throw new InvalidOperationException(details);
         }
 
         if (unsupported.Count > 0)
         {
-            warnings.Add($"Skipped unsupported audio files because SoundType currently validates imported packs as .wav-only: {string.Join(", ", unsupported.Distinct(StringComparer.OrdinalIgnoreCase))}.");
+            warnings.Add($"Skipped unsupported audio files because SoundType imports .wav and .mp3 samples only: {string.Join(", ", unsupported.Distinct(StringComparer.OrdinalIgnoreCase))}.");
         }
 
         PrepareOutputFolder(outputRoot, options.Overwrite);
@@ -147,7 +147,7 @@ public sealed class MechvibesPackImporter
                 continue;
             }
 
-            if (!Path.GetExtension(absolutePath).Equals(".wav", StringComparison.OrdinalIgnoreCase))
+            if (!IsSupportedSampleExtension(absolutePath))
             {
                 unsupported.Add(samplePath);
                 continue;
@@ -215,6 +215,9 @@ public sealed class MechvibesPackImporter
 
         return fullPath;
     }
+
+    private static bool IsSupportedSampleExtension(string path) =>
+        Path.GetExtension(path).ToLowerInvariant() is ".wav" or ".mp3";
 
     private static void PrepareOutputFolder(string outputRoot, bool overwrite)
     {

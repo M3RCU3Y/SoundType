@@ -95,7 +95,7 @@ Supported source shape:
 
 - Folder pack with `config.json`.
 - `key_define_type: "multi"` where `sound` and `defines` point at individual sample files.
-- `.wav` samples only in the generated SoundType manifest.
+- `.wav` and `.mp3` samples in the generated SoundType manifest.
 
 Mapping behavior:
 
@@ -103,11 +103,11 @@ Mapping behavior:
 - Mechvibes key codes `14`, `28`, `57`, and `15` map to `backspace`, `enter`, `space`, and `tab`.
 - Other key-down definitions map to `normal`.
 - `*-up` release definitions are skipped because SoundType currently plays key-down sounds.
-- Each referenced WAV is copied once into `samples/`, even if multiple keys point at it.
+- Each referenced WAV/MP3 sample is copied once into `samples/`, even if multiple keys point at it.
 
 Unsupported source shape:
 
 - `key_define_type: "single"` sprite packs are rejected with an error because conversion would require extracting timed slices from one audio file.
-- `.mp3` and `.ogg` references are skipped with warnings when WAV samples remain. If no supported normal WAV samples remain, conversion fails. This keeps the output compatible with current SoundType validation while leaving room for future MP3 support.
+- `.ogg` and other unsupported references are skipped with warnings when playable WAV/MP3 samples remain. If no supported normal WAV/MP3 samples remain, conversion fails.
 
 Licensing caveat: Mechvibes packs may include third-party recordings with their own terms. Convert and redistribute only when the original license allows it; the generated `pack.json` includes a reminder rather than a rights grant.
