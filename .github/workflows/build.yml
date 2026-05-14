@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches: ["main", "master", "feature/**"]
+  pull_request:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore .\SoundType.sln
+
+      - name: Test
+        run: dotnet test .\SoundType.sln --configuration Release --no-restore
+
+      - name: Publish portable zip
+        shell: pwsh
+        run: .\tools\publish-portable.ps1
+
+      - name: Upload portable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoundType-win-x64-Release-portable
+          path: artifacts\SoundType-win-x64-Release-portable.zip

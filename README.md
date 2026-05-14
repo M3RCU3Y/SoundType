@@ -43,6 +43,14 @@ dotnet run --project .\src\SoundType.App\SoundType.App.csproj
 .\.tools\dotnet\dotnet.exe test .\SoundType.sln
 ```
 
+## Package
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\publish-portable.ps1
+```
+
+This creates `artifacts\SoundType-win-x64-Release-portable.zip`. See [docs/PACKAGING.md](docs/PACKAGING.md).
+
 ## Placeholder Audio
 
 The built-in WAV files are generated development placeholders:
