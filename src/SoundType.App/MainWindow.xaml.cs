@@ -141,6 +141,7 @@ public partial class MainWindow : Window
         }
         PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
         PackValidationText.Text = $"{pack.Name} by {pack.Author} is active. {pack.Description}";
+        RefreshStatus();
         _ = SaveSettingsAsync();
     }
 
@@ -211,6 +212,9 @@ public partial class MainWindow : Window
         _audio.Eq = _settings.Eq;
         RefreshAppRules();
         RefreshGroupVolumeText();
+        RefreshEqText();
+        RefreshTrayStatus();
+        RefreshStartupStatus();
         RefreshStatus();
     }
 
@@ -255,6 +259,26 @@ public partial class MainWindow : Window
         {
             enabledItem.Checked = _settings.Enabled;
         }
+
+        if (_trayIcon.ContextMenuStrip?.Items["pack"] is Forms.ToolStripMenuItem packItem)
+        {
+            packItem.Text = $"Pack: {_activePack?.Name ?? "None"}";
+        }
+    }
+
+    private void RefreshTrayStatus()
+    {
+        TrayStatusText.Text = _settings.MinimizeToTray
+            ? "Closing the window hides SoundType, keeps sounds active, and leaves controls in the tray."
+            : "Closing the window exits SoundType. Use Hide to tray when you want it running quietly.";
+    }
+
+    private void RefreshStartupStatus()
+    {
+        StartupStatusText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
+        StartupStatusText.Text = _settings.StartWithWindows
+            ? "Enabled. Windows will launch SoundType after you sign in."
+            : "Off. SoundType only starts when you open it.";
     }
 
     private void RegisterGlobalHotkey()
@@ -330,6 +354,7 @@ public partial class MainWindow : Window
     {
         Forms.ContextMenuStrip menu = new();
         Forms.ToolStripMenuItem title = new("SoundType") { Enabled = false };
+        Forms.ToolStripMenuItem pack = new("Pack: None") { Name = "pack", Enabled = false };
         Forms.ToolStripMenuItem enabled = new("Enabled") { Name = "enabled", Checked = _settings.Enabled, CheckOnClick = true };
         enabled.Click += async (_, _) =>
         {
@@ -342,6 +367,9 @@ public partial class MainWindow : Window
         Forms.ToolStripMenuItem open = new("Open SoundType");
         open.Click += (_, _) => ShowFromTray();
 
+        Forms.ToolStripMenuItem hide = new("Hide to tray");
+        hide.Click += (_, _) => HideToTray(showBalloon: false);
+
         Forms.ToolStripMenuItem exit = new("Exit");
         exit.Click += (_, _) =>
         {
@@ -350,9 +378,12 @@ public partial class MainWindow : Window
         };
 
         menu.Items.Add(title);
+        menu.Items.Add(pack);
         menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add(enabled);
         menu.Items.Add(open);
+        menu.Items.Add(hide);
+        menu.Items.Add(enabled);
+        menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(exit);
 
         _trayIcon.Icon = System.Drawing.SystemIcons.Application;
@@ -364,8 +395,21 @@ public partial class MainWindow : Window
     private void ShowFromTray()
     {
         Show();
+        ShowInTaskbar = true;
         WindowState = WindowState.Normal;
         Activate();
+        RefreshTrayStatus();
+    }
+
+    private void HideToTray(bool showBalloon = true)
+    {
+        ShowInTaskbar = false;
+        Hide();
+        RefreshTrayStatus();
+        if (showBalloon)
+        {
+            ShowTrayBalloon("SoundType is still running in the tray.");
+        }
     }
 
     private void EnabledToggle_Click(object sender, RoutedEventArgs e)
@@ -722,22 +766,38 @@ public partial class MainWindow : Window
         if (_loading) return;
         _settings.IgnoreKeyRepeats = IgnoreRepeatsCheck.IsChecked == true;
         _settings.MinimizeToTray = MinimizeToTrayCheck.IsChecked == true;
+        RefreshTrayStatus();
         _ = SaveSettingsAsync();
     }
 
     private void StartWithWindowsChanged(object sender, RoutedEventArgs e)
     {
         if (_loading) return;
-        _settings.StartWithWindows = StartWithWindowsCheck.IsChecked == true;
-        _startup.SetEnabled(_settings.StartWithWindows);
+        bool requested = StartWithWindowsCheck.IsChecked == true;
+        if (!_startup.TrySetEnabled(requested, out string? errorMessage))
+        {
+            _loading = true;
+            _settings.StartWithWindows = _startup.IsEnabled();
+            StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
+            _loading = false;
+            StartupStatusText.Foreground = (MediaBrush)FindResource("DangerBrush");
+            StartupStatusText.Text = $"Windows startup could not be updated: {errorMessage}";
+            return;
+        }
+
+        _settings.StartWithWindows = requested;
+        RefreshStartupStatus();
         _ = SaveSettingsAsync();
     }
+
+    private void HideToTray_Click(object sender, RoutedEventArgs e) => HideToTray();
 
     private void EqChanged(object sender, RoutedEventArgs e)
     {
         if (_loading) return;
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
         _audio.Eq = _settings.Eq;
+        RefreshEqText();
         _ = SaveSettingsAsync();
     }
 
@@ -748,7 +808,9 @@ public partial class MainWindow : Window
         _settings.Eq.MidGainDb = MidSlider.Value;
         _settings.Eq.TrebleGainDb = TrebleSlider.Value;
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
+        _settings.Eq.PresetName = "Custom";
         _audio.Eq = _settings.Eq;
+        RefreshEqText();
         _ = SaveSettingsAsync();
     }
 
@@ -777,6 +839,27 @@ public partial class MainWindow : Window
         BackspaceVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Backspace * 100)}%";
     }
 
+    private void RefreshEqText()
+    {
+        if (BassValueText is null)
+        {
+            return;
+        }
+
+        BassValueText.Text = FormatDb(_settings.Eq.BassGainDb);
+        MidValueText.Text = FormatDb(_settings.Eq.MidGainDb);
+        TrebleValueText.Text = FormatDb(_settings.Eq.TrebleGainDb);
+        EqPresetText.Text = _settings.Eq.Enabled
+            ? $"{_settings.Eq.PresetName} EQ"
+            : "Flat, no EQ trim";
+    }
+
+    private static string FormatDb(double value)
+    {
+        double rounded = Math.Round(value, 1);
+        return rounded > 0 ? $"+{rounded:0.#} dB" : $"{rounded:0.#} dB";
+    }
+
     private void RuleVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (RuleVolumeText is not null)
@@ -787,6 +870,7 @@ public partial class MainWindow : Window
 
     private void PresetFlat_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Flat", 0, 0, 0);
     private void PresetWarm_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Warm", 4, 1, -2);
+    private void PresetThock_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Thock", 5, 2, -1);
     private void PresetCrisp_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Crisp", -1, 1, 4);
     private void PresetSoftNight_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Soft Night", -2, -1, -3);
 
@@ -804,6 +888,7 @@ public partial class MainWindow : Window
         TrebleSlider.Value = treble;
         _loading = false;
         _audio.Eq = _settings.Eq;
+        RefreshEqText();
         _ = SaveSettingsAsync();
     }
 
@@ -812,7 +897,7 @@ public partial class MainWindow : Window
         if (_settings.MinimizeToTray && !_exitRequested)
         {
             e.Cancel = true;
-            Hide();
+            HideToTray();
             return;
         }
 

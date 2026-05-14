@@ -7,6 +7,57 @@
         mc:Ignorable="d"
         Title="SoundType" Height="760" Width="1120" MinHeight="680" MinWidth="980"
         Background="{StaticResource WindowBackgroundBrush}">
+    <Window.Resources>
+        <Style x:Key="EqVerticalRepeatButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Width="6" Background="{TemplateBinding Background}" CornerRadius="4"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="EqVerticalThumbStyle" TargetType="Thumb">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Background="#F6FFF9" BorderBrush="#39F184" BorderThickness="2" CornerRadius="7">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="14" ShadowDepth="0" Opacity="0.32" Color="#39F184"/>
+                            </Border.Effect>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="EqVerticalSliderStyle" TargetType="Slider">
+            <Setter Property="Orientation" Value="Vertical"/>
+            <Setter Property="IsMoveToPointEnabled" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid Width="36" Height="128">
+                            <Border Width="8" HorizontalAlignment="Center" Background="#122A1C" CornerRadius="5"/>
+                            <Track x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource EqVerticalRepeatButtonStyle}" Background="#39F184"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource EqVerticalRepeatButtonStyle}" Background="#29302B"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource EqVerticalThumbStyle}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid Margin="26">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -167,19 +218,51 @@
                                 <TextBlock x:Name="BackspaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
                             </DockPanel>
                             <Slider x:Name="BackspaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
-                            <CheckBox x:Name="EqEnabledCheck" Content="Enable EQ trim" Checked="EqChanged" Unchecked="EqChanged" Margin="0,12,0,4"/>
-                            <TextBlock Text="Warmth" Foreground="{StaticResource MutedTextBrush}"/>
-                            <Slider x:Name="BassSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
-                            <TextBlock Text="Body" Foreground="{StaticResource MutedTextBrush}"/>
-                            <Slider x:Name="MidSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
-                            <TextBlock Text="Crispness" Foreground="{StaticResource MutedTextBrush}"/>
-                            <Slider x:Name="TrebleSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Flat" Click="PresetFlat_Click"/>
-                                <Button Content="Warm" Click="PresetWarm_Click"/>
-                                <Button Content="Crisp" Click="PresetCrisp_Click"/>
-                                <Button Content="Soft Night" Click="PresetSoftNight_Click"/>
-                            </StackPanel>
+                            <Border Margin="0,18,0,0" Padding="18" CornerRadius="8" Background="#0E1512" BorderBrush="#244833" BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <DockPanel Grid.Row="0">
+                                        <StackPanel DockPanel.Dock="Left">
+                                            <TextBlock Text="Equalizer" FontSize="18" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="EqPresetText" Text="Flat" Foreground="{StaticResource MutedTextBrush}" FontSize="12"/>
+                                        </StackPanel>
+                                        <CheckBox x:Name="EqEnabledCheck" DockPanel.Dock="Right" Content="On" Checked="EqChanged" Unchecked="EqChanged"/>
+                                    </DockPanel>
+                                    <Grid Grid.Row="1" Margin="0,18,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                            <TextBlock x:Name="BassValueText" Text="+0 dB" HorizontalAlignment="Center" Foreground="#39F184" FontWeight="SemiBold"/>
+                                            <Slider x:Name="BassSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,8"/>
+                                            <TextBlock Text="Warmth" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                            <TextBlock x:Name="MidValueText" Text="+0 dB" HorizontalAlignment="Center" Foreground="#39F184" FontWeight="SemiBold"/>
+                                            <Slider x:Name="MidSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,8"/>
+                                            <TextBlock Text="Body" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                            <TextBlock x:Name="TrebleValueText" Text="+0 dB" HorizontalAlignment="Center" Foreground="#39F184" FontWeight="SemiBold"/>
+                                            <Slider x:Name="TrebleSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,8"/>
+                                            <TextBlock Text="Crispness" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <WrapPanel Grid.Row="2" HorizontalAlignment="Center">
+                                        <Button Content="Flat" Click="PresetFlat_Click"/>
+                                        <Button Content="Warm" Click="PresetWarm_Click"/>
+                                        <Button Content="Thock" Click="PresetThock_Click"/>
+                                        <Button Content="Crisp" Click="PresetCrisp_Click"/>
+                                        <Button Content="Soft Night" Click="PresetSoftNight_Click"/>
+                                    </WrapPanel>
+                                </Grid>
+                            </Border>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -217,9 +300,20 @@
                         <StackPanel>
                             <TextBlock Text="Advanced" FontSize="22" FontWeight="SemiBold"/>
                             <CheckBox x:Name="IgnoreRepeatsCheck" Content="Ignore held-key repeats" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" Margin="0,12,0,4"/>
-                            <CheckBox x:Name="MinimizeToTrayCheck" Content="Minimize to tray on close" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
-                            <CheckBox x:Name="StartWithWindowsCheck" Content="Start SoundType when I sign in" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged"/>
-                            <TextBlock Text="Tray menu includes Open SoundType, Enabled, and Exit." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+                            <Border Margin="0,10,0,0" Padding="14" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                                <StackPanel>
+                                    <CheckBox x:Name="MinimizeToTrayCheck" Content="Keep SoundType running in the tray when closed" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
+                                    <TextBlock x:Name="TrayStatusText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,10"/>
+                                    <Button Content="Hide to tray now" Click="HideToTray_Click" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Margin="0,12,0,0" Padding="14" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                                <StackPanel>
+                                    <CheckBox x:Name="StartWithWindowsCheck" Content="Start SoundType when I sign in to Windows" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged"/>
+                                    <TextBlock x:Name="StartupStatusText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="Tray menu includes Open, Hide, Enabled, the active sound pack, and Exit." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
                             <TextBlock Text="Privacy: SoundType does not record words, characters, or key history. It only reacts locally to key events for sound playback." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,14,0,0"/>
                         </StackPanel>
                     </Border>

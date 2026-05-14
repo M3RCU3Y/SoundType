@@ -1,3 +1,5 @@
+using System.IO;
+using System.Security;
 using Microsoft.Win32;
 
 namespace SoundType.App;
@@ -13,6 +15,12 @@ public sealed class StartupService
         return key?.GetValue(AppName) is string;
     }
 
+    public string? GetRegisteredCommand()
+    {
+        using RegistryKey? key = Registry.CurrentUser.OpenSubKey(RunKeyPath, writable: false);
+        return key?.GetValue(AppName) as string;
+    }
+
     public void SetEnabled(bool enabled)
     {
         using RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKeyPath, writable: true)
@@ -20,12 +28,35 @@ public sealed class StartupService
 
         if (enabled)
         {
-            string exePath = Environment.ProcessPath ?? System.Reflection.Assembly.GetEntryAssembly()?.Location ?? "";
-            key.SetValue(AppName, $"\"{exePath}\"");
+            key.SetValue(AppName, BuildStartupCommand());
         }
         else
         {
             key.DeleteValue(AppName, throwOnMissingValue: false);
         }
+    }
+
+    public bool TrySetEnabled(bool enabled, out string? errorMessage)
+    {
+        try
+        {
+            SetEnabled(enabled);
+            errorMessage = null;
+            return true;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or SecurityException)
+        {
+            errorMessage = ex.Message;
+            return false;
+        }
+    }
+
+    internal static string BuildStartupCommand()
+    {
+        string exePath = Environment.ProcessPath
+            ?? System.Reflection.Assembly.GetEntryAssembly()?.Location
+            ?? AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+
+        return $"\"{exePath}\"";
     }
 }
