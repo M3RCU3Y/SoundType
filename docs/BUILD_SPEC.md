@@ -9,7 +9,7 @@ SoundType is a local-only Windows desktop utility that plays customizable typing
 - Global keyboard hook.
 - Privacy-safe key identities only.
 - Local JSON settings.
-- NAudio playback from preloaded WAV sound packs.
+- NAudio playback from preloaded WAV/MP3 sound packs.
 - Built-in sound pack folder format.
 - Enable/mute, master volume, key exclusions, app exclusions, tray behavior, startup registration, and basic EQ trim controls.
 

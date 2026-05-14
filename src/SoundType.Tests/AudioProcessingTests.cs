@@ -12,7 +12,7 @@ public sealed class AudioProcessingTests
         AudioEngine engine = new();
         LoadedSoundPack pack = new(
             new SoundPackMetadata { Id = "soft-laptop", Name = "Soft Laptop" },
-            new Dictionary<string, IReadOnlyList<byte[]>>(StringComparer.OrdinalIgnoreCase));
+            new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase));
 
         engine.LoadPack(pack, makeActive: false);
 

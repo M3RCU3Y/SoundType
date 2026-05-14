@@ -43,6 +43,89 @@ public sealed class SoundPackTests
     }
 
     [Fact]
+    public void Validate_AllowsWavAndMp3SampleFiles()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "mixed-formats",
+              "name": "Mixed Formats",
+              "groups": {
+                "normal": [ "normal/key01.wav", "normal/key02.mp3" ]
+              }
+            }
+            """);
+        Directory.CreateDirectory(Path.Combine(root, "normal"));
+        File.WriteAllBytes(Path.Combine(root, "normal", "key01.wav"), [1, 2, 3]);
+        File.WriteAllBytes(Path.Combine(root, "normal", "key02.mp3"), [4, 5, 6]);
+        SoundPackLoader loader = new();
+
+        var result = loader.Validate(loader.TryLoadMetadata(root));
+
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Validate_Fails_WithClearMessage_WhenAudioExtensionIsUnsupported()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "unsupported-format",
+              "name": "Unsupported Format",
+              "groups": {
+                "normal": [ "normal/key01.ogg" ]
+              }
+            }
+            """);
+        Directory.CreateDirectory(Path.Combine(root, "normal"));
+        File.WriteAllBytes(Path.Combine(root, "normal", "key01.ogg"), [1, 2, 3]);
+        SoundPackLoader loader = new();
+
+        var result = loader.Validate(loader.TryLoadMetadata(root));
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, error =>
+            error.Contains("normal/key01.ogg") &&
+            error.Contains(".wav") &&
+            error.Contains(".mp3"));
+    }
+
+    [Fact]
+    public void Load_PreservesSampleFormatMetadata()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "mixed-formats",
+              "name": "Mixed Formats",
+              "groups": {
+                "normal": [ "normal/key01.wav", "normal/key02.mp3" ]
+              }
+            }
+            """);
+        Directory.CreateDirectory(Path.Combine(root, "normal"));
+        File.WriteAllBytes(Path.Combine(root, "normal", "key01.wav"), [1, 2, 3]);
+        File.WriteAllBytes(Path.Combine(root, "normal", "key02.mp3"), [4, 5, 6]);
+        SoundPackLoader loader = new();
+        var metadata = loader.TryLoadMetadata(root)!;
+
+        LoadedSoundPack pack = loader.Load(metadata);
+
+        Assert.Collection(
+            pack.Samples["normal"],
+            sample =>
+            {
+                Assert.Equal("normal/key01.wav", sample.RelativePath);
+                Assert.Equal(SoundSampleFormat.Wav, sample.Format);
+                Assert.Equal([1, 2, 3], sample.Data);
+            },
+            sample =>
+            {
+                Assert.Equal("normal/key02.mp3", sample.RelativePath);
+                Assert.Equal(SoundSampleFormat.Mp3, sample.Format);
+                Assert.Equal([4, 5, 6], sample.Data);
+            });
+    }
+
+    [Fact]
     public void DiscoverPacks_ReturnsValidMetadataFiles()
     {
         string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

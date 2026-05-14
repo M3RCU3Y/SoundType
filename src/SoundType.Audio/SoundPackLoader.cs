@@ -5,6 +5,13 @@ namespace SoundType.Audio;
 
 public sealed class SoundPackLoader
 {
+    private static readonly IReadOnlyDictionary<string, SoundSampleFormat> SupportedSampleFormats =
+        new Dictionary<string, SoundSampleFormat>(StringComparer.OrdinalIgnoreCase)
+        {
+            [".wav"] = SoundSampleFormat.Wav,
+            [".mp3"] = SoundSampleFormat.Mp3
+        };
+
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
 
     public IReadOnlyList<SoundPackMetadata> DiscoverPacks(string packsRoot)
@@ -80,9 +87,9 @@ public sealed class SoundPackLoader
         {
             foreach (string relativePath in files)
             {
-                if (!relativePath.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+                if (!TryGetSampleFormat(relativePath, out _))
                 {
-                    result.Errors.Add($"{group}: {relativePath} is not a supported .wav file.");
+                    result.Errors.Add($"{group}: {relativePath} has unsupported audio format. Supported formats: .wav, .mp3.");
                     continue;
                 }
 
@@ -105,14 +112,30 @@ public sealed class SoundPackLoader
             throw new InvalidOperationException(string.Join(Environment.NewLine, validation.Errors));
         }
 
-        Dictionary<string, IReadOnlyList<byte[]>> samples = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, IReadOnlyList<LoadedSoundSample>> samples = new(StringComparer.OrdinalIgnoreCase);
         foreach ((string group, List<string> files) in metadata.Groups)
         {
             samples[group] = files
-                .Select(path => File.ReadAllBytes(Path.Combine(metadata.FolderPath, path)))
+                .Select(path => new LoadedSoundSample(
+                    path,
+                    GetSampleFormat(path),
+                    File.ReadAllBytes(Path.Combine(metadata.FolderPath, path))))
                 .ToList();
         }
 
         return new LoadedSoundPack(metadata, samples);
+    }
+
+    private static bool TryGetSampleFormat(string relativePath, out SoundSampleFormat format) =>
+        SupportedSampleFormats.TryGetValue(Path.GetExtension(relativePath), out format);
+
+    private static SoundSampleFormat GetSampleFormat(string relativePath)
+    {
+        if (TryGetSampleFormat(relativePath, out SoundSampleFormat format))
+        {
+            return format;
+        }
+
+        throw new InvalidOperationException($"{relativePath} has unsupported audio format. Supported formats: .wav, .mp3.");
     }
 }
