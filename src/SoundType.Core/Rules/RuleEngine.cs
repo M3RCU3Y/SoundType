@@ -24,14 +24,38 @@ public sealed class RuleEngine
             !string.IsNullOrWhiteSpace(rule.ProcessName) &&
             string.Equals(rule.ProcessName, currentProcessName, StringComparison.OrdinalIgnoreCase));
 
+        bool enabledOnlyModeActive = settings.AppRules.Any(rule => rule.Mode == AppRuleMode.EnabledOnly);
+
         if (appRule?.Mode == AppRuleMode.Disabled)
         {
             return PlaybackDecision.Skip($"{currentProcessName} is disabled.");
         }
 
+        if (enabledOnlyModeActive && appRule?.Mode != AppRuleMode.EnabledOnly)
+        {
+            return PlaybackDecision.Skip($"{currentProcessName ?? "Current app"} is not enabled-only.");
+        }
+
         string group = ResolveGroup(key, activePack);
-        double volumeMultiplier = appRule?.VolumeOverride ?? 1.0;
-        return PlaybackDecision.Play(group, volumeMultiplier);
+        double volumeMultiplier = ResolveVolumeMultiplier(appRule);
+        string? soundPackId = ResolveSoundPackId(appRule);
+        return PlaybackDecision.Play(group, volumeMultiplier, soundPackId);
+    }
+
+    private static double ResolveVolumeMultiplier(AppRule? appRule) =>
+        appRule?.VolumeOverride is double volumeOverride
+            ? Math.Clamp(volumeOverride, 0.0, 1.5)
+            : 1.0;
+
+    private static string? ResolveSoundPackId(AppRule? appRule)
+    {
+        if (appRule?.Mode == AppRuleMode.UseSpecificPack &&
+            !string.IsNullOrWhiteSpace(appRule.SoundPackId))
+        {
+            return appRule.SoundPackId;
+        }
+
+        return null;
     }
 
     private static string ResolveGroup(KeyIdentity key, SoundPackMetadata? pack)
