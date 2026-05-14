@@ -1,6 +1,6 @@
 # Sound Pack Format
 
-A SoundType sound pack is currently a folder with a `pack.json` file and WAV assets. Future `.soundpack` zip import/export support can wrap this same structure.
+A SoundType sound pack is a folder with a `pack.json` file and WAV assets. A `.soundpack` file is a zip archive that wraps the same folder-compatible structure.
 
 ## Required
 
@@ -48,3 +48,13 @@ A SoundType sound pack is currently a folder with a `pack.json` file and WAV ass
 ## Validation
 
 SoundType validates that `pack.json` can be parsed, `id` and `name` exist, the `normal` group exists, all listed audio files exist, and all listed audio files are `.wav`.
+
+## Archives
+
+SoundType can export a folder-based pack to a zip archive with the intended `.soundpack` extension. The archive contents use the pack folder as the root, so `pack.json` must be at the archive root rather than inside an extra nested directory.
+
+SoundType can import `.soundpack` and `.zip` archives into the packs root. Import extracts to a temporary staging folder, validates the staged folder with the same folder-pack validation, then installs it into a folder named after the pack `id`.
+
+When `overwrite` is disabled, import refuses to replace an existing pack folder with the same `id`. When `overwrite` is enabled, SoundType replaces only that pack's target folder after the archive has extracted and validated successfully.
+
+Archive entries are rejected if they would extract outside the staging folder, including `../` path traversal and absolute paths.
