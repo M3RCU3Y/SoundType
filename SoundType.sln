@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C938990D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundType.PackValidator", "tools\SoundType.PackValidator\SoundType.PackValidator.csproj", "{0BD17BFC-A809-488B-9BA3-4631118CC255}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundType.MechvibesImporter", "tools\SoundType.MechvibesImporter\SoundType.MechvibesImporter.csproj", "{2DE4033A-4C80-45FE-9C6F-3639CF23E968}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{0BD17BFC-A809-488B-9BA3-4631118CC255}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BD17BFC-A809-488B-9BA3-4631118CC255}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BD17BFC-A809-488B-9BA3-4631118CC255}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DE4033A-4C80-45FE-9C6F-3639CF23E968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DE4033A-4C80-45FE-9C6F-3639CF23E968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DE4033A-4C80-45FE-9C6F-3639CF23E968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DE4033A-4C80-45FE-9C6F-3639CF23E968}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E4C96632-C884-4F73-8FF5-B2552EA76009} = {C9E905E4-19CC-454B-8687-F61F3FD0C12F}
@@ -60,5 +66,6 @@ Global
 		{7B36805F-7958-4123-BECF-80BAFA3DE4F8} = {C9E905E4-19CC-454B-8687-F61F3FD0C12F}
 		{D463645F-87E8-4865-8C28-68EE3BE74740} = {C9E905E4-19CC-454B-8687-F61F3FD0C12F}
 		{0BD17BFC-A809-488B-9BA3-4631118CC255} = {C938990D-9E5C-4587-B24D-6C0389BAEE54}
+		{2DE4033A-4C80-45FE-9C6F-3639CF23E968} = {C938990D-9E5C-4587-B24D-6C0389BAEE54}
 	EndGlobalSection
 EndGlobal

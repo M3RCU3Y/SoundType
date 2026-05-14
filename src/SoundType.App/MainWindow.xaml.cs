@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using SoundType.App.Controls;
 using SoundType.Audio;
 using SoundType.Core.Models;
 using SoundType.Core.Rules;
@@ -13,7 +14,6 @@ using SoundType.Core.Settings;
 using SoundType.Input;
 using Forms = System.Windows.Forms;
 using MediaBrush = System.Windows.Media.Brush;
-using WpfCheckBox = System.Windows.Controls.CheckBox;
 
 namespace SoundType.App;
 
@@ -196,20 +196,8 @@ public partial class MainWindow : Window
 
     private void BuildKeyRules()
     {
-        KeyRulesPanel.Children.Clear();
-        foreach (KeyIdentity key in KeyIdentityMapper.CommonKeys)
-        {
-            WpfCheckBox checkBox = new()
-            {
-                Content = key.DisplayName,
-                Tag = key.Code,
-                Width = 112,
-                IsChecked = !_settings.ExcludedKeys.Contains(key.Code)
-            };
-            checkBox.Checked += KeyRuleChanged;
-            checkBox.Unchecked += KeyRuleChanged;
-            KeyRulesPanel.Children.Add(checkBox);
-        }
+        VisualKeyboard.SetExcludedKeys(_settings.ExcludedKeys);
+        RefreshExcludedKeysText();
     }
 
     private void RefreshAppRules()
@@ -499,23 +487,72 @@ public partial class MainWindow : Window
         Process.Start(new ProcessStartInfo(_packsRoot) { UseShellExecute = true });
     }
 
-    private void KeyRuleChanged(object sender, RoutedEventArgs e)
+    private void VisualKeyboard_KeyToggled(object sender, KeyboardKeyToggledEventArgs e)
     {
-        if (_loading || sender is not WpfCheckBox checkBox || checkBox.Tag is not string code)
+        if (_loading)
         {
             return;
         }
 
-        if (checkBox.IsChecked == true)
+        if (e.IsExcluded)
         {
-            _settings.ExcludedKeys.Remove(code);
+            _settings.ExcludedKeys.Add(e.Code);
         }
         else
         {
-            _settings.ExcludedKeys.Add(code);
+            _settings.ExcludedKeys.Remove(e.Code);
         }
 
+        RefreshExcludedKeysText();
         _ = SaveSettingsAsync();
+    }
+
+    private void EnableAllKeys_Click(object sender, RoutedEventArgs e)
+    {
+        if (_loading)
+        {
+            return;
+        }
+
+        _settings.ExcludedKeys.Clear();
+        BuildKeyRules();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RestoreDefaultKeyRules_Click(object sender, RoutedEventArgs e)
+    {
+        if (_loading)
+        {
+            return;
+        }
+
+        _settings.ExcludedKeys = AppSettings.DefaultExcludedKeys();
+        BuildKeyRules();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RefreshExcludedKeysText()
+    {
+        if (ExcludedKeysText is null)
+        {
+            return;
+        }
+
+        if (_settings.ExcludedKeys.Count == 0)
+        {
+            ExcludedKeysText.Text = "Every key is active.";
+            return;
+        }
+
+        string mutedKeys = string.Join(", ",
+            _settings.ExcludedKeys
+                .Order(StringComparer.OrdinalIgnoreCase)
+                .Take(8)
+                .Select(KeyIdentityMapper.GetDisplayName));
+        int remaining = _settings.ExcludedKeys.Count - 8;
+        ExcludedKeysText.Text = remaining > 0
+            ? $"Muted: {mutedKeys}, +{remaining} more"
+            : $"Muted: {mutedKeys}";
     }
 
     private void AddAppRule_Click(object sender, RoutedEventArgs e)

@@ -8,7 +8,7 @@ SoundType runs locally and does not record what you type.
 
 - Global low-level keyboard hook for key-down events.
 - Privacy-safe key identities only; no typed text, words, or key history.
-- Non-blocking audio queue backed by preloaded WAV sound packs.
+- Non-blocking audio queue backed by preloaded WAV/MP3 sound packs.
 - Normal, Enter, Space, and Backspace sound groups.
 - Enable/mute toggle, master volume, key exclusions, app exclusions, tray menu, and start-with-Windows setting.
 - Global `Ctrl+Alt+K` mute toggle hotkey.
@@ -61,6 +61,18 @@ Developers can validate folder packs or `.soundpack`/`.zip` archives before impo
 ```
 
 The validator exits `0` for a valid pack and nonzero for missing metadata, missing files, unsupported file types, unsafe archives, or other validation errors.
+
+## Convert Mechvibes Packs
+
+Developers can convert a Mechvibes folder pack that contains `config.json` into a SoundType folder pack:
+
+```powershell
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.MechvibesImporter\SoundType.MechvibesImporter.csproj -- C:\path\to\mechvibes-pack .\dist\ConvertedPack
+```
+
+The importer supports practical multi-file Mechvibes packs and writes `pack.json` plus copied WAV/MP3 samples into the output folder. OGG references are skipped with warnings or reported as errors when no playable normal samples remain. Single-file Mechvibes sprite packs are not converted yet because they require slicing timing ranges out of one source audio file.
+
+Only convert and redistribute packs when the original pack license allows it. The generated manifest includes a license reminder; it does not grant rights to third-party assets.
 
 ## Placeholder Audio
 

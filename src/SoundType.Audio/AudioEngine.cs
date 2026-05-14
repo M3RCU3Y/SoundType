@@ -88,7 +88,7 @@ public sealed class AudioEngine : IAsyncDisposable
             return;
         }
 
-        if (!pack.Samples.TryGetValue(request.SoundGroup, out IReadOnlyList<byte[]>? samples) || samples.Count == 0)
+        if (!pack.Samples.TryGetValue(request.SoundGroup, out IReadOnlyList<LoadedSoundSample>? samples) || samples.Count == 0)
         {
             if (!pack.Samples.TryGetValue("normal", out samples) || samples.Count == 0)
             {
@@ -96,9 +96,9 @@ public sealed class AudioEngine : IAsyncDisposable
             }
         }
 
-        byte[] sample = SelectSample(pack.Metadata, request.SoundGroup, samples);
-        MemoryStream stream = new(sample, writable: false);
-        WaveFileReader reader = new(stream);
+        LoadedSoundSample sample = SelectSample(pack.Metadata, request.SoundGroup, samples);
+        MemoryStream stream = new(sample.Data, writable: false);
+        WaveStream reader = CreateReader(sample, stream);
         ISampleProvider sampleProvider = reader.ToSampleProvider();
         if (Eq.Enabled)
         {
@@ -138,7 +138,15 @@ public sealed class AudioEngine : IAsyncDisposable
         return _activePack;
     }
 
-    private byte[] SelectSample(SoundPackMetadata metadata, string group, IReadOnlyList<byte[]> samples)
+    private static WaveStream CreateReader(LoadedSoundSample sample, Stream stream) =>
+        sample.Format switch
+        {
+            SoundSampleFormat.Wav => new WaveFileReader(stream),
+            SoundSampleFormat.Mp3 => new Mp3FileReader(stream),
+            _ => throw new InvalidOperationException($"{sample.RelativePath} has unsupported audio format.")
+        };
+
+    private LoadedSoundSample SelectSample(SoundPackMetadata metadata, string group, IReadOnlyList<LoadedSoundSample> samples)
     {
         if (metadata.Defaults.Randomize)
         {

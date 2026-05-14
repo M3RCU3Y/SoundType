@@ -25,6 +25,7 @@
     <ProjectReference Include="..\SoundType.Input\SoundType.Input.csproj" />
     <ProjectReference Include="..\SoundType.Audio\SoundType.Audio.csproj" />
     <ProjectReference Include="..\..\tools\SoundType.PackValidator\SoundType.PackValidator.csproj" />
+    <ProjectReference Include="..\..\tools\SoundType.MechvibesImporter\SoundType.MechvibesImporter.csproj" />
   </ItemGroup>
 
 </Project>
