@@ -15,6 +15,7 @@ public sealed class SettingsTests
 
         Assert.True(settings.Enabled);
         Assert.Equal(0.75, settings.MasterVolume);
+        Assert.Equal(0.02, settings.PitchVariation);
         Assert.Contains("LeftShift", settings.ExcludedKeys);
     }
 
@@ -28,6 +29,7 @@ public sealed class SettingsTests
         {
             Enabled = false,
             MasterVolume = 0.25,
+            PitchVariation = 0.08,
             ActiveSoundPackId = "soft-laptop"
         };
         original.ExcludedKeys.Add("Tab");
@@ -38,6 +40,7 @@ public sealed class SettingsTests
 
         Assert.False(restored.Enabled);
         Assert.Equal(0.25, restored.MasterVolume);
+        Assert.Equal(0.08, restored.PitchVariation);
         Assert.Equal("soft-laptop", restored.ActiveSoundPackId);
         Assert.Contains("Tab", restored.ExcludedKeys);
         Assert.Contains(restored.AppRules, rule => rule.ProcessName == "Code.exe");
@@ -56,5 +59,23 @@ public sealed class SettingsTests
 
         Assert.True(settings.Enabled);
         Assert.Equal("classic-typewriter", settings.ActiveSoundPackId);
+    }
+
+    [Fact]
+    public async Task LoadAsync_ClampsPitchVariation()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "pitchVariation": 0.4
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.Equal(0.12, settings.PitchVariation);
     }
 }

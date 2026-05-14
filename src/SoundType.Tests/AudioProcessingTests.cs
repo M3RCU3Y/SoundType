@@ -58,12 +58,53 @@ public sealed class AudioProcessingTests
         Assert.All(buffer, sample => Assert.False(float.IsNaN(sample)));
     }
 
+    [Fact]
+    public void PitchVariationSampleProvider_SpeedsUpPlaybackWhenFactorIsAboveOne()
+    {
+        ArraySampleProvider source = new(CreateRamp(100));
+        PitchVariationSampleProvider pitch = new(source, speedFactor: 2.0);
+        float[] buffer = new float[100];
+
+        int read = pitch.Read(buffer, 0, buffer.Length);
+
+        Assert.InRange(read, 49, 51);
+        Assert.Equal(0.0f, buffer[0], precision: 5);
+        Assert.Equal(2.0f, buffer[1], precision: 5);
+        Assert.Equal(4.0f, buffer[2], precision: 5);
+    }
+
+    [Fact]
+    public void PitchVariationSampleProvider_SlowsPlaybackWhenFactorIsBelowOne()
+    {
+        ArraySampleProvider source = new(CreateRamp(10));
+        PitchVariationSampleProvider pitch = new(source, speedFactor: 0.5);
+        float[] buffer = new float[20];
+
+        int read = pitch.Read(buffer, 0, buffer.Length);
+
+        Assert.Equal(20, read);
+        Assert.Equal(0.0f, buffer[0], precision: 5);
+        Assert.Equal(0.5f, buffer[1], precision: 5);
+        Assert.Equal(1.0f, buffer[2], precision: 5);
+    }
+
     private static float[] CreateSineWave(int count)
     {
         float[] samples = new float[count];
         for (int i = 0; i < count; i++)
         {
             samples[i] = (float)Math.Sin(i * 0.05) * 0.4f;
+        }
+
+        return samples;
+    }
+
+    private static float[] CreateRamp(int count)
+    {
+        float[] samples = new float[count];
+        for (int i = 0; i < count; i++)
+        {
+            samples[i] = i;
         }
 
         return samples;

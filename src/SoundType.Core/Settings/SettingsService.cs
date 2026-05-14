@@ -5,7 +5,11 @@ namespace SoundType.Core.Settings;
 
 public sealed class SettingsService
 {
-    private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+    private readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true
+    };
 
     public SettingsService(string? settingsPath = null)
     {
@@ -55,6 +59,7 @@ public sealed class SettingsService
     {
         settings ??= new AppSettings();
         settings.MasterVolume = Math.Clamp(settings.MasterVolume, 0.0, 1.0);
+        settings.PitchVariation = Math.Clamp(settings.PitchVariation, 0.0, 0.12);
         settings.ActiveSoundPackId = string.IsNullOrWhiteSpace(settings.ActiveSoundPackId)
             ? "classic-typewriter"
             : settings.ActiveSoundPackId;

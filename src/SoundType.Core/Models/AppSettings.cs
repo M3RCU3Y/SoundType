@@ -7,6 +7,7 @@ public sealed class AppSettings
     public bool MinimizeToTray { get; set; } = true;
     public bool ShowStartupNotification { get; set; }
     public double MasterVolume { get; set; } = 0.75;
+    public double PitchVariation { get; set; } = 0.02;
     public string ActiveSoundPackId { get; set; } = "classic-typewriter";
     public string GlobalToggleHotkey { get; set; } = "Ctrl+Alt+K";
     public bool IgnoreKeyRepeats { get; set; } = true;
