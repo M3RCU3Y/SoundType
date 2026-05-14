@@ -133,6 +133,9 @@
                             </DockPanel>
                             <Slider x:Name="RuleVolumeSlider" Minimum="0" Maximum="1.5" Value="1" TickFrequency="0.05" ValueChanged="RuleVolumeSlider_ValueChanged"/>
                             <TextBlock x:Name="CurrentAppText" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,8"/>
+                            <TextBlock Text="Recently detected apps" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,4"/>
+                            <ListBox x:Name="RecentAppsList" Height="76" SelectionChanged="RecentAppsList_SelectionChanged" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
+                            <TextBlock Text="Rules" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,4"/>
                             <ListBox x:Name="AppRulesList" Height="120" SelectionChanged="AppRulesList_SelectionChanged" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
                             <Button Content="Remove selected rule" Click="RemoveAppRule_Click" Margin="0,12,0,0"/>
                         </StackPanel>

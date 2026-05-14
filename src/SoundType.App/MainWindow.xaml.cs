@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using SoundType.Audio;
 using SoundType.Core.Models;
 using SoundType.Core.Rules;
+using SoundType.Core.Services;
 using SoundType.Core.Settings;
 using SoundType.Input;
 using Forms = System.Windows.Forms;
@@ -23,6 +24,7 @@ public partial class MainWindow : Window
     private readonly SoundPackLoader _packLoader = new();
     private readonly SoundPackArchiveService _archiveService = new();
     private readonly RuleEngine _ruleEngine = new();
+    private readonly RecentAppTracker _recentApps = new();
     private readonly KeyboardHookService _keyboardHook = new();
     private readonly GlobalHotkeyService _globalHotkey = new();
     private readonly ActiveWindowService _activeWindow = new();
@@ -73,6 +75,7 @@ public partial class MainWindow : Window
         }
 
         string? processName = _activeWindow.GetActiveProcessName();
+        _recentApps.Record(processName);
         PlaybackDecision decision = _ruleEngine.Decide(e.Key, processName, _settings, _activePack);
         if (!decision.ShouldPlay || decision.SoundGroup is null)
         {
@@ -221,6 +224,8 @@ public partial class MainWindow : Window
     private void RefreshCurrentApp()
     {
         string? processName = _activeWindow.GetActiveProcessName();
+        _recentApps.Record(processName);
+        RefreshRecentApps();
         CurrentAppText.Text = string.IsNullOrWhiteSpace(processName)
             ? "Current app: unknown"
             : $"Current app: {processName}";
@@ -567,6 +572,34 @@ public partial class MainWindow : Window
         _settings.AppRules.RemoveAll(rule => rule.ProcessName.Equals(selected.Rule.ProcessName, StringComparison.OrdinalIgnoreCase));
         RefreshAppRules();
         _ = SaveSettingsAsync();
+    }
+
+    private void RefreshRecentApps()
+    {
+        if (RecentAppsList is null)
+        {
+            return;
+        }
+
+        string? selected = RecentAppsList.SelectedItem as string;
+        RecentAppsList.Items.Clear();
+        foreach (RecentAppEntry app in _recentApps.ListRecentApps())
+        {
+            RecentAppsList.Items.Add(app.ProcessName);
+        }
+
+        if (selected is not null && RecentAppsList.Items.Contains(selected))
+        {
+            RecentAppsList.SelectedItem = selected;
+        }
+    }
+
+    private void RecentAppsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (RecentAppsList.SelectedItem is string processName)
+        {
+            ProcessRuleTextBox.Text = processName;
+        }
     }
 
     private void AppRulesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
