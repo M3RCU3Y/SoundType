@@ -49,6 +49,22 @@ public sealed class RecentAppTrackerTests
         Assert.Equal(["Third.exe", "Second.exe"], apps.Select(app => app.ProcessName));
     }
 
+    [Fact]
+    public void ListRecentApps_ReturnsNewestFirst_WhenRecordedRapidly()
+    {
+        RecentAppTracker tracker = new();
+
+        tracker.Record("First");
+        tracker.Record("Second");
+        tracker.Record("Third");
+
+        IReadOnlyList<RecentAppEntry> apps = tracker.ListRecentApps();
+
+        Assert.Equal(["Third.exe", "Second.exe", "First.exe"], apps.Select(app => app.ProcessName));
+        Assert.True(apps[0].LastSeenUtc > apps[1].LastSeenUtc);
+        Assert.True(apps[1].LastSeenUtc > apps[2].LastSeenUtc);
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
