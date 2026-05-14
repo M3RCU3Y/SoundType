@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="SoundType" Height="760" Width="1120" MinHeight="680" MinWidth="980"
-        Background="{StaticResource AppBackgroundBrush}">
+        Background="{StaticResource WindowBackgroundBrush}">
     <Grid Margin="26">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -18,7 +18,7 @@
                 <TextBlock Text="SoundType" FontSize="34" FontWeight="SemiBold"/>
                 <TextBlock Text="Craft the sound of your keyboard." Foreground="{StaticResource MutedTextBrush}" FontSize="15"/>
             </StackPanel>
-            <Border DockPanel.Dock="Right" Padding="14,9" CornerRadius="8" Background="{StaticResource PanelBrush}" BorderBrush="#2D313B" BorderThickness="1">
+            <Border DockPanel.Dock="Right" Padding="14,9" CornerRadius="8" Background="{StaticResource StatusBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Effect="{StaticResource SoftShadowEffect}">
                 <StackPanel Orientation="Horizontal">
                     <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource AccentBrush}" Margin="0,0,9,0"/>
                     <TextBlock x:Name="StatusText" Text="Loading" FontWeight="SemiBold"/>
@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Row="0" Grid.ColumnSpan="2" CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+            <Border Grid.Row="0" Grid.ColumnSpan="2" CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
                 <StackPanel>
                     <DockPanel Margin="0,0,0,12" LastChildFill="False">
                         <StackPanel DockPanel.Dock="Left">
@@ -54,7 +54,7 @@
 
             <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="0,0,18,0" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
                         <StackPanel>
                             <TextBlock Text="Main Control" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
                             <DockPanel Margin="0,10,0,4">
@@ -68,11 +68,11 @@
                         </StackPanel>
                     </Border>
 
-                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
                         <StackPanel>
                             <TextBlock Text="Sound Packs" FontSize="22" FontWeight="SemiBold"/>
                             <TextBlock Text="Choose the active typing personality. Packs are loaded from assets/packs." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,14"/>
-                            <ListBox x:Name="PacksList" Height="190" SelectionChanged="PacksList_SelectionChanged" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
+                            <ListBox x:Name="PacksList" Height="190" SelectionChanged="PacksList_SelectionChanged"/>
                             <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
                                 <Button Content="Preview" Click="PreviewPack_Click"/>
                                 <Button Content="Open pack folder" Click="OpenPackFolder_Click"/>
@@ -83,7 +83,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1">
+                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Effect="{StaticResource CardShadowEffect}">
                         <StackPanel>
                             <TextBlock Text="Mixer / EQ" FontSize="22" FontWeight="SemiBold"/>
                             <DockPanel Margin="0,14,0,0">
@@ -126,18 +126,18 @@
 
             <ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1" Margin="0,0,0,16">
+                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="0,0,0,16" Effect="{StaticResource CardShadowEffect}">
                         <StackPanel>
                             <TextBlock Text="App Rules" FontSize="22" FontWeight="SemiBold"/>
                             <TextBlock Text="Control SoundType by foreground process name." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,12"/>
                             <DockPanel>
-                                <TextBox x:Name="ProcessRuleTextBox" DockPanel.Dock="Left" Height="32" MinWidth="220" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45" Padding="8,4"/>
+                                <TextBox x:Name="ProcessRuleTextBox" DockPanel.Dock="Left" Height="32" MinWidth="220"/>
                                 <Button Content="Add/update rule" Click="AddAppRule_Click" Margin="10,0,0,0"/>
                             </DockPanel>
                             <TextBlock Text="Mode" Foreground="{StaticResource MutedTextBrush}" Margin="0,12,0,4"/>
-                            <ComboBox x:Name="RuleModeComboBox" Height="32" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA"/>
+                            <ComboBox x:Name="RuleModeComboBox" Height="32"/>
                             <TextBlock Text="Pack override" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,4"/>
-                            <ComboBox x:Name="RulePackComboBox" Height="32" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA"/>
+                            <ComboBox x:Name="RulePackComboBox" Height="32"/>
                             <DockPanel Margin="0,10,0,0">
                                 <TextBlock DockPanel.Dock="Left" Text="Volume override" Foreground="{StaticResource MutedTextBrush}"/>
                                 <TextBlock x:Name="RuleVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
@@ -145,14 +145,14 @@
                             <Slider x:Name="RuleVolumeSlider" Minimum="0" Maximum="1.5" Value="1" TickFrequency="0.05" ValueChanged="RuleVolumeSlider_ValueChanged"/>
                             <TextBlock x:Name="CurrentAppText" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,8"/>
                             <TextBlock Text="Recently detected apps" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,4"/>
-                            <ListBox x:Name="RecentAppsList" Height="76" SelectionChanged="RecentAppsList_SelectionChanged" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
+                            <ListBox x:Name="RecentAppsList" Height="76" SelectionChanged="RecentAppsList_SelectionChanged"/>
                             <TextBlock Text="Rules" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,4"/>
-                            <ListBox x:Name="AppRulesList" Height="120" SelectionChanged="AppRulesList_SelectionChanged" Background="{StaticResource PanelAltBrush}" Foreground="#F4F7FA" BorderBrush="#343A45"/>
+                            <ListBox x:Name="AppRulesList" Height="120" SelectionChanged="AppRulesList_SelectionChanged"/>
                             <Button Content="Remove selected rule" Click="RemoveAppRule_Click" Margin="0,12,0,0"/>
                         </StackPanel>
                     </Border>
 
-                    <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1">
+                    <Border CornerRadius="8" Background="{StaticResource CardBackgroundBrush}" Padding="22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Effect="{StaticResource CardShadowEffect}">
                         <StackPanel>
                             <TextBlock Text="Advanced" FontSize="22" FontWeight="SemiBold"/>
                             <CheckBox x:Name="IgnoreRepeatsCheck" Content="Ignore held-key repeats" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" Margin="0,12,0,4"/>
