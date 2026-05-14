@@ -60,6 +60,8 @@ public sealed class SettingsService
             : settings.ActiveSoundPackId;
         settings.ExcludedKeys ??= AppSettings.DefaultExcludedKeys();
         settings.AppRules ??= [];
+        settings.GroupVolumes ??= new SoundGroupVolumeSettings();
+        settings.GroupVolumes.Clamp();
         settings.Eq ??= new EqSettings();
         return settings;
     }

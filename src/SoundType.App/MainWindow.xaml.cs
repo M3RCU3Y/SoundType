@@ -84,7 +84,7 @@ public partial class MainWindow : Window
             Key = e.Key,
             SoundGroup = decision.SoundGroup,
             SoundPackId = decision.SoundPackId,
-            VolumeMultiplier = decision.VolumeMultiplier,
+            VolumeMultiplier = decision.VolumeMultiplier * _settings.GroupVolumes.GetVolumeForGroup(decision.SoundGroup),
             ActiveProcessName = processName
         });
     }
@@ -177,12 +177,17 @@ public partial class MainWindow : Window
         MinimizeToTrayCheck.IsChecked = _settings.MinimizeToTray;
         StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
         EqEnabledCheck.IsChecked = _settings.Eq.Enabled;
+        NormalVolumeSlider.Value = _settings.GroupVolumes.Normal;
+        EnterVolumeSlider.Value = _settings.GroupVolumes.Enter;
+        SpaceVolumeSlider.Value = _settings.GroupVolumes.Space;
+        BackspaceVolumeSlider.Value = _settings.GroupVolumes.Backspace;
         BassSlider.Value = _settings.Eq.BassGainDb;
         MidSlider.Value = _settings.Eq.MidGainDb;
         TrebleSlider.Value = _settings.Eq.TrebleGainDb;
         _audio.MasterVolume = _settings.MasterVolume;
         _audio.Eq = _settings.Eq;
         RefreshAppRules();
+        RefreshGroupVolumeText();
         RefreshStatus();
     }
 
@@ -617,6 +622,31 @@ public partial class MainWindow : Window
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
         _audio.Eq = _settings.Eq;
         _ = SaveSettingsAsync();
+    }
+
+    private void GroupVolumeSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading) return;
+        _settings.GroupVolumes.Normal = NormalVolumeSlider.Value;
+        _settings.GroupVolumes.Enter = EnterVolumeSlider.Value;
+        _settings.GroupVolumes.Space = SpaceVolumeSlider.Value;
+        _settings.GroupVolumes.Backspace = BackspaceVolumeSlider.Value;
+        _settings.GroupVolumes.Clamp();
+        RefreshGroupVolumeText();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RefreshGroupVolumeText()
+    {
+        if (NormalVolumeText is null)
+        {
+            return;
+        }
+
+        NormalVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Normal * 100)}%";
+        EnterVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Enter * 100)}%";
+        SpaceVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Space * 100)}%";
+        BackspaceVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Backspace * 100)}%";
     }
 
     private void RuleVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

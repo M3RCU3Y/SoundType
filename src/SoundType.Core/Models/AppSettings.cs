@@ -13,6 +13,7 @@ public sealed class AppSettings
     public bool PauseInFullscreenApps { get; set; } = true;
     public HashSet<string> ExcludedKeys { get; set; } = DefaultExcludedKeys();
     public List<AppRule> AppRules { get; set; } = [];
+    public SoundGroupVolumeSettings GroupVolumes { get; set; } = new();
     public EqSettings Eq { get; set; } = new();
 
     public static HashSet<string> DefaultExcludedKeys() =>

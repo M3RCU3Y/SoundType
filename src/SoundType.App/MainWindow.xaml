@@ -65,6 +65,26 @@
                     <Border CornerRadius="8" Background="{StaticResource PanelBrush}" Padding="22" BorderBrush="#2D313B" BorderThickness="1">
                         <StackPanel>
                             <TextBlock Text="Mixer / EQ" FontSize="22" FontWeight="SemiBold"/>
+                            <DockPanel Margin="0,14,0,0">
+                                <TextBlock DockPanel.Dock="Left" Text="Normal keys" Foreground="{StaticResource MutedTextBrush}"/>
+                                <TextBlock x:Name="NormalVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                            </DockPanel>
+                            <Slider x:Name="NormalVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Enter ding" Foreground="{StaticResource MutedTextBrush}"/>
+                                <TextBlock x:Name="EnterVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                            </DockPanel>
+                            <Slider x:Name="EnterVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Space" Foreground="{StaticResource MutedTextBrush}"/>
+                                <TextBlock x:Name="SpaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                            </DockPanel>
+                            <Slider x:Name="SpaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Backspace" Foreground="{StaticResource MutedTextBrush}"/>
+                                <TextBlock x:Name="BackspaceVolumeText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                            </DockPanel>
+                            <Slider x:Name="BackspaceVolumeSlider" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged"/>
                             <CheckBox x:Name="EqEnabledCheck" Content="Enable EQ trim" Checked="EqChanged" Unchecked="EqChanged" Margin="0,12,0,4"/>
                             <TextBlock Text="Warmth" Foreground="{StaticResource MutedTextBrush}"/>
                             <Slider x:Name="BassSlider" Minimum="-12" Maximum="12" ValueChanged="EqSliderChanged"/>
