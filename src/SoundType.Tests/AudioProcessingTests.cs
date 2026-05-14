@@ -89,6 +89,51 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public void MultiBandEqSampleProvider_ProcessesTenBandsWithoutChangingReadCount()
+    {
+        ArraySampleProvider source = new(CreateSineWave(512));
+        EqSettings settings = new()
+        {
+            Enabled = true
+        };
+        settings.SetPreset("Test", [3, 2, 1, 0, -1, -2, 2, 3, 1, -1]);
+        MultiBandEqSampleProvider eq = new(source, settings);
+        float[] buffer = new float[512];
+
+        int read = eq.Read(buffer, 0, buffer.Length);
+
+        Assert.Equal(512, read);
+        Assert.Contains(buffer, sample => Math.Abs(sample) > 0.0001f);
+        Assert.All(buffer, sample => Assert.False(float.IsNaN(sample)));
+    }
+
+    [Fact]
+    public void StereoPanSampleProvider_PansTowardRightChannel()
+    {
+        ArraySampleProvider source = new([1f, 1f], channels: 2);
+        StereoPanSampleProvider pan = new(source, pan: 1.0);
+        float[] buffer = new float[2];
+
+        int read = pan.Read(buffer, 0, buffer.Length);
+
+        Assert.Equal(2, read);
+        Assert.True(buffer[0] < 0.01f);
+        Assert.True(buffer[1] > 0.99f);
+    }
+
+    [Fact]
+    public void WaveformPeakBuilder_NormalizesBuckets()
+    {
+        float[] samples = [0.1f, -0.1f, 0.4f, -0.2f, 0.8f, -0.1f, 0.2f, -0.2f];
+
+        IReadOnlyList<double> peaks = WaveformPeakBuilder.BuildPeaks(samples, channels: 2, bucketCount: 4);
+
+        Assert.Equal(4, peaks.Count);
+        Assert.Equal(1.0, peaks.Max(), precision: 5);
+        Assert.All(peaks, peak => Assert.InRange(peak, 0.0, 1.0));
+    }
+
+    [Fact]
     public void AudioSampleTrimmer_RemovesLeadingSilentFrames()
     {
         float[] samples =
@@ -155,12 +200,13 @@ public sealed class AudioProcessingTests
         private readonly float[] _samples;
         private int _position;
 
-        public ArraySampleProvider(float[] samples)
+        public ArraySampleProvider(float[] samples, int channels = 1)
         {
             _samples = samples;
+            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, channels);
         }
 
-        public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(44100, 1);
+        public WaveFormat WaveFormat { get; }
 
         public int Read(float[] buffer, int offset, int count)
         {

@@ -8,7 +8,9 @@ Source: https://github.com/keyboard-sounds/keyboardsounds-pro
 
 KeyboardSounds Pro is licensed under the MIT License.
 
-SoundType uses KeyboardSounds Pro as visual inspiration for the refreshed desktop layout and includes selected bundled keyboard sound profiles whose profile folders include MIT/kbsim license notices:
+SoundType uses KeyboardSounds Pro as visual inspiration for the refreshed desktop layout and adapts its MIT-licensed audio architecture ideas into native C# implementations, including preloaded audio buffers, overlapping playback, 10-band equalization, key-position/random pan, and waveform previews.
+
+SoundType also includes selected bundled keyboard sound profiles whose profile folders include MIT/kbsim license notices:
 
 - Alpaca
 - Gateron Black Ink

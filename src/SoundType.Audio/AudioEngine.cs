@@ -35,6 +35,7 @@ public sealed class AudioEngine : IAsyncDisposable
     public double MasterVolume { get; set; } = 0.75;
     public double PitchVariation { get; set; } = 0.02;
     public EqSettings Eq { get; set; } = new();
+    public PanSettings Pan { get; set; } = new();
 
     public void LoadPack(LoadedSoundPack pack, bool makeActive = true)
     {
@@ -121,7 +122,13 @@ public sealed class AudioEngine : IAsyncDisposable
 
         if (Eq.Enabled)
         {
-            sampleProvider = new ThreeBandEqSampleProvider(sampleProvider, Eq);
+            sampleProvider = new MultiBandEqSampleProvider(sampleProvider, Eq);
+        }
+
+        double pan = ResolvePan(request.Key);
+        if (Math.Abs(pan) > 0.001)
+        {
+            sampleProvider = new StereoPanSampleProvider(sampleProvider, pan);
         }
 
         sampleProvider = new VolumeSampleProvider(sampleProvider)
@@ -184,9 +191,35 @@ public sealed class AudioEngine : IAsyncDisposable
             return 1.0;
         }
 
-        double maxGain = Math.Max(Eq.BassGainDb, Math.Max(Eq.MidGainDb, Eq.TrebleGainDb));
+        Eq.Normalize();
+        double maxGain = Eq.BandGainsDb.DefaultIfEmpty(0).Max();
         return maxGain <= 0 ? 1.0 : Math.Clamp(1.0 - maxGain / 48.0, 0.65, 1.0);
     }
+
+    private double ResolvePan(KeyIdentity key)
+    {
+        Pan.Normalize();
+        if (!Pan.Enabled || Pan.Strength <= 0)
+        {
+            return 0;
+        }
+
+        double pan = Pan.Mode == PanMode.Random
+            ? NextRandomPan()
+            : KeyboardPanResolver.Resolve(key);
+        return Math.Clamp(pan * Pan.Strength, -1.0, 1.0);
+    }
+
+    private double NextRandomPan()
+    {
+        lock (_random)
+        {
+            return _random.NextDouble() * 2.0 - 1.0;
+        }
+    }
+
+    public bool TryGetLoadedPack(string soundPackId, out LoadedSoundPack? pack) =>
+        _packs.TryGetValue(soundPackId, out pack);
 
     public async ValueTask DisposeAsync()
     {

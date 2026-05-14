@@ -33,6 +33,8 @@ public partial class MainWindow : Window
     private readonly DispatcherTimer _activeAppTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private readonly string _packsRoot;
     private readonly Forms.NotifyIcon _trayIcon = new();
+    private readonly List<Slider> _eqBandSliders = [];
+    private readonly List<TextBlock> _eqBandValueTexts = [];
     private AppSettings _settings = new();
     private IReadOnlyList<SoundPackMetadata> _packs = [];
     private SoundPackMetadata? _activePack;
@@ -45,6 +47,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        BuildEqBandControls();
         _packsRoot = Path.Combine(AppContext.BaseDirectory, "assets", "packs");
         Loaded += MainWindow_Loaded;
         Closing += MainWindow_Closing;
@@ -57,6 +60,7 @@ public partial class MainWindow : Window
         _settings = await _settingsService.LoadAsync();
         _settings.StartWithWindows = _startup.IsEnabled();
         ConfigureAppRuleEditors();
+        ConfigurePanControls();
         ConfigurePackFilters();
         LoadPacks();
         BuildKeyRules();
@@ -177,6 +181,64 @@ public partial class MainWindow : Window
         RuleVolumeText.Text = "100%";
     }
 
+    private void ConfigurePanControls()
+    {
+        PanModeComboBox.Items.Clear();
+        PanModeComboBox.Items.Add(PanMode.KeyPosition);
+        PanModeComboBox.Items.Add(PanMode.Random);
+    }
+
+    private void BuildEqBandControls()
+    {
+        EqBandsPanel.Children.Clear();
+        _eqBandSliders.Clear();
+        _eqBandValueTexts.Clear();
+
+        for (int i = 0; i < EqSettings.BandCount; i++)
+        {
+            int bandIndex = i;
+            TextBlock valueText = new()
+            {
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                Foreground = (MediaBrush)FindResource("AccentHoverBrush"),
+                FontWeight = FontWeights.Bold,
+                FontSize = 12
+            };
+
+            Slider slider = new()
+            {
+                Style = (Style)FindResource("EqVerticalSliderStyle"),
+                Minimum = -12,
+                Maximum = 12,
+                TickFrequency = 1,
+                Margin = new Thickness(0, 10, 0, 10),
+                Tag = bandIndex
+            };
+            slider.ValueChanged += EqSliderChanged;
+
+            TextBlock labelText = new()
+            {
+                Text = FormatFrequency(EqSettings.Frequencies[i]),
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                Foreground = (MediaBrush)FindResource("MutedTextBrush"),
+                FontWeight = FontWeights.SemiBold,
+                FontSize = 12
+            };
+
+            StackPanel stack = new()
+            {
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
+            };
+            stack.Children.Add(valueText);
+            stack.Children.Add(slider);
+            stack.Children.Add(labelText);
+            EqBandsPanel.Children.Add(stack);
+            _eqBandSliders.Add(slider);
+            _eqBandValueTexts.Add(valueText);
+        }
+    }
+
     private void ConfigurePackFilters()
     {
         if (_packFiltersConfigured)
@@ -209,15 +271,23 @@ public partial class MainWindow : Window
         EnterVolumeSlider.Value = _settings.GroupVolumes.Enter;
         SpaceVolumeSlider.Value = _settings.GroupVolumes.Space;
         BackspaceVolumeSlider.Value = _settings.GroupVolumes.Backspace;
-        BassSlider.Value = _settings.Eq.BassGainDb;
-        MidSlider.Value = _settings.Eq.MidGainDb;
-        TrebleSlider.Value = _settings.Eq.TrebleGainDb;
+        _settings.Eq.Normalize();
+        for (int i = 0; i < _eqBandSliders.Count; i++)
+        {
+            _eqBandSliders[i].Value = _settings.Eq.GetBandGainDb(i);
+        }
+
+        PanEnabledCheck.IsChecked = _settings.Pan.Enabled;
+        PanModeComboBox.SelectedItem = _settings.Pan.Mode;
+        PanStrengthSlider.Value = _settings.Pan.Strength;
         _audio.MasterVolume = _settings.MasterVolume;
         _audio.PitchVariation = _settings.PitchVariation;
         _audio.Eq = _settings.Eq;
+        _audio.Pan = _settings.Pan;
         RefreshAppRules();
         RefreshGroupVolumeText();
         RefreshEqText();
+        RefreshPanText();
         RefreshTrayStatus();
         RefreshStartupStatus();
         RefreshStatus();
@@ -861,13 +931,31 @@ public partial class MainWindow : Window
     private void EqSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (_loading) return;
-        _settings.Eq.BassGainDb = BassSlider.Value;
-        _settings.Eq.MidGainDb = MidSlider.Value;
-        _settings.Eq.TrebleGainDb = TrebleSlider.Value;
+        for (int i = 0; i < _eqBandSliders.Count; i++)
+        {
+            _settings.Eq.SetBandGainDb(i, _eqBandSliders[i].Value);
+        }
+
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
         _settings.Eq.PresetName = "Custom";
         _audio.Eq = _settings.Eq;
         RefreshEqText();
+        _ = SaveSettingsAsync();
+    }
+
+    private void PanChanged(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        _settings.Pan.Enabled = PanEnabledCheck.IsChecked == true;
+        if (PanModeComboBox.SelectedItem is PanMode mode)
+        {
+            _settings.Pan.Mode = mode;
+        }
+
+        _settings.Pan.Strength = PanStrengthSlider.Value;
+        _settings.Pan.Normalize();
+        _audio.Pan = _settings.Pan;
+        RefreshPanText();
         _ = SaveSettingsAsync();
     }
 
@@ -898,17 +986,32 @@ public partial class MainWindow : Window
 
     private void RefreshEqText()
     {
-        if (BassValueText is null)
+        if (_eqBandValueTexts.Count == 0)
         {
             return;
         }
 
-        BassValueText.Text = FormatDb(_settings.Eq.BassGainDb);
-        MidValueText.Text = FormatDb(_settings.Eq.MidGainDb);
-        TrebleValueText.Text = FormatDb(_settings.Eq.TrebleGainDb);
+        _settings.Eq.Normalize();
+        for (int i = 0; i < _eqBandValueTexts.Count; i++)
+        {
+            _eqBandValueTexts[i].Text = FormatDb(_settings.Eq.GetBandGainDb(i));
+        }
+
         EqPresetText.Text = _settings.Eq.Enabled
             ? $"{_settings.Eq.PresetName} EQ"
             : "Flat, no EQ trim";
+    }
+
+    private void RefreshPanText()
+    {
+        if (PanStatusText is null)
+        {
+            return;
+        }
+
+        PanStatusText.Text = _settings.Pan.Enabled
+            ? $"{FormatPanMode(_settings.Pan.Mode)} at {Math.Round(_settings.Pan.Strength * 100)}% width"
+            : "Centered stereo playback";
     }
 
     private static string FormatDb(double value)
@@ -916,6 +1019,12 @@ public partial class MainWindow : Window
         double rounded = Math.Round(value, 1);
         return rounded > 0 ? $"+{rounded:0.#} dB" : $"{rounded:0.#} dB";
     }
+
+    private static string FormatFrequency(int hz) =>
+        hz >= 1000 ? $"{hz / 1000.0:0.#}k" : hz.ToString();
+
+    private static string FormatPanMode(PanMode mode) =>
+        mode == PanMode.Random ? "Random pan" : "Key-position pan";
 
     private void RuleVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
@@ -925,24 +1034,22 @@ public partial class MainWindow : Window
         }
     }
 
-    private void PresetFlat_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Flat", 0, 0, 0);
-    private void PresetWarm_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Warm", 4, 1, -2);
-    private void PresetThock_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Thock", 5, 2, -1);
-    private void PresetCrisp_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Crisp", -1, 1, 4);
-    private void PresetSoftNight_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Soft Night", -2, -1, -3);
+    private void PresetFlat_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Flat", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    private void PresetWarm_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Warm", [4, 4, 2, 1, 0, -1, -2, -2, -2, -2]);
+    private void PresetThock_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Thock", [6, 5, 3, 2, 1, 0, -1, -2, -2, -2]);
+    private void PresetCrisp_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Crisp", [-2, -1, 0, 0, 1, 2, 4, 5, 4, 3]);
+    private void PresetSoftNight_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Soft Night", [-2, -2, -1, -1, -1, -2, -3, -4, -4, -4]);
 
-    private void ApplyEqPreset(string name, double bass, double mid, double treble)
+    private void ApplyEqPreset(string name, IReadOnlyList<double> gainsDb)
     {
-        _settings.Eq.PresetName = name;
-        _settings.Eq.BassGainDb = bass;
-        _settings.Eq.MidGainDb = mid;
-        _settings.Eq.TrebleGainDb = treble;
-        _settings.Eq.Enabled = name != "Flat";
+        _settings.Eq.SetPreset(name, gainsDb);
         _loading = true;
         EqEnabledCheck.IsChecked = _settings.Eq.Enabled;
-        BassSlider.Value = bass;
-        MidSlider.Value = mid;
-        TrebleSlider.Value = treble;
+        for (int i = 0; i < _eqBandSliders.Count; i++)
+        {
+            _eqBandSliders[i].Value = _settings.Eq.GetBandGainDb(i);
+        }
+
         _loading = false;
         _audio.Eq = _settings.Eq;
         RefreshEqText();
@@ -1077,6 +1184,7 @@ public partial class MainWindow : Window
             SelectedPackTypeText.Text = "";
             SelectedPackDescriptionText.Text = "Try another search or category.";
             SelectedPackDetailsText.Text = "";
+            PackWaveformPreview.Peaks = [];
             return;
         }
 
@@ -1086,6 +1194,25 @@ public partial class MainWindow : Window
         SelectedPackDescriptionText.Text = pack.Description;
         SelectedPackDetailsText.Text =
             $"{item.TagsText} | {item.DetailLine} | {pack.Author} | {pack.License}";
+        RefreshWaveformPreview(pack);
+    }
+
+    private void RefreshWaveformPreview(SoundPackMetadata pack)
+    {
+        if (!_audio.TryGetLoadedPack(pack.Id, out LoadedSoundPack? loadedPack) || loadedPack is null)
+        {
+            PackWaveformPreview.Peaks = [];
+            return;
+        }
+
+        LoadedSoundSample? sample = loadedPack.Samples
+            .OrderBy(group => group.Key.Equals("normal", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+            .SelectMany(group => group.Value)
+            .FirstOrDefault(candidate => candidate.DecodedSamples.Length > 0);
+
+        PackWaveformPreview.Peaks = sample is null
+            ? []
+            : WaveformPeakBuilder.BuildPeaks(sample);
     }
 
     private static class PackFilter

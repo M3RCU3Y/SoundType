@@ -68,6 +68,9 @@ public sealed class SettingsService
         settings.GroupVolumes ??= new SoundGroupVolumeSettings();
         settings.GroupVolumes.Clamp();
         settings.Eq ??= new EqSettings();
+        settings.Eq.Normalize();
+        settings.Pan ??= new PanSettings();
+        settings.Pan.Normalize();
         return settings;
     }
 }

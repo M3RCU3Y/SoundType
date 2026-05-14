@@ -296,6 +296,8 @@
                                     <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,8"/>
                                     <TextBlock x:Name="SelectedPackDetailsText" Foreground="{StaticResource SubtleTextBrush}" TextWrapping="Wrap" FontSize="12"/>
                                     <TextBlock x:Name="PackValidationText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+                                    <TextBlock Text="Waveform" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold" Margin="0,18,0,8"/>
+                                    <controls:WaveformPreviewControl x:Name="PackWaveformPreview" Height="86"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Top">
                                     <WrapPanel Margin="0,0,0,12">
@@ -350,28 +352,7 @@
                                     <CheckBox x:Name="EqEnabledCheck" DockPanel.Dock="Right" Content="On" Checked="EqChanged" Unchecked="EqChanged"/>
                                 </DockPanel>
 
-                                <Grid Background="#293348" Height="290">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock x:Name="BassValueText" HorizontalAlignment="Center" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
-                                        <Slider x:Name="BassSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,10"/>
-                                        <TextBlock Text="Bass" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock x:Name="MidValueText" HorizontalAlignment="Center" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
-                                        <Slider x:Name="MidSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,10"/>
-                                        <TextBlock Text="Body" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock x:Name="TrebleValueText" HorizontalAlignment="Center" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
-                                        <Slider x:Name="TrebleSlider" Style="{StaticResource EqVerticalSliderStyle}" Minimum="-12" Maximum="12" TickFrequency="1" ValueChanged="EqSliderChanged" Margin="0,10"/>
-                                        <TextBlock Text="Treble" HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold"/>
-                                    </StackPanel>
-                                </Grid>
+                                <UniformGrid x:Name="EqBandsPanel" Columns="10" Background="#293348" Height="290"/>
 
                                 <WrapPanel Margin="0,18,0,0">
                                     <Button Content="Flat" Click="PresetFlat_Click"/>
@@ -380,6 +361,32 @@
                                     <Button Content="Crisp" Click="PresetCrisp_Click"/>
                                     <Button Content="Soft Night" Click="PresetSoftNight_Click"/>
                                 </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,24">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,14">
+                                    <StackPanel DockPanel.Dock="Left">
+                                        <TextBlock Text="Pan" FontSize="26" FontWeight="Bold"/>
+                                        <TextBlock x:Name="PanStatusText" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="PanEnabledCheck" DockPanel.Dock="Right" Content="On" Checked="PanChanged" Unchecked="PanChanged"/>
+                                </DockPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.1*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,18,0">
+                                        <TextBlock Text="Mode" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <ComboBox x:Name="PanModeComboBox" Height="42" Margin="0,6,0,0" SelectionChanged="PanChanged"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Stereo width" Foreground="{StaticResource MutedTextBrush}"/>
+                                        <Slider x:Name="PanStrengthSlider" Minimum="0" Maximum="1" TickFrequency="0.05" ValueChanged="PanChanged" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Grid>
                             </StackPanel>
                         </Border>
 

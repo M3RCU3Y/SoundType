@@ -17,6 +17,7 @@ public sealed class AppSettings
     public List<AppRule> AppRules { get; set; } = [];
     public SoundGroupVolumeSettings GroupVolumes { get; set; } = new();
     public EqSettings Eq { get; set; } = new();
+    public PanSettings Pan { get; set; } = new();
 
     public static HashSet<string> DefaultExcludedKeys() =>
         new(StringComparer.OrdinalIgnoreCase)
