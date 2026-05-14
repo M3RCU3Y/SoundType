@@ -21,6 +21,7 @@ public partial class MainWindow : Window
     private const int ToggleHotkeyId = 0x534B;
     private readonly SettingsService _settingsService = new();
     private readonly SoundPackLoader _packLoader = new();
+    private readonly SoundPackArchiveService _archiveService = new();
     private readonly RuleEngine _ruleEngine = new();
     private readonly KeyboardHookService _keyboardHook = new();
     private readonly GlobalHotkeyService _globalHotkey = new();
@@ -51,6 +52,7 @@ public partial class MainWindow : Window
     {
         _settings = await _settingsService.LoadAsync();
         _settings.StartWithWindows = _startup.IsEnabled();
+        ConfigureAppRuleEditors();
         LoadPacks();
         BuildKeyRules();
         ConfigureTray();
@@ -81,6 +83,7 @@ public partial class MainWindow : Window
         {
             Key = e.Key,
             SoundGroup = decision.SoundGroup,
+            SoundPackId = decision.SoundPackId,
             VolumeMultiplier = decision.VolumeMultiplier,
             ActiveProcessName = processName
         });
@@ -90,9 +93,12 @@ public partial class MainWindow : Window
     {
         _packs = _packLoader.DiscoverPacks(_packsRoot);
         PacksList.Items.Clear();
+        RulePackComboBox.Items.Clear();
         foreach (SoundPackMetadata pack in _packs)
         {
             PacksList.Items.Add(new PackListItem(pack));
+            RulePackComboBox.Items.Add(new PackListItem(pack));
+            TryPreloadPack(pack);
         }
 
         PackListItem? selected = PacksList.Items
@@ -104,6 +110,9 @@ public partial class MainWindow : Window
         {
             PacksList.SelectedItem = selected;
             ActivatePack(selected.Metadata);
+            RulePackComboBox.SelectedItem ??= RulePackComboBox.Items
+                .OfType<PackListItem>()
+                .FirstOrDefault(item => item.Metadata.Id.Equals(selected.Metadata.Id, StringComparison.OrdinalIgnoreCase));
         }
         else
         {
@@ -123,10 +132,40 @@ public partial class MainWindow : Window
 
         _activePack = pack;
         _settings.ActiveSoundPackId = pack.Id;
-        _audio.LoadPack(_packLoader.Load(pack));
+        if (!_audio.SetActivePack(pack.Id))
+        {
+            _audio.LoadPack(_packLoader.Load(pack));
+        }
         PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
         PackValidationText.Text = $"{pack.Name} by {pack.Author} is active. {pack.Description}";
         _ = SaveSettingsAsync();
+    }
+
+    private void TryPreloadPack(SoundPackMetadata pack)
+    {
+        try
+        {
+            if (_packLoader.Validate(pack).IsValid)
+            {
+                _audio.LoadPack(_packLoader.Load(pack), makeActive: false);
+            }
+        }
+        catch
+        {
+            // Invalid packs stay visible with validation feedback when selected.
+        }
+    }
+
+    private void ConfigureAppRuleEditors()
+    {
+        RuleModeComboBox.Items.Clear();
+        RuleModeComboBox.Items.Add(AppRuleMode.Disabled);
+        RuleModeComboBox.Items.Add(AppRuleMode.Default);
+        RuleModeComboBox.Items.Add(AppRuleMode.EnabledOnly);
+        RuleModeComboBox.Items.Add(AppRuleMode.UseSpecificPack);
+        RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
+        RuleVolumeSlider.Value = 1.0;
+        RuleVolumeText.Text = "100%";
     }
 
     private void BindSettingsToUi()
@@ -170,7 +209,7 @@ public partial class MainWindow : Window
         AppRulesList.Items.Clear();
         foreach (AppRule rule in _settings.AppRules.OrderBy(rule => rule.ProcessName))
         {
-            AppRulesList.Items.Add(rule.ProcessName);
+            AppRulesList.Items.Add(new AppRuleListItem(rule));
         }
     }
 
@@ -338,6 +377,112 @@ public partial class MainWindow : Window
 
     private void PreviewPack_Click(object sender, RoutedEventArgs e) => _audio.Preview();
 
+    private void ImportSoundPack_Click(object sender, RoutedEventArgs e)
+    {
+        Microsoft.Win32.OpenFileDialog dialog = new()
+        {
+            Filter = "Sound packs (*.soundpack;*.zip)|*.soundpack;*.zip|All files (*.*)|*.*"
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: false);
+            ReloadPacksAndSelect(metadata.Id);
+            PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
+            PackValidationText.Text = $"Imported {metadata.Name}.";
+        }
+        catch (IOException ex) when (ex.Message.Contains("already exists", StringComparison.OrdinalIgnoreCase))
+        {
+            MessageBoxResult overwrite = System.Windows.MessageBox.Show(
+                this,
+                "A sound pack with this id already exists. Replace it?",
+                "Replace sound pack",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (overwrite != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: true);
+                ReloadPacksAndSelect(metadata.Id);
+                PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
+                PackValidationText.Text = $"Replaced {metadata.Name}.";
+            }
+            catch (Exception retryException)
+            {
+                ShowPackError(retryException.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowPackError(ex.Message);
+        }
+    }
+
+    private void ExportActivePack_Click(object sender, RoutedEventArgs e)
+    {
+        if (_activePack is null)
+        {
+            ShowPackError("No active pack selected.");
+            return;
+        }
+
+        Microsoft.Win32.SaveFileDialog dialog = new()
+        {
+            Filter = "Sound packs (*.soundpack)|*.soundpack|Zip archives (*.zip)|*.zip",
+            FileName = $"{_activePack.Id}.soundpack",
+            DefaultExt = ".soundpack"
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            _archiveService.ExportPack(_activePack.FolderPath, dialog.FileName);
+            PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
+            PackValidationText.Text = $"Exported {_activePack.Name} to {dialog.FileName}.";
+        }
+        catch (Exception ex)
+        {
+            ShowPackError(ex.Message);
+        }
+    }
+
+    private SoundPackMetadata TryImportPack(string archivePath, bool overwrite) =>
+        _archiveService.ImportPack(archivePath, _packsRoot, overwrite);
+
+    private void ReloadPacksAndSelect(string packId)
+    {
+        _settings.ActiveSoundPackId = packId;
+        LoadPacks();
+        PackListItem? selected = PacksList.Items
+            .OfType<PackListItem>()
+            .FirstOrDefault(item => item.Metadata.Id.Equals(packId, StringComparison.OrdinalIgnoreCase));
+        if (selected is not null)
+        {
+            PacksList.SelectedItem = selected;
+            ActivatePack(selected.Metadata);
+        }
+    }
+
+    private void ShowPackError(string message)
+    {
+        PackValidationText.Foreground = (MediaBrush)FindResource("DangerBrush");
+        PackValidationText.Text = message;
+    }
+
     private void OpenPackFolder_Click(object sender, RoutedEventArgs e)
     {
         Directory.CreateDirectory(_packsRoot);
@@ -376,15 +521,31 @@ public partial class MainWindow : Window
             processName += ".exe";
         }
 
+        AppRuleMode mode = RuleModeComboBox.SelectedItem is AppRuleMode selectedMode
+            ? selectedMode
+            : AppRuleMode.Disabled;
+        string? packId = RulePackComboBox.SelectedItem is PackListItem packItem
+            ? packItem.Metadata.Id
+            : null;
+        double volumeOverride = Math.Clamp(RuleVolumeSlider.Value, 0.0, 1.5);
+
         AppRule? existing = _settings.AppRules.FirstOrDefault(rule =>
             rule.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase));
         if (existing is null)
         {
-            _settings.AppRules.Add(new AppRule { ProcessName = processName, Mode = AppRuleMode.Disabled });
+            _settings.AppRules.Add(new AppRule
+            {
+                ProcessName = processName,
+                Mode = mode,
+                SoundPackId = mode == AppRuleMode.UseSpecificPack ? packId : null,
+                VolumeOverride = Math.Abs(volumeOverride - 1.0) < 0.001 ? null : volumeOverride
+            });
         }
         else
         {
-            existing.Mode = AppRuleMode.Disabled;
+            existing.Mode = mode;
+            existing.SoundPackId = mode == AppRuleMode.UseSpecificPack ? packId : null;
+            existing.VolumeOverride = Math.Abs(volumeOverride - 1.0) < 0.001 ? null : volumeOverride;
         }
 
         RefreshAppRules();
@@ -393,14 +554,34 @@ public partial class MainWindow : Window
 
     private void RemoveAppRule_Click(object sender, RoutedEventArgs e)
     {
-        if (AppRulesList.SelectedItem is not string selected)
+        if (AppRulesList.SelectedItem is not AppRuleListItem selected)
         {
             return;
         }
 
-        _settings.AppRules.RemoveAll(rule => rule.ProcessName.Equals(selected, StringComparison.OrdinalIgnoreCase));
+        _settings.AppRules.RemoveAll(rule => rule.ProcessName.Equals(selected.Rule.ProcessName, StringComparison.OrdinalIgnoreCase));
         RefreshAppRules();
         _ = SaveSettingsAsync();
+    }
+
+    private void AppRulesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AppRulesList.SelectedItem is not AppRuleListItem selected)
+        {
+            return;
+        }
+
+        AppRule rule = selected.Rule;
+        ProcessRuleTextBox.Text = rule.ProcessName;
+        RuleModeComboBox.SelectedItem = rule.Mode;
+        RuleVolumeSlider.Value = rule.VolumeOverride ?? 1.0;
+
+        if (!string.IsNullOrWhiteSpace(rule.SoundPackId))
+        {
+            RulePackComboBox.SelectedItem = RulePackComboBox.Items
+                .OfType<PackListItem>()
+                .FirstOrDefault(item => item.Metadata.Id.Equals(rule.SoundPackId, StringComparison.OrdinalIgnoreCase));
+        }
     }
 
     private void SettingsCheckChanged(object sender, RoutedEventArgs e)
@@ -436,6 +617,14 @@ public partial class MainWindow : Window
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
         _audio.Eq = _settings.Eq;
         _ = SaveSettingsAsync();
+    }
+
+    private void RuleVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (RuleVolumeText is not null)
+        {
+            RuleVolumeText.Text = $"{Math.Round(RuleVolumeSlider.Value * 100)}%";
+        }
     }
 
     private void PresetFlat_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Flat", 0, 0, 0);
@@ -482,5 +671,17 @@ public partial class MainWindow : Window
     {
         public SoundPackMetadata Metadata { get; } = metadata;
         public override string ToString() => $"{Metadata.Name} - {Metadata.Description}";
+    }
+
+    private sealed class AppRuleListItem(AppRule rule)
+    {
+        public AppRule Rule { get; } = rule;
+
+        public override string ToString()
+        {
+            string pack = string.IsNullOrWhiteSpace(Rule.SoundPackId) ? "" : $" | Pack: {Rule.SoundPackId}";
+            string volume = Rule.VolumeOverride is double value ? $" | Volume: {Math.Round(value * 100)}%" : "";
+            return $"{Rule.ProcessName} | {Rule.Mode}{pack}{volume}";
+        }
     }
 }

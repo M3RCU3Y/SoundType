@@ -7,6 +7,21 @@ namespace SoundType.Tests;
 public sealed class AudioProcessingTests
 {
     [Fact]
+    public async Task AudioEngine_SetActivePack_ReturnsWhetherPackWasPreloaded()
+    {
+        AudioEngine engine = new();
+        LoadedSoundPack pack = new(
+            new SoundPackMetadata { Id = "soft-laptop", Name = "Soft Laptop" },
+            new Dictionary<string, IReadOnlyList<byte[]>>(StringComparer.OrdinalIgnoreCase));
+
+        engine.LoadPack(pack, makeActive: false);
+
+        Assert.True(engine.SetActivePack("soft-laptop"));
+        Assert.False(engine.SetActivePack("missing-pack"));
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void LimiterSampleProvider_ClampsSamplesToThreshold()
     {
         ArraySampleProvider source = new([-2.0f, -0.25f, 0.25f, 2.0f]);

@@ -14,6 +14,7 @@ public sealed class AudioEngine : IAsyncDisposable
     private readonly Random _random = new();
     private readonly CancellationTokenSource _shutdown = new();
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
     private readonly Task _worker;
     private LoadedSoundPack? _activePack;
 
@@ -25,10 +26,26 @@ public sealed class AudioEngine : IAsyncDisposable
     public double MasterVolume { get; set; } = 0.75;
     public EqSettings Eq { get; set; } = new();
 
-    public void LoadPack(LoadedSoundPack pack)
+    public void LoadPack(LoadedSoundPack pack, bool makeActive = true)
     {
+        _packs[pack.Metadata.Id] = pack;
+        if (makeActive)
+        {
+            _activePack = pack;
+            _roundRobin.Clear();
+        }
+    }
+
+    public bool SetActivePack(string soundPackId)
+    {
+        if (!_packs.TryGetValue(soundPackId, out LoadedSoundPack? pack))
+        {
+            return false;
+        }
+
         _activePack = pack;
         _roundRobin.Clear();
+        return true;
     }
 
     public bool TryEnqueue(PlaybackRequest request) => _queue.Writer.TryWrite(request);
@@ -65,7 +82,7 @@ public sealed class AudioEngine : IAsyncDisposable
 
     private void PlayNow(PlaybackRequest request)
     {
-        LoadedSoundPack? pack = _activePack;
+        LoadedSoundPack? pack = ResolvePack(request.SoundPackId);
         if (pack is null)
         {
             return;
@@ -110,6 +127,17 @@ public sealed class AudioEngine : IAsyncDisposable
         output.Play();
     }
 
+    private LoadedSoundPack? ResolvePack(string? soundPackId)
+    {
+        if (!string.IsNullOrWhiteSpace(soundPackId) &&
+            _packs.TryGetValue(soundPackId, out LoadedSoundPack? requestedPack))
+        {
+            return requestedPack;
+        }
+
+        return _activePack;
+    }
+
     private byte[] SelectSample(SoundPackMetadata metadata, string group, IReadOnlyList<byte[]> samples)
     {
         if (metadata.Defaults.Randomize)
@@ -120,8 +148,9 @@ public sealed class AudioEngine : IAsyncDisposable
             }
         }
 
-        int next = _roundRobin.TryGetValue(group, out int value) ? value : 0;
-        _roundRobin[group] = (next + 1) % samples.Count;
+        string roundRobinKey = $"{metadata.Id}:{group}";
+        int next = _roundRobin.TryGetValue(roundRobinKey, out int value) ? value : 0;
+        _roundRobin[roundRobinKey] = (next + 1) % samples.Count;
         return samples[next];
     }
 

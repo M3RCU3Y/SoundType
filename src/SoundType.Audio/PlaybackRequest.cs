@@ -6,6 +6,7 @@ public sealed class PlaybackRequest
 {
     public required string SoundGroup { get; init; }
     public required KeyIdentity Key { get; init; }
+    public string? SoundPackId { get; init; }
     public double VolumeMultiplier { get; init; } = 1.0;
     public string? ActiveProcessName { get; init; }
 }

@@ -22,6 +22,8 @@
 - Key exclusion UI.
 - App process exclusion UI.
 - Persisted process-name rules.
+- Per-app disabled/default/enabled-only modes.
+- Per-app pack and volume overrides.
 
 ## 0.4 Shell Behavior
 

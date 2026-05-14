@@ -11,6 +11,9 @@ SoundType runs locally and does not record what you type.
 - Non-blocking audio queue backed by preloaded WAV sound packs.
 - Normal, Enter, Space, and Backspace sound groups.
 - Enable/mute toggle, master volume, key exclusions, app exclusions, tray menu, and start-with-Windows setting.
+- Global `Ctrl+Alt+K` mute toggle hotkey.
+- `.soundpack` archive import/export with safe zip extraction.
+- Per-app rule modes for disabled/default/enabled-only behavior, pack override, and volume override.
 - JSON settings stored under `%AppData%\SoundType\settings.json`.
 - Three built-in placeholder packs: Classic Typewriter, Soft Laptop, and Cyber Terminal.
 - WPF frontend using the same service boundaries planned for a future WinUI 3 frontend.
