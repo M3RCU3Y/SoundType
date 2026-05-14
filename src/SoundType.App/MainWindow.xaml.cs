@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using SoundType.Audio;
@@ -17,10 +18,12 @@ namespace SoundType.App;
 
 public partial class MainWindow : Window
 {
+    private const int ToggleHotkeyId = 0x534B;
     private readonly SettingsService _settingsService = new();
     private readonly SoundPackLoader _packLoader = new();
     private readonly RuleEngine _ruleEngine = new();
     private readonly KeyboardHookService _keyboardHook = new();
+    private readonly GlobalHotkeyService _globalHotkey = new();
     private readonly ActiveWindowService _activeWindow = new();
     private readonly AudioEngine _audio = new();
     private readonly StartupService _startup = new();
@@ -30,6 +33,7 @@ public partial class MainWindow : Window
     private AppSettings _settings = new();
     private IReadOnlyList<SoundPackMetadata> _packs = [];
     private SoundPackMetadata? _activePack;
+    private HwndSource? _hotkeySource;
     private bool _loading = true;
     private bool _exitRequested;
 
@@ -56,6 +60,7 @@ public partial class MainWindow : Window
         _loading = false;
         RefreshStatus();
         RefreshCurrentApp();
+        RegisterGlobalHotkey();
     }
 
     private void KeyboardHook_KeyPressed(object? sender, KeyPressedEvent e)
@@ -191,6 +196,65 @@ public partial class MainWindow : Window
         if (_trayIcon.ContextMenuStrip?.Items["enabled"] is Forms.ToolStripMenuItem enabledItem)
         {
             enabledItem.Checked = _settings.Enabled;
+        }
+    }
+
+    private void RegisterGlobalHotkey()
+    {
+        string hotkeyText = string.IsNullOrWhiteSpace(_settings.GlobalToggleHotkey)
+            ? HotkeyGesture.DefaultText
+            : _settings.GlobalToggleHotkey;
+
+        if (!HotkeyGesture.TryParse(hotkeyText, out HotkeyGesture gesture))
+        {
+            _settings.GlobalToggleHotkey = HotkeyGesture.DefaultText;
+            gesture = HotkeyGesture.Default;
+            ShowHotkeyStatus("Invalid global hotkey. Using Ctrl+Alt+K.");
+            _ = SaveSettingsAsync();
+        }
+
+        IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+        _hotkeySource = HwndSource.FromHwnd(windowHandle);
+        _hotkeySource?.AddHook(WndProc);
+
+        if (!_globalHotkey.TryRegister(windowHandle, ToggleHotkeyId, gesture, out string? errorMessage))
+        {
+            ShowHotkeyStatus(errorMessage ?? "Global hotkey unavailable.");
+            ShowTrayBalloon("Global hotkey unavailable");
+        }
+    }
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == GlobalHotkeyService.WmHotkey && wParam.ToInt32() == ToggleHotkeyId)
+        {
+            handled = true;
+            ToggleEnabledFromHotkey();
+        }
+
+        return IntPtr.Zero;
+    }
+
+    private async void ToggleEnabledFromHotkey()
+    {
+        _settings.Enabled = !_settings.Enabled;
+        EnabledToggle.IsChecked = _settings.Enabled;
+        RefreshStatus();
+        ShowTrayBalloon(_settings.Enabled ? "SoundType enabled" : "SoundType muted");
+        await SaveSettingsAsync();
+    }
+
+    private void ShowHotkeyStatus(string message)
+    {
+        PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
+        PackValidationText.Text = message;
+    }
+
+    private void ShowTrayBalloon(string message)
+    {
+        if (_trayIcon.Visible)
+        {
+            _trayIcon.ShowBalloonTip(1200, "SoundType", message, Forms.ToolTipIcon.Info);
         }
     }
 
@@ -406,6 +470,8 @@ public partial class MainWindow : Window
         }
 
         _keyboardHook.Dispose();
+        _hotkeySource?.RemoveHook(WndProc);
+        _globalHotkey.Dispose();
         _trayIcon.Visible = false;
         _trayIcon.Dispose();
         await _audio.DisposeAsync();
