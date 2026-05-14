@@ -39,6 +39,7 @@ public partial class MainWindow : Window
     private HwndSource? _hotkeySource;
     private bool _loading = true;
     private bool _exitRequested;
+    private bool _packFiltersConfigured;
 
     public MainWindow()
     {
@@ -55,6 +56,7 @@ public partial class MainWindow : Window
         _settings = await _settingsService.LoadAsync();
         _settings.StartWithWindows = _startup.IsEnabled();
         ConfigureAppRuleEditors();
+        ConfigurePackFilters();
         LoadPacks();
         BuildKeyRules();
         ConfigureTray();
@@ -95,26 +97,19 @@ public partial class MainWindow : Window
     private void LoadPacks()
     {
         _packs = _packLoader.DiscoverPacks(_packsRoot);
-        PacksList.Items.Clear();
         RulePackComboBox.Items.Clear();
-        PackCountText.Text = _packs.Count == 1
-            ? "1 pack available."
-            : $"{_packs.Count} packs available.";
         foreach (SoundPackMetadata pack in _packs)
         {
-            PacksList.Items.Add(new PackListItem(pack));
             RulePackComboBox.Items.Add(new PackListItem(pack));
             TryPreloadPack(pack);
         }
 
-        PackListItem? selected = PacksList.Items
-            .OfType<PackListItem>()
-            .FirstOrDefault(item => item.Metadata.Id.Equals(_settings.ActiveSoundPackId, StringComparison.OrdinalIgnoreCase))
-            ?? PacksList.Items.OfType<PackListItem>().FirstOrDefault();
+        RefreshPackLibrary(_settings.ActiveSoundPackId);
+
+        PackListItem? selected = PacksList.SelectedItem as PackListItem;
 
         if (selected is not null)
         {
-            PacksList.SelectedItem = selected;
             ActivatePack(selected.Metadata);
             RulePackComboBox.SelectedItem ??= RulePackComboBox.Items
                 .OfType<PackListItem>()
@@ -124,6 +119,7 @@ public partial class MainWindow : Window
         {
             PackValidationText.Text = "No sound packs were found. Run tools/generate-placeholder-sounds.ps1 from the repo root.";
             PackCountText.Text = "No packs available.";
+            RefreshSelectedPackDetails(null);
         }
     }
 
@@ -173,6 +169,24 @@ public partial class MainWindow : Window
         RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
         RuleVolumeSlider.Value = 1.0;
         RuleVolumeText.Text = "100%";
+    }
+
+    private void ConfigurePackFilters()
+    {
+        if (_packFiltersConfigured)
+        {
+            return;
+        }
+
+        PackTypeComboBox.Items.Clear();
+        PackTypeComboBox.Items.Add(PackFilter.All);
+        PackTypeComboBox.Items.Add(PackFilter.Switches);
+        PackTypeComboBox.Items.Add(PackFilter.Typewriters);
+        PackTypeComboBox.Items.Add(PackFilter.Quiet);
+        PackTypeComboBox.Items.Add(PackFilter.Digital);
+        PackTypeComboBox.SelectedItem = PackFilter.All;
+        PackSearchTextBox.Text = "";
+        _packFiltersConfigured = true;
     }
 
     private void BindSettingsToUi()
@@ -370,6 +384,7 @@ public partial class MainWindow : Window
 
     private void PacksList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        RefreshSelectedPackDetails((PacksList.SelectedItem as PackListItem)?.Metadata);
         if (_loading) return;
         if (PacksList.SelectedItem is PackListItem item)
         {
@@ -377,7 +392,34 @@ public partial class MainWindow : Window
         }
     }
 
-    private void PreviewPack_Click(object sender, RoutedEventArgs e) => _audio.Preview();
+    private void PackSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_loading) return;
+        RefreshPackLibrary();
+    }
+
+    private void PackTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loading) return;
+        RefreshPackLibrary();
+    }
+
+    private void PreviewNormal_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("normal");
+    private void PreviewEnter_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("enter");
+    private void PreviewSpace_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("space");
+    private void PreviewBackspace_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("backspace");
+    private void PreviewTab_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("tab");
+
+    private void PreviewPackGroup(string group)
+    {
+        if (PacksList.SelectedItem is PackListItem item &&
+            (_activePack is null || !item.Metadata.Id.Equals(_activePack.Id, StringComparison.OrdinalIgnoreCase)))
+        {
+            ActivatePack(item.Metadata);
+        }
+
+        _audio.Preview(group);
+    }
 
     private void ImportSoundPack_Click(object sender, RoutedEventArgs e)
     {
@@ -804,6 +846,93 @@ public partial class MainWindow : Window
 
             return "Pack";
         }
+    }
+
+    private void RefreshPackLibrary(string? preferredPackId = null)
+    {
+        string? previousSelection = preferredPackId
+            ?? (PacksList.SelectedItem as PackListItem)?.Metadata.Id
+            ?? _activePack?.Id;
+
+        List<PackListItem> visiblePacks = _packs
+            .Where(PackMatchesCurrentFilters)
+            .Select(pack => new PackListItem(pack))
+            .ToList();
+
+        PacksList.Items.Clear();
+        foreach (PackListItem item in visiblePacks)
+        {
+            PacksList.Items.Add(item);
+        }
+
+        PackCountText.Text = visiblePacks.Count == _packs.Count
+            ? (_packs.Count == 1 ? "1 pack available." : $"{_packs.Count} packs available.")
+            : $"{visiblePacks.Count} of {_packs.Count} packs shown.";
+
+        PackListItem? selected = visiblePacks.FirstOrDefault(item =>
+            !string.IsNullOrWhiteSpace(previousSelection) &&
+            item.Metadata.Id.Equals(previousSelection, StringComparison.OrdinalIgnoreCase))
+            ?? visiblePacks.FirstOrDefault();
+        PacksList.SelectedItem = selected;
+        RefreshSelectedPackDetails(selected?.Metadata);
+    }
+
+    private bool PackMatchesCurrentFilters(SoundPackMetadata pack)
+    {
+        string search = PackSearchTextBox.Text.Trim();
+        if (!string.IsNullOrWhiteSpace(search) && !PackMatchesSearch(pack, search))
+        {
+            return false;
+        }
+
+        string filter = PackTypeComboBox.SelectedItem as string ?? PackFilter.All;
+        return filter switch
+        {
+            PackFilter.Switches => HasTag(pack, "switch"),
+            PackFilter.Typewriters => HasTag(pack, "typewriter"),
+            PackFilter.Quiet => HasTag(pack, "quiet") || HasTag(pack, "soft") || HasTag(pack, "laptop"),
+            PackFilter.Digital => HasTag(pack, "digital") || HasTag(pack, "terminal"),
+            _ => true
+        };
+    }
+
+    private static bool PackMatchesSearch(SoundPackMetadata pack, string search) =>
+        Contains(pack.Name, search) ||
+        Contains(pack.Description, search) ||
+        pack.Tags.Any(tag => Contains(tag, search));
+
+    private static bool Contains(string value, string search) =>
+        value.Contains(search, StringComparison.OrdinalIgnoreCase);
+
+    private static bool HasTag(SoundPackMetadata pack, string tag) =>
+        pack.Tags.Any(candidate => candidate.Equals(tag, StringComparison.OrdinalIgnoreCase));
+
+    private void RefreshSelectedPackDetails(SoundPackMetadata? pack)
+    {
+        if (pack is null)
+        {
+            SelectedPackNameText.Text = "No pack selected";
+            SelectedPackTypeText.Text = "";
+            SelectedPackDescriptionText.Text = "Try another search or category.";
+            SelectedPackDetailsText.Text = "";
+            return;
+        }
+
+        PackListItem item = new(pack);
+        SelectedPackNameText.Text = pack.Name;
+        SelectedPackTypeText.Text = item.TypeLabel;
+        SelectedPackDescriptionText.Text = pack.Description;
+        SelectedPackDetailsText.Text =
+            $"{item.TagsText} | {item.DetailLine} | {pack.Author} | {pack.License}";
+    }
+
+    private static class PackFilter
+    {
+        public const string All = "All";
+        public const string Switches = "Switches";
+        public const string Typewriters = "Typewriters";
+        public const string Quiet = "Quiet";
+        public const string Digital = "Digital";
     }
 
     private sealed class AppRuleListItem(AppRule rule)

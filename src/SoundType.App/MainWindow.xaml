@@ -79,6 +79,14 @@
                                     <TextBlock Text="Switches + Typewriters" Foreground="{StaticResource AccentHoverBrush}" FontWeight="SemiBold" FontSize="12"/>
                                 </Border>
                             </DockPanel>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="156"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="PackSearchTextBox" Grid.Column="0" Height="34" Margin="0,0,10,0" TextChanged="PackSearchTextBox_TextChanged"/>
+                                <ComboBox x:Name="PackTypeComboBox" Grid.Column="1" Height="34" SelectionChanged="PackTypeComboBox_SelectionChanged"/>
+                            </Grid>
                             <ListBox x:Name="PacksList" Height="265" SelectionChanged="PacksList_SelectionChanged" HorizontalContentAlignment="Stretch">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -106,7 +114,23 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                             <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                                <Button Content="Preview" Click="PreviewPack_Click"/>
+                                <Button Content="Normal" Click="PreviewNormal_Click"/>
+                                <Button Content="Enter" Click="PreviewEnter_Click"/>
+                                <Button Content="Space" Click="PreviewSpace_Click"/>
+                                <Button Content="Backspace" Click="PreviewBackspace_Click"/>
+                                <Button Content="Tab" Click="PreviewTab_Click"/>
+                            </StackPanel>
+                            <Border Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <TextBlock x:Name="SelectedPackNameText" DockPanel.Dock="Left" FontSize="16" FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="SelectedPackTypeText" DockPanel.Dock="Right" Foreground="{StaticResource AccentHoverBrush}" FontWeight="SemiBold" FontSize="12"/>
+                                    </DockPanel>
+                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,5,0,8"/>
+                                    <TextBlock x:Name="SelectedPackDetailsText" Foreground="{StaticResource SubtleTextBrush}" TextWrapping="Wrap" FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
                                 <Button Content="Open pack folder" Click="OpenPackFolder_Click"/>
                                 <Button Content="Import .soundpack" Click="ImportSoundPack_Click"/>
                                 <Button Content="Export active" Click="ExportActivePack_Click"/>
