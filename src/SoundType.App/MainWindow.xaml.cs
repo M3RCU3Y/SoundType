@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -403,6 +405,75 @@ public partial class MainWindow : Window
         {
             page.Visibility = ReferenceEquals(page, activePage) ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        UpdateNavigationState(activePage);
+    }
+
+    private void UpdateNavigationState(FrameworkElement activePage)
+    {
+        (System.Windows.Controls.Button Button, FrameworkElement Page)[] nav =
+        [
+            (LibraryNavButton, LibraryPage),
+            (AudioNavButton, AudioPage),
+            (KeyboardNavButton, KeyboardPage),
+            (RulesNavButton, RulesPage),
+            (SettingsNavButton, SettingsPage)
+        ];
+
+        foreach ((System.Windows.Controls.Button button, FrameworkElement page) in nav)
+        {
+            bool selected = ReferenceEquals(page, activePage);
+            button.Background = selected ? (MediaBrush)FindResource("AccentBrush") : System.Windows.Media.Brushes.Transparent;
+            button.BorderBrush = selected ? (MediaBrush)FindResource("AccentHoverBrush") : System.Windows.Media.Brushes.Transparent;
+            button.Foreground = (MediaBrush)FindResource(selected ? "TextBrush" : "MutedTextBrush");
+        }
+    }
+
+    private void ShellDrag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (IsInteractiveElement(e.OriginalSource as DependencyObject))
+        {
+            return;
+        }
+
+        if (e.ClickCount == 2)
+        {
+            ToggleWindowMaximized();
+            return;
+        }
+
+        if (e.ButtonState == MouseButtonState.Pressed)
+        {
+            DragMove();
+        }
+    }
+
+    private void CloseDot_Click(object sender, RoutedEventArgs e) => Close();
+
+    private void MinimizeDot_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+    private void MaximizeDot_Click(object sender, RoutedEventArgs e) => ToggleWindowMaximized();
+
+    private void ToggleWindowMaximized() =>
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+    private static bool IsInteractiveElement(DependencyObject? source)
+    {
+        while (source is not null)
+        {
+            if (source is System.Windows.Controls.Primitives.ButtonBase or
+                System.Windows.Controls.Primitives.TextBoxBase or
+                Selector or
+                System.Windows.Controls.Primitives.RangeBase or
+                System.Windows.Controls.Primitives.ScrollBar)
+            {
+                return true;
+            }
+
+            source = VisualTreeHelper.GetParent(source);
+        }
+
+        return false;
     }
 
     private void RegisterGlobalHotkey()

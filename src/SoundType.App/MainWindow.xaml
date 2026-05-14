@@ -5,21 +5,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SoundType" Height="860" Width="1360" MinHeight="760" MinWidth="1120"
-        Background="#05070D">
+        Title="SoundType" Height="900" Width="1480" MinHeight="780" MinWidth="1180"
+        WindowStyle="None" ResizeMode="NoResize" Background="#05070D">
     <Window.Resources>
         <LinearGradientBrush x:Key="HeroPanelBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#18333E" Offset="0"/>
-            <GradientStop Color="#101725" Offset="0.52"/>
-            <GradientStop Color="#07101C" Offset="1"/>
+            <GradientStop Color="#18313B" Offset="0"/>
+            <GradientStop Color="#111B2B" Offset="0.48"/>
+            <GradientStop Color="#09111E" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="SidebarBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#111A2A" Offset="0"/>
-            <GradientStop Color="#070B17" Offset="1"/>
+            <GradientStop Color="#101827" Offset="0"/>
+            <GradientStop Color="#080C19" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="FeatureCardBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#112646" Offset="0"/>
-            <GradientStop Color="#0B1327" Offset="1"/>
+            <GradientStop Color="#122C4E" Offset="0"/>
+            <GradientStop Color="#0C1530" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="GreenCardBrush" StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#0E4D3F" Offset="0"/>
@@ -34,7 +34,7 @@
             <Setter Property="CornerRadius" Value="22"/>
             <Setter Property="Padding" Value="24"/>
             <Setter Property="Background" Value="{StaticResource FeatureCardBrush}"/>
-            <Setter Property="BorderBrush" Value="#34435C"/>
+            <Setter Property="BorderBrush" Value="#354768"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="Effect" Value="{StaticResource CardShadowEffect}"/>
         </Style>
@@ -42,17 +42,17 @@
         <Style x:Key="CompactPanelStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="16"/>
             <Setter Property="Padding" Value="16"/>
-            <Setter Property="Background" Value="#1D2637"/>
-            <Setter Property="BorderBrush" Value="#4A556B"/>
+            <Setter Property="Background" Value="#1D2638"/>
+            <Setter Property="BorderBrush" Value="#4B5870"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
 
         <Style x:Key="NavButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Height" Value="58"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
-            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Height" Value="74"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Padding" Value="22,0"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -60,8 +60,42 @@
 
         <Style x:Key="PrimaryNavButtonStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
-            <Setter Property="Foreground" Value="#04120D"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
+        </Style>
+
+        <Style x:Key="NavIconChipStyle" TargetType="Border">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Background" Value="#14243A"/>
+            <Setter Property="BorderBrush" Value="#344763"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,18,0"/>
+        </Style>
+
+        <Style x:Key="NavIconTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Black"/>
+        </Style>
+
+        <Style x:Key="MacDotButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,12,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Ellipse Fill="{TemplateBinding Background}" Opacity="0.95"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="PowerToggleStyle" TargetType="ToggleButton">
@@ -151,15 +185,17 @@
         </Style>
     </Window.Resources>
 
-    <Grid Background="#05070D">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="340"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Border Background="#07101B" BorderBrush="#35435A" BorderThickness="1" CornerRadius="24" MouseLeftButtonDown="ShellDrag_MouseLeftButtonDown">
+        <Grid ClipToBounds="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="382"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="{StaticResource SidebarBrush}" BorderBrush="#273246" BorderThickness="0,0,1,0" Padding="28">
+        <Border Grid.Column="0" Background="{StaticResource SidebarBrush}" BorderBrush="#2D3850" BorderThickness="0,0,1,0" Padding="34,30,34,28">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -168,21 +204,32 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="0,0,0,24">
-                    <TextBlock Text="SoundType" FontSize="32" FontWeight="Bold"/>
-                    <TextBlock Text="Keyboard sound studio" Foreground="{StaticResource MutedTextBrush}" FontSize="14" Margin="0,4,0,0"/>
+                    <DockPanel Margin="0,0,0,28">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                            <Button Style="{StaticResource MacDotButtonStyle}" Background="#FF5F57" Click="CloseDot_Click"/>
+                            <Button Style="{StaticResource MacDotButtonStyle}" Background="#FFBD2E" Click="MinimizeDot_Click"/>
+                            <Button Style="{StaticResource MacDotButtonStyle}" Background="#28C840" Click="MaximizeDot_Click"/>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock Text="Git" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" Margin="0,0,20,0"/>
+                            <TextBlock Text="Chat" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <TextBlock Text="SoundType" FontSize="36" FontWeight="Bold"/>
+                    <TextBlock Text="Keyboard sound studio" Foreground="{StaticResource MutedTextBrush}" FontSize="15" Margin="0,6,0,0"/>
                 </StackPanel>
 
-                <ToggleButton Grid.Row="1" x:Name="EnabledToggle" Style="{StaticResource PowerToggleStyle}" Height="70" Click="EnabledToggle_Click" Margin="0,0,0,22" Background="{StaticResource DangerBrush}" BorderBrush="#F87171">
+                <ToggleButton Grid.Row="1" x:Name="EnabledToggle" Style="{StaticResource PowerToggleStyle}" Height="78" Click="EnabledToggle_Click" Margin="0,0,0,22" Background="{StaticResource DangerBrush}" BorderBrush="#F87171">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock Text="||" FontWeight="Bold" FontSize="20" Margin="0,0,14,0"/>
                         <TextBlock Text="DISABLE" FontSize="20" FontWeight="Bold"/>
                     </StackPanel>
                 </ToggleButton>
 
-                <Border Grid.Row="2" Style="{StaticResource CompactPanelStyle}" Margin="0,0,0,24">
+                <Border Grid.Row="2" Style="{StaticResource CompactPanelStyle}" Margin="0,0,0,24" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="VOLUME" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" FontSize="13"/>
-                        <DockPanel Margin="0,14,0,0">
+                        <TextBlock Text="VOLUME" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" FontSize="15"/>
+                        <DockPanel Margin="0,14,0,0" LastChildFill="False">
                             <TextBlock DockPanel.Dock="Left" Text="Keyboard" Foreground="{StaticResource MutedTextBrush}"/>
                             <TextBlock x:Name="VolumeText" DockPanel.Dock="Right" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold"/>
                         </DockPanel>
@@ -190,15 +237,42 @@
                     </StackPanel>
                 </Border>
 
-                <StackPanel Grid.Row="3">
-                    <Button Content="Library" Style="{StaticResource PrimaryNavButtonStyle}" Click="ShowLibrary_Click"/>
-                    <Button Content="Audio Effects" Style="{StaticResource NavButtonStyle}" Click="ShowAudio_Click"/>
-                    <Button Content="Keyboard Rules" Style="{StaticResource NavButtonStyle}" Click="ShowKeyboard_Click"/>
-                    <Button Content="Application Rules" Style="{StaticResource NavButtonStyle}" Click="ShowRules_Click"/>
-                    <Button Content="Settings" Style="{StaticResource NavButtonStyle}" Click="ShowSettings_Click"/>
-                </StackPanel>
+                <Border Grid.Row="3" Style="{StaticResource CompactPanelStyle}" Padding="18" Margin="0,0,0,24">
+                    <StackPanel>
+                        <Button x:Name="LibraryNavButton" Style="{StaticResource PrimaryNavButtonStyle}" Click="ShowLibrary_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource NavIconChipStyle}"><TextBlock Style="{StaticResource NavIconTextStyle}" Text="LIB"/></Border>
+                                <TextBlock Text="Library" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="AudioNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowAudio_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource NavIconChipStyle}"><TextBlock Style="{StaticResource NavIconTextStyle}" Text="EQ"/></Border>
+                                <TextBlock Text="Audio Effects" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="KeyboardNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowKeyboard_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource NavIconChipStyle}"><TextBlock Style="{StaticResource NavIconTextStyle}" Text="KEY"/></Border>
+                                <TextBlock Text="Keyboard Rules" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="RulesNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowRules_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource NavIconChipStyle}"><TextBlock Style="{StaticResource NavIconTextStyle}" Text="APP"/></Border>
+                                <TextBlock Text="Application Rules" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="SettingsNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowSettings_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource NavIconChipStyle}"><TextBlock Style="{StaticResource NavIconTextStyle}" Text="SET"/></Border>
+                                <TextBlock Text="Settings" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
 
-                <Border Grid.Row="4" Style="{StaticResource CompactPanelStyle}">
+                <Border Grid.Row="5" Style="{StaticResource CompactPanelStyle}">
                     <StackPanel>
                         <DockPanel>
                             <Ellipse x:Name="StatusDot" DockPanel.Dock="Left" Width="11" Height="11" Fill="{StaticResource AccentBrush}" Margin="0,0,10,0"/>
@@ -215,7 +289,7 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="46,42">
                         <DockPanel Margin="0,0,0,22">
-                            <StackPanel DockPanel.Dock="Left">
+                            <StackPanel DockPanel.Dock="Left" Width="260">
                                 <TextBlock Text="Library" FontSize="42" FontWeight="Bold"/>
                                 <Rectangle Width="70" Height="5" Fill="{StaticResource AccentBrush}" RadiusX="3" RadiusY="3" HorizontalAlignment="Left" Margin="0,12,0,0"/>
                             </StackPanel>
@@ -566,4 +640,5 @@
             </Grid>
         </Grid>
     </Grid>
+    </Border>
 </Window>
