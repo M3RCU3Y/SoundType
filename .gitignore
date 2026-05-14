@@ -10,3 +10,4 @@ TestResults/
 *.log
 artifacts/
 publish/
+.external/
