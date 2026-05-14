@@ -51,6 +51,17 @@ powershell -ExecutionPolicy Bypass -File .\tools\publish-portable.ps1
 
 This creates `artifacts\SoundType-win-x64-Release-portable.zip`. See [docs/PACKAGING.md](docs/PACKAGING.md).
 
+## Validate Sound Packs
+
+Developers can validate folder packs or `.soundpack`/`.zip` archives before importing them:
+
+```powershell
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\ClassicTypewriter
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\RainyTypewriter.soundpack
+```
+
+The validator exits `0` for a valid pack and nonzero for missing metadata, missing files, unsupported file types, unsafe archives, or other validation errors.
+
 ## Placeholder Audio
 
 The built-in WAV files are generated development placeholders:
