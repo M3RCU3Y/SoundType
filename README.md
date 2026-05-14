@@ -8,7 +8,7 @@ SoundType runs locally and does not record what you type.
 
 - Global low-level keyboard hook for key-down events.
 - Privacy-safe key identities only; no typed text, words, or key history.
-- Non-blocking audio queue backed by preloaded WAV sound packs.
+- Non-blocking audio queue backed by preloaded WAV/MP3 sound packs.
 - Normal, Enter, Space, and Backspace sound groups.
 - Enable/mute toggle, master volume, key exclusions, app exclusions, tray menu, and start-with-Windows setting.
 - Global `Ctrl+Alt+K` mute toggle hotkey.

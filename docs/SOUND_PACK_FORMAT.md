@@ -1,11 +1,11 @@
 # Sound Pack Format
 
-A SoundType sound pack is a folder with a `pack.json` file and WAV assets. A `.soundpack` file is a zip archive that wraps the same folder-compatible structure.
+A SoundType sound pack is a folder with a `pack.json` file and WAV or MP3 assets. A `.soundpack` file is a zip archive that wraps the same folder-compatible structure.
 
 ## Required
 
 - `pack.json`
-- At least one `.wav` file in the `normal` group
+- At least one `.wav` or `.mp3` file in the `normal` group
 
 ## Optional
 
@@ -28,10 +28,10 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV assets. A `.s
   "groups": {
     "normal": [
       "normal/key01.wav",
-      "normal/key02.wav"
+      "normal/key02.mp3"
     ],
     "enter": [
-      "enter/ding.wav"
+      "enter/ding.mp3"
     ]
   },
   "keyOverrides": {
@@ -47,7 +47,9 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV assets. A `.s
 
 ## Validation
 
-SoundType validates that `pack.json` can be parsed, `id` and `name` exist, the `normal` group exists, all listed audio files exist, and all listed audio files are `.wav`.
+SoundType validates that `pack.json` can be parsed, `id` and `name` exist, the `normal` group exists, all listed audio files exist, and all listed audio files are `.wav` or `.mp3`.
+
+OGG files are not supported with the current NAudio dependency set. Packs that list `.ogg` samples are rejected with a supported-formats validation error instead of being partially imported.
 
 Use the developer validator to check a folder pack:
 
