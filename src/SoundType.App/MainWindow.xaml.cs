@@ -97,6 +97,9 @@ public partial class MainWindow : Window
         _packs = _packLoader.DiscoverPacks(_packsRoot);
         PacksList.Items.Clear();
         RulePackComboBox.Items.Clear();
+        PackCountText.Text = _packs.Count == 1
+            ? "1 pack available."
+            : $"{_packs.Count} packs available.";
         foreach (SoundPackMetadata pack in _packs)
         {
             PacksList.Items.Add(new PackListItem(pack));
@@ -120,6 +123,7 @@ public partial class MainWindow : Window
         else
         {
             PackValidationText.Text = "No sound packs were found. Run tools/generate-placeholder-sounds.ps1 from the repo root.";
+            PackCountText.Text = "No packs available.";
         }
     }
 
@@ -770,7 +774,36 @@ public partial class MainWindow : Window
     private sealed class PackListItem(SoundPackMetadata metadata)
     {
         public SoundPackMetadata Metadata { get; } = metadata;
+        public string Name => Metadata.Name;
+        public string Description => Metadata.Description;
+        public string TypeLabel => ResolveTypeLabel(Metadata);
+        public string TagsText => Metadata.Tags.Count == 0
+            ? TypeLabel
+            : string.Join(" / ", Metadata.Tags.Take(3).Select(tag => tag.ToUpperInvariant()));
+        public string DetailLine => $"{SampleCount} samples";
+        private int SampleCount => Metadata.Groups.Values.Sum(files => files.Count);
+
         public override string ToString() => $"{Metadata.Name} - {Metadata.Description}";
+
+        private static string ResolveTypeLabel(SoundPackMetadata metadata)
+        {
+            if (metadata.Tags.Any(tag => tag.Equals("typewriter", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "Typewriter";
+            }
+
+            if (metadata.Tags.Any(tag => tag.Equals("switch", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "Key Switch";
+            }
+
+            if (metadata.Tags.Any(tag => tag.Equals("laptop", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "Laptop";
+            }
+
+            return "Pack";
+        }
     }
 
     private sealed class AppRuleListItem(AppRule rule)
