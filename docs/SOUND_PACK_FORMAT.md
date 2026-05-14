@@ -49,11 +49,27 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV assets. A `.s
 
 SoundType validates that `pack.json` can be parsed, `id` and `name` exist, the `normal` group exists, all listed audio files exist, and all listed audio files are `.wav`.
 
+Use the developer validator to check a folder pack:
+
+```powershell
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\ClassicTypewriter
+```
+
+Use the same command for a `.soundpack` or `.zip` archive:
+
+```powershell
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\RainyTypewriter.soundpack
+```
+
+The validator prints the pack name and id for valid packs. It prints validation errors and exits nonzero for invalid packs.
+
 ## Archives
 
 SoundType can export a folder-based pack to a zip archive with the intended `.soundpack` extension. The archive contents use the pack folder as the root, so `pack.json` must be at the archive root rather than inside an extra nested directory.
 
 SoundType can import `.soundpack` and `.zip` archives into the packs root. Import extracts to a temporary staging folder, validates the staged folder with the same folder-pack validation, then installs it into a folder named after the pack `id`.
+
+The validator also imports archives into a temporary validation folder, validates the imported metadata and files there, then removes the temporary folder. It does not write validated archive contents into `assets/packs`.
 
 When `overwrite` is disabled, import refuses to replace an existing pack folder with the same `id`. When `overwrite` is enabled, SoundType replaces only that pack's target folder after the archive has extracted and validated successfully.
 

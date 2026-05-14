@@ -43,6 +43,17 @@ dotnet run --project .\src\SoundType.App\SoundType.App.csproj
 .\.tools\dotnet\dotnet.exe test .\SoundType.sln
 ```
 
+## Validate Sound Packs
+
+Developers can validate folder packs or `.soundpack`/`.zip` archives before importing them:
+
+```powershell
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\ClassicTypewriter
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\RainyTypewriter.soundpack
+```
+
+The validator exits `0` for a valid pack and nonzero for missing metadata, missing files, unsupported file types, unsafe archives, or other validation errors.
+
 ## Placeholder Audio
 
 The built-in WAV files are generated development placeholders:
