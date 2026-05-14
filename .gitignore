@@ -2,6 +2,7 @@ bin/
 obj/
 .vs/
 .tools/
+.worktrees/
 TestResults/
 *.user
 *.suo
