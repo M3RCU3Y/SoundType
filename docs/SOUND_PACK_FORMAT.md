@@ -11,6 +11,7 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV or MP3 assets
 
 - `enter`, `space`, `backspace`, and `tab` groups
 - Preview image
+- Tags for library grouping, such as `switch`, `typewriter`, `clicky`, or `thock`
 - Key overrides
 - Default volume
 - Random sample selection
@@ -25,6 +26,7 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV or MP3 assets
   "version": "1.0.0",
   "description": "Soft vintage typewriter sounds with a warm enter ding.",
   "license": "Personal use",
+  "tags": [ "typewriter", "vintage" ],
   "groups": {
     "normal": [
       "normal/key01.wav",

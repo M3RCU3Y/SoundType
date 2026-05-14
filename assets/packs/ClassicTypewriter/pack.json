@@ -1,34 +1,46 @@
-{
-  "id": "classic-typewriter",
-  "name": "Classic Typewriter",
-  "author": "SoundType",
-  "version": "0.1.0",
-  "description": "Vintage, tactile, and lightly metallic.",
-  "license": "Placeholder development audio",
-  "groups": {
-    "normal": [
-      "normal/key01.wav",
-      "normal/key02.wav",
-      "normal/key03.wav"
-    ],
-    "enter": [
-      "enter/ding.wav"
-    ],
-    "space": [
-      "space/space.wav"
-    ],
-    "backspace": [
-      "backspace/backspace.wav"
-    ]
-  },
-  "keyOverrides": {
-    "Enter": "enter",
-    "Space": "space",
-    "Backspace": "backspace"
-  },
-  "defaults": {
-    "volume": 0.75,
-    "pitchVariation": 0.0,
-    "randomize": true
-  }
+﻿{
+    "id":  "classic-typewriter",
+    "name":  "Classic Typewriter",
+    "author":  "SoundType",
+    "version":  "1.0.0",
+    "description":  "Vintage mechanical slugs, ribbon chatter, and a stronger carriage enter.",
+    "license":  "Original synthetic audio generated for SoundType; MIT-compatible for this project.",
+    "tags":  [
+                 "typewriter",
+                 "vintage",
+                 "metal"
+             ],
+    "groups":  {
+                   "normal":  [
+                                  "normal/key01.wav",
+                                  "normal/key02.wav",
+                                  "normal/key03.wav",
+                                  "normal/key04.wav",
+                                  "normal/key05.wav",
+                                  "normal/key06.wav"
+                              ],
+                   "enter":  [
+                                 "enter/enter.wav"
+                             ],
+                   "space":  [
+                                 "space/space.wav"
+                             ],
+                   "backspace":  [
+                                     "backspace/backspace.wav"
+                                 ],
+                   "tab":  [
+                               "tab/tab.wav"
+                           ]
+               },
+    "keyOverrides":  {
+                         "Enter":  "enter",
+                         "Space":  "space",
+                         "Backspace":  "backspace",
+                         "Tab":  "tab"
+                     },
+    "defaults":  {
+                     "volume":  0.7,
+                     "pitchVariation":  0,
+                     "randomize":  true
+                 }
 }

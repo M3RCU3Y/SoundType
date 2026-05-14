@@ -110,6 +110,7 @@ public sealed class MechvibesPackImporter
             Version = "1.0.0",
             Description = "Imported from Mechvibes config.json.",
             License = "Check the original Mechvibes pack license before redistributing.",
+            Tags = ["mechvibes", "import"],
             Groups = groups,
             KeyOverrides = BuildKeyOverrides(groups),
             Defaults = new SoundPackDefaults

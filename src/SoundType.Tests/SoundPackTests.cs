@@ -149,6 +149,27 @@ public sealed class SoundPackTests
         Assert.Equal("pack-one", packs[0].Id);
     }
 
+    [Fact]
+    public void TryLoadMetadata_ReadsPackTags()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "tagged-pack",
+              "name": "Tagged Pack",
+              "tags": [ "switch", "clicky" ],
+              "groups": {
+                "normal": [ "normal/key.wav" ]
+              }
+            }
+            """);
+        SoundPackLoader loader = new();
+
+        var metadata = loader.TryLoadMetadata(root);
+
+        Assert.NotNull(metadata);
+        Assert.Equal(["switch", "clicky"], metadata.Tags);
+    }
+
     private static string CreatePackRoot(string json)
     {
         string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

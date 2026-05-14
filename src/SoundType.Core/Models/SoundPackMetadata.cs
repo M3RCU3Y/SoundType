@@ -11,6 +11,7 @@ public sealed class SoundPackMetadata
     public string Description { get; set; } = "";
     public string License { get; set; } = "";
     public string? PreviewImage { get; set; }
+    public List<string> Tags { get; set; } = [];
     public Dictionary<string, List<string>> Groups { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public Dictionary<string, string> KeyOverrides { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public SoundPackDefaults Defaults { get; set; } = new();
