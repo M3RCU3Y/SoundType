@@ -62,6 +62,18 @@ Developers can validate folder packs or `.soundpack`/`.zip` archives before impo
 
 The validator exits `0` for a valid pack and nonzero for missing metadata, missing files, unsupported file types, unsafe archives, or other validation errors.
 
+## Convert Mechvibes Packs
+
+Developers can convert a Mechvibes folder pack that contains `config.json` into a SoundType folder pack:
+
+```powershell
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.MechvibesImporter\SoundType.MechvibesImporter.csproj -- C:\path\to\mechvibes-pack .\dist\ConvertedPack
+```
+
+The importer supports practical multi-file Mechvibes packs and writes `pack.json` plus copied samples into the output folder. SoundType currently validates imported packs as `.wav`-only, so `.mp3` and `.ogg` references are skipped with warnings or reported as errors when no playable normal samples remain. Single-file Mechvibes sprite packs are not converted yet because they require slicing timing ranges out of one source audio file.
+
+Only convert and redistribute packs when the original pack license allows it. The generated manifest includes a license reminder; it does not grant rights to third-party assets.
+
 ## Placeholder Audio
 
 The built-in WAV files are generated development placeholders:
