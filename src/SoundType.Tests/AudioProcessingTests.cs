@@ -22,6 +22,22 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_PrunesInactivePacksPastCacheLimit()
+    {
+        AudioEngine engine = new() { MaxCachedPacks = 2 };
+
+        engine.LoadPack(CreateLoadedPack("one"), makeActive: true);
+        engine.LoadPack(CreateLoadedPack("two"), makeActive: false);
+        engine.LoadPack(CreateLoadedPack("three"), makeActive: false);
+
+        Assert.Equal(2, engine.LoadedPackCount);
+        Assert.True(engine.TryGetLoadedPack("one", out _));
+        Assert.False(engine.TryGetLoadedPack("two", out _));
+        Assert.True(engine.TryGetLoadedPack("three", out _));
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void LimiterSampleProvider_ClampsSamplesToThreshold()
     {
         ArraySampleProvider source = new([-2.0f, -0.25f, 0.25f, 2.0f]);
@@ -209,6 +225,24 @@ public sealed class AudioProcessingTests
         }
 
         return samples;
+    }
+
+    private static LoadedSoundPack CreateLoadedPack(string id)
+    {
+        WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+        LoadedSoundSample sample = new(
+            "normal/key.wav",
+            SoundSampleFormat.Wav,
+            [],
+            [0.1f, -0.1f],
+            format);
+
+        return new LoadedSoundPack(
+            new SoundPackMetadata { Id = id, Name = id },
+            new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["normal"] = [sample]
+            });
     }
 
     private sealed class ArraySampleProvider : ISampleProvider

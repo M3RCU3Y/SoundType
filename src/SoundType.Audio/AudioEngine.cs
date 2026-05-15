@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using SoundType.Core.Models;
@@ -6,11 +7,13 @@ namespace SoundType.Audio;
 
 public sealed class AudioEngine : IAsyncDisposable
 {
+    private const int DefaultMaxCachedPacks = 4;
     private readonly Random _random = new();
     private readonly object _packLock = new();
     private readonly object _mixerLock = new();
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, long> _packLastUsedTicks = new(StringComparer.OrdinalIgnoreCase);
     private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private readonly MixingSampleProvider _mixer;
     private readonly WaveOutEvent _output;
@@ -33,12 +36,24 @@ public sealed class AudioEngine : IAsyncDisposable
     public double PitchVariation { get; set; } = 0.02;
     public EqSettings Eq { get; set; } = new();
     public PanSettings Pan { get; set; } = new();
+    public int MaxCachedPacks { get; init; } = DefaultMaxCachedPacks;
+    public int LoadedPackCount
+    {
+        get
+        {
+            lock (_packLock)
+            {
+                return _packs.Count;
+            }
+        }
+    }
 
     public void LoadPack(LoadedSoundPack pack, bool makeActive = true)
     {
         lock (_packLock)
         {
             _packs[pack.Metadata.Id] = pack;
+            MarkPackUsed(pack.Metadata.Id);
             if (makeActive)
             {
                 _activePack = pack;
@@ -47,6 +62,8 @@ public sealed class AudioEngine : IAsyncDisposable
                     _roundRobin.Clear();
                 }
             }
+
+            PruneCachedPacks();
         }
     }
 
@@ -60,10 +77,12 @@ public sealed class AudioEngine : IAsyncDisposable
             }
 
             _activePack = pack;
+            MarkPackUsed(pack.Metadata.Id);
             lock (_roundRobin)
             {
                 _roundRobin.Clear();
             }
+            PruneCachedPacks();
             return true;
         }
     }
@@ -160,7 +179,13 @@ public sealed class AudioEngine : IAsyncDisposable
             if (!string.IsNullOrWhiteSpace(soundPackId) &&
                 _packs.TryGetValue(soundPackId, out LoadedSoundPack? requestedPack))
             {
+                MarkPackUsed(requestedPack.Metadata.Id);
                 return requestedPack;
+            }
+
+            if (_activePack is not null)
+            {
+                MarkPackUsed(_activePack.Metadata.Id);
             }
 
             return _activePack;
@@ -238,7 +263,51 @@ public sealed class AudioEngine : IAsyncDisposable
     {
         lock (_packLock)
         {
-            return _packs.TryGetValue(soundPackId, out pack);
+            bool found = _packs.TryGetValue(soundPackId, out pack);
+            if (found)
+            {
+                MarkPackUsed(soundPackId);
+            }
+
+            return found;
+        }
+    }
+
+    private void MarkPackUsed(string soundPackId) =>
+        _packLastUsedTicks[soundPackId] = Stopwatch.GetTimestamp();
+
+    private void PruneCachedPacks()
+    {
+        int maxCachedPacks = Math.Max(1, MaxCachedPacks);
+        while (_packs.Count > maxCachedPacks)
+        {
+            string? activePackId = _activePack?.Metadata.Id;
+            string? oldestPackId = _packLastUsedTicks
+                .Where(entry => !entry.Key.Equals(activePackId, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(entry => entry.Value)
+                .Select(entry => entry.Key)
+                .FirstOrDefault();
+
+            if (oldestPackId is null)
+            {
+                return;
+            }
+
+            _packs.Remove(oldestPackId);
+            _packLastUsedTicks.Remove(oldestPackId);
+            RemoveRoundRobinEntries(oldestPackId);
+        }
+    }
+
+    private void RemoveRoundRobinEntries(string soundPackId)
+    {
+        string prefix = $"{soundPackId}:";
+        lock (_roundRobin)
+        {
+            foreach (string key in _roundRobin.Keys.Where(key => key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).ToList())
+            {
+                _roundRobin.Remove(key);
+            }
         }
     }
 

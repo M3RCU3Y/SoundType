@@ -159,7 +159,10 @@ public sealed class SoundPackLoader
             int read;
             while ((read = provider.Read(buffer, 0, buffer.Length)) > 0)
             {
-                samples.AddRange(buffer.Take(read));
+                for (int i = 0; i < read; i++)
+                {
+                    samples.Add(buffer[i]);
+                }
             }
 
             return AudioSampleTrimmer.TrimSilence(samples.ToArray(), PlaybackWaveFormat.Channels);

@@ -41,6 +41,8 @@ public partial class MainWindow : Window
     private IReadOnlyList<SoundPackMetadata> _packs = [];
     private SoundPackMetadata? _activePack;
     private HwndSource? _hotkeySource;
+    private string? _currentProcessName;
+    private string? _lastRecordedProcessName;
     private bool _loading = true;
     private bool _exitRequested;
     private bool _packFiltersConfigured;
@@ -87,8 +89,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        string? processName = _activeWindow.GetActiveProcessName();
-        _recentApps.Record(processName);
+        string? processName = _currentProcessName;
         PlaybackDecision decision = _ruleEngine.Decide(e.Key, processName, _settings, _activePack);
         if (!decision.ShouldPlay || decision.SoundGroup is null)
         {
@@ -124,7 +125,7 @@ public partial class MainWindow : Window
             RulePackComboBox.SelectedItem ??= RulePackComboBox.Items
                 .OfType<PackListItem>()
                 .FirstOrDefault(item => item.Metadata.Id.Equals(selected.Metadata.Id, StringComparison.OrdinalIgnoreCase));
-            PreloadPacksInBackground(selected.Metadata.Id);
+            PreloadRulePacksInBackground(selected.Metadata.Id);
         }
         else
         {
@@ -173,15 +174,22 @@ public partial class MainWindow : Window
         }
     }
 
-    private void PreloadPacksInBackground(string? activePackId)
+    private void PreloadRulePacksInBackground(string? activePackId)
     {
-        IReadOnlyList<SoundPackMetadata> packs = _packs
-            .Where(pack => !pack.Id.Equals(activePackId, StringComparison.OrdinalIgnoreCase))
+        HashSet<string> rulePackIds = _settings.AppRules
+            .Where(rule => rule.Mode == AppRuleMode.UseSpecificPack && !string.IsNullOrWhiteSpace(rule.SoundPackId))
+            .Select(rule => rule.SoundPackId!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        IReadOnlyList<SoundPackMetadata> rulePacks = _packs
+            .Where(pack =>
+                !pack.Id.Equals(activePackId, StringComparison.OrdinalIgnoreCase) &&
+                rulePackIds.Contains(pack.Id))
             .ToList();
 
         _ = Task.Run(() =>
         {
-            foreach (SoundPackMetadata pack in packs)
+            foreach (SoundPackMetadata pack in rulePacks)
             {
                 TryPreloadPack(pack);
             }
@@ -330,8 +338,14 @@ public partial class MainWindow : Window
     private void RefreshCurrentApp()
     {
         string? processName = _activeWindow.GetActiveProcessName();
-        _recentApps.Record(processName);
-        RefreshRecentApps();
+        _currentProcessName = processName;
+        if (!string.Equals(processName, _lastRecordedProcessName, StringComparison.OrdinalIgnoreCase))
+        {
+            _lastRecordedProcessName = processName;
+            _recentApps.Record(processName);
+            RefreshRecentApps();
+        }
+
         CurrentAppText.Text = string.IsNullOrWhiteSpace(processName)
             ? "Current app: unknown"
             : $"Current app: {processName}";
