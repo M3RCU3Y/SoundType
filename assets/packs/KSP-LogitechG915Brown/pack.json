@@ -1,0 +1,55 @@
+{
+  "id": "ksp-logitech-g915-brown",
+  "name": "Logitech G915 TKL Brown",
+  "author": "Keyboard Sounds / KeyboardSounds Pro",
+  "version": "1.0.0",
+  "description": "Low-profile Logitech G915 TKL Brown switch press samples imported from KeyboardSounds Pro.",
+  "license": "MIT. Source: keyboard-sounds/keyboardsounds-pro desktop/bundled-profiles/logitech-g915-tkl-brown.",
+  "tags": [
+    "switch",
+    "mechanical",
+    "low-profile",
+    "tactile",
+    "keyboardsounds-pro"
+  ],
+  "groups": {
+    "normal": [
+      "normal/key-press-1.wav",
+      "normal/key-press-2.wav",
+      "normal/key-press-3.wav",
+      "normal/key-press-4.wav",
+      "normal/key-press-5.wav"
+    ],
+    "enter": [
+      "enter/enter-press-1.wav",
+      "enter/enter-press-2.wav"
+    ],
+    "space": [
+      "space/space-press-1.wav",
+      "space/space-press-2.wav",
+      "space/space-press-3.wav"
+    ],
+    "backspace": [
+      "backspace/backspace-press-1.wav",
+      "backspace/backspace-press-2.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace",
+    "Delete": "backspace",
+    "LeftCtrl": "enter",
+    "RightCtrl": "enter",
+    "LeftAlt": "enter",
+    "RightAlt": "enter",
+    "LeftShift": "enter",
+    "RightShift": "enter",
+    "CapsLock": "enter"
+  },
+  "defaults": {
+    "volume": 0.68,
+    "pitchVariation": 0.008,
+    "randomize": true
+  }
+}

@@ -150,6 +150,22 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public void AudioSampleTrimmer_RemovesTrailingQuietFrames()
+    {
+        float[] samples =
+        [
+            0f, 0f,
+            0.08f, -0.07f,
+            0.04f, -0.03f,
+            0.0001f, -0.0001f
+        ];
+
+        float[] trimmed = AudioSampleTrimmer.TrimSilence(samples, channels: 2, leadingThreshold: 0.001f, trailingThreshold: 0.001f);
+
+        Assert.Equal([0.08f, -0.07f, 0.04f, -0.03f], trimmed);
+    }
+
+    [Fact]
     public void LoadedSoundSampleProvider_StartsEachPlaybackFromBeginning()
     {
         WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);

@@ -1,4 +1,5 @@
 using SoundType.Audio;
+using SoundType.Core.Models;
 
 namespace SoundType.Tests;
 
@@ -170,11 +171,48 @@ public sealed class SoundPackTests
         Assert.Equal(["switch", "clicky"], metadata.Tags);
     }
 
+    [Fact]
+    public void BuiltInSoundPacks_AllValidateAndDecodeAudio()
+    {
+        string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
+        SoundPackLoader loader = new();
+
+        IReadOnlyList<SoundPackMetadata> packs = loader.DiscoverPacks(packsRoot);
+
+        Assert.NotEmpty(packs);
+        foreach (SoundPackMetadata pack in packs)
+        {
+            var validation = loader.Validate(pack);
+            Assert.True(validation.IsValid, $"{pack.Id}: {string.Join("; ", validation.Errors)}");
+
+            LoadedSoundPack loaded = loader.Load(pack);
+            Assert.True(
+                loaded.Samples.Values.SelectMany(samples => samples).All(sample => sample.DecodedSamples.Length > 0),
+                $"{pack.Id} has at least one sample that failed to decode.");
+        }
+    }
+
     private static string CreatePackRoot(string json)
     {
         string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         File.WriteAllText(Path.Combine(root, "pack.json"), json);
         return root;
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        DirectoryInfo? current = new(AppContext.BaseDirectory);
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "SoundType.sln")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Could not locate SoundType repository root.");
     }
 }

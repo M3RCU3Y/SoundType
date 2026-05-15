@@ -1,6 +1,6 @@
 # SoundType
 
-**A Windows typing sound studio for mechanical switches, typewriters, laptops, terminals, and every keyboard mood in between.**
+**A Windows typing sound studio for mechanical switches and typewriters.**
 
 SoundType runs quietly in the tray, listens locally for key presses, and plays customizable sound packs without recording words, characters, or key history.
 
@@ -12,8 +12,8 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 
 | Area | What SoundType Does |
 | --- | --- |
-| Sound packs | Built-in clicky, tactile, linear, thock, laptop, terminal, and typewriter packs |
-| Authentic profiles | MIT/CC0 profiles including Cherry MX, Gateron Ink, Holy Panda, Alpaca, and CC0 typewriter sounds |
+| Sound packs | Built-in sourced switch and typewriter packs |
+| Authentic profiles | MIT/CC0 profiles including Cherry MX, Gateron Ink, Holy Panda, Alpaca, NovelKeys Cream, Logitech G915 Brown, and typewriters |
 | Keyboard control | Full visual keyboard for excluding keys without typing raw characters |
 | Per-app rules | Disable, force enable, override pack, or adjust volume by foreground app |
 | Mixer | Master volume, group volumes, pitch variation, limiter, and a simple Spotify-like EQ |
@@ -26,18 +26,11 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 
 | Pack | Feel |
 | --- | --- |
-| Clicky Blue | Bright switch clicks with a crisp top end |
-| Tactile Brown | Rounded tactile taps for everyday typing |
-| Linear Red | Smooth, lighter switch taps |
-| Deep Thock | Lower, fuller mechanical keyboard hits |
-| Classic Typewriter | Return, space, and carriage-style typewriter texture |
-| Rainy Typewriter | Softer typewriter profile for long sessions |
-| Laptop Chiclet | Short, compact laptop taps |
-| Terminal Blip | Minimal sci-fi terminal ticks |
-| KSP switch profiles | MIT-licensed Alpaca, Cherry MX, Gateron Ink, and Holy Panda profiles |
+| KSP switch profiles | MIT-licensed Alpaca, Cherry MX, Gateron Ink, Holy Panda, NovelKeys Cream, and Logitech G915 Brown profiles |
+| Antique Typewriter | KeyboardSounds Pro's antique typewriter profile |
 | Cassie Typewriter CC0 | Authentic CC0 typewriter one-shots from OpenGameArt |
 
-The bundled audio mixes original SoundType synthetic packs with permissively licensed third-party profiles. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+The bundled audio now favors sourced profiles over generated placeholders. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Quick Start
 
@@ -86,8 +79,8 @@ SoundType folder packs use a `pack.json` manifest plus grouped WAV/MP3 samples. 
 Validate a folder pack or archive:
 
 ```powershell
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\ClassicTypewriter
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\RainyTypewriter.soundpack
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\KSP-Typewriter
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\MyPack.soundpack
 ```
 
 Convert a compatible Mechvibes folder pack:
@@ -107,7 +100,7 @@ See [docs/SOUND_PACK_FORMAT.md](docs/SOUND_PACK_FORMAT.md) for the pack contract
 | `src/SoundType.Core` | Settings, pack models, validation, rules |
 | `src/SoundType.Input` | Keyboard hook, hotkey, active window detection |
 | `src/SoundType.Tests` | Unit and integration-style regression tests |
-| `assets/packs` | Built-in original sound packs |
+| `assets/packs` | Built-in sourced sound packs |
 | `tools` | Pack generator, validator, importer, portable publish script |
 | `docs` | Build spec, privacy notes, roadmap, QA, packaging, development docs |
 

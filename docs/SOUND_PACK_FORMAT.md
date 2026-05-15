@@ -56,13 +56,13 @@ OGG files are not supported with the current NAudio dependency set. Packs that l
 Use the developer validator to check a folder pack:
 
 ```powershell
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\ClassicTypewriter
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\KSP-Typewriter
 ```
 
 Use the same command for a `.soundpack` or `.zip` archive:
 
 ```powershell
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\RainyTypewriter.soundpack
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\MyPack.soundpack
 ```
 
 The validator prints the pack name and id for valid packs. It prints validation errors and exits nonzero for invalid packs.

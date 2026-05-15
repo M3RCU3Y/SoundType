@@ -95,7 +95,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        _audio.TryEnqueue(new PlaybackRequest
+        _audio.TryPlay(new PlaybackRequest
         {
             Key = e.Key,
             SoundGroup = decision.SoundGroup,
@@ -112,7 +112,6 @@ public partial class MainWindow : Window
         foreach (SoundPackMetadata pack in _packs)
         {
             RulePackComboBox.Items.Add(new PackListItem(pack));
-            TryPreloadPack(pack);
         }
 
         RefreshPackLibrary(_settings.ActiveSoundPackId);
@@ -125,6 +124,7 @@ public partial class MainWindow : Window
             RulePackComboBox.SelectedItem ??= RulePackComboBox.Items
                 .OfType<PackListItem>()
                 .FirstOrDefault(item => item.Metadata.Id.Equals(selected.Metadata.Id, StringComparison.OrdinalIgnoreCase));
+            PreloadPacksInBackground(selected.Metadata.Id);
         }
         else
         {
@@ -160,15 +160,32 @@ public partial class MainWindow : Window
     {
         try
         {
-            if (_packLoader.Validate(pack).IsValid)
+            if (_audio.TryGetLoadedPack(pack.Id, out _) || !_packLoader.Validate(pack).IsValid)
             {
-                _audio.LoadPack(_packLoader.Load(pack), makeActive: false);
+                return;
             }
+
+            _audio.LoadPack(_packLoader.Load(pack), makeActive: false);
         }
         catch
         {
             // Invalid packs stay visible with validation feedback when selected.
         }
+    }
+
+    private void PreloadPacksInBackground(string? activePackId)
+    {
+        IReadOnlyList<SoundPackMetadata> packs = _packs
+            .Where(pack => !pack.Id.Equals(activePackId, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        _ = Task.Run(() =>
+        {
+            foreach (SoundPackMetadata pack in packs)
+            {
+                TryPreloadPack(pack);
+            }
+        });
     }
 
     private void ConfigureAppRuleEditors()

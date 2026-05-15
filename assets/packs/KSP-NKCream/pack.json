@@ -1,0 +1,52 @@
+{
+  "id": "ksp-nk-cream",
+  "name": "NovelKeys Cream",
+  "author": "Mechvibes Community / KeyboardSounds Pro",
+  "version": "1.0.0",
+  "description": "NovelKeys Cream switch samples imported from KeyboardSounds Pro's bundled profile.",
+  "license": "MIT. Source: keyboard-sounds/keyboardsounds-pro desktop/bundled-profiles/nk-cream.",
+  "tags": [
+    "switch",
+    "mechanical",
+    "linear",
+    "keyboardsounds-pro"
+  ],
+  "groups": {
+    "normal": [
+      "normal/a.wav",
+      "normal/b.wav",
+      "normal/c.wav",
+      "normal/d.wav",
+      "normal/e.wav",
+      "normal/f.wav"
+    ],
+    "enter": [
+      "enter/enter.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "backspace": [
+      "backspace/backspace.wav"
+    ],
+    "tab": [
+      "tab/tab.wav"
+    ],
+    "shift": [
+      "shift/shift.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace",
+    "Tab": "tab",
+    "LeftShift": "shift",
+    "RightShift": "shift"
+  },
+  "defaults": {
+    "volume": 0.66,
+    "pitchVariation": 0.012,
+    "randomize": true
+  }
+}

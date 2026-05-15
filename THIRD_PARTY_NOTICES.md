@@ -19,8 +19,11 @@ SoundType also includes selected bundled keyboard sound profiles whose profile f
 - Cherry MX Black
 - Cherry MX Blue
 - Cherry MX Brown
+- NovelKeys Cream
+- Logitech G915 TKL Brown
+- Antique Typewriter
 
-The copied profile folders in `assets/packs/KSP-*` preserve their upstream license file when one is present. The original copyright belongs to the upstream authors named in those license files.
+The copied profile folders in `assets/packs/KSP-*` preserve their upstream license file. The original copyright belongs to the upstream authors named in those license files.
 
 ## OpenGameArt Typewriter Sounds
 

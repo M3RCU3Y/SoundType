@@ -1,4 +1,3 @@
-using System.Threading.Channels;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using SoundType.Core.Models;
@@ -7,29 +6,27 @@ namespace SoundType.Audio;
 
 public sealed class AudioEngine : IAsyncDisposable
 {
-    private readonly Channel<PlaybackRequest> _queue = Channel.CreateUnbounded<PlaybackRequest>(
-        new UnboundedChannelOptions { SingleReader = true, SingleWriter = false });
     private readonly Random _random = new();
-    private readonly CancellationTokenSource _shutdown = new();
+    private readonly object _packLock = new();
+    private readonly object _mixerLock = new();
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
     private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private readonly MixingSampleProvider _mixer;
     private readonly WaveOutEvent _output;
-    private readonly Task _worker;
     private LoadedSoundPack? _activePack;
+    private bool _disposed;
 
     public AudioEngine()
     {
         _mixer = new MixingSampleProvider(_playbackFormat) { ReadFully = true };
         _output = new WaveOutEvent
         {
-            DesiredLatency = 20,
+            DesiredLatency = 18,
             NumberOfBuffers = 2
         };
         _output.Init(_mixer);
         _output.Play();
-        _worker = Task.Run(ProcessQueueAsync);
     }
 
     public double MasterVolume { get; set; } = 0.75;
@@ -39,56 +36,66 @@ public sealed class AudioEngine : IAsyncDisposable
 
     public void LoadPack(LoadedSoundPack pack, bool makeActive = true)
     {
-        _packs[pack.Metadata.Id] = pack;
-        if (makeActive)
+        lock (_packLock)
         {
-            _activePack = pack;
-            _roundRobin.Clear();
+            _packs[pack.Metadata.Id] = pack;
+            if (makeActive)
+            {
+                _activePack = pack;
+                lock (_roundRobin)
+                {
+                    _roundRobin.Clear();
+                }
+            }
         }
     }
 
     public bool SetActivePack(string soundPackId)
     {
-        if (!_packs.TryGetValue(soundPackId, out LoadedSoundPack? pack))
+        lock (_packLock)
+        {
+            if (!_packs.TryGetValue(soundPackId, out LoadedSoundPack? pack))
+            {
+                return false;
+            }
+
+            _activePack = pack;
+            lock (_roundRobin)
+            {
+                _roundRobin.Clear();
+            }
+            return true;
+        }
+    }
+
+    public bool TryEnqueue(PlaybackRequest request) => TryPlay(request);
+
+    public bool TryPlay(PlaybackRequest request)
+    {
+        if (_disposed)
         {
             return false;
         }
 
-        _activePack = pack;
-        _roundRobin.Clear();
-        return true;
+        try
+        {
+            PlayNow(request);
+            return true;
+        }
+        catch
+        {
+            // Audio failures should never destabilize the keyboard hook or UI.
+            return false;
+        }
     }
-
-    public bool TryEnqueue(PlaybackRequest request) => _queue.Writer.TryWrite(request);
 
     public void Preview(string soundGroup = "normal")
     {
-        TryEnqueue(new PlaybackRequest
+        TryPlay(new PlaybackRequest
         {
             SoundGroup = soundGroup,
             Key = new KeyIdentity("Preview", "Preview", KeyCategory.Special)
         });
-    }
-
-    private async Task ProcessQueueAsync()
-    {
-        try
-        {
-            await foreach (PlaybackRequest request in _queue.Reader.ReadAllAsync(_shutdown.Token))
-            {
-                try
-                {
-                    PlayNow(request);
-                }
-                catch
-                {
-                    // Audio failures should never destabilize the keyboard hook or UI.
-                }
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
     }
 
     private void PlayNow(PlaybackRequest request)
@@ -140,18 +147,24 @@ public sealed class AudioEngine : IAsyncDisposable
         };
         sampleProvider = new LimiterSampleProvider(sampleProvider);
 
-        _mixer.AddMixerInput(sampleProvider);
+        lock (_mixerLock)
+        {
+            _mixer.AddMixerInput(sampleProvider);
+        }
     }
 
     private LoadedSoundPack? ResolvePack(string? soundPackId)
     {
-        if (!string.IsNullOrWhiteSpace(soundPackId) &&
-            _packs.TryGetValue(soundPackId, out LoadedSoundPack? requestedPack))
+        lock (_packLock)
         {
-            return requestedPack;
-        }
+            if (!string.IsNullOrWhiteSpace(soundPackId) &&
+                _packs.TryGetValue(soundPackId, out LoadedSoundPack? requestedPack))
+            {
+                return requestedPack;
+            }
 
-        return _activePack;
+            return _activePack;
+        }
     }
 
     private LoadedSoundSample SelectSample(SoundPackMetadata metadata, string group, IReadOnlyList<LoadedSoundSample> samples)
@@ -165,9 +178,12 @@ public sealed class AudioEngine : IAsyncDisposable
         }
 
         string roundRobinKey = $"{metadata.Id}:{group}";
-        int next = _roundRobin.TryGetValue(roundRobinKey, out int value) ? value : 0;
-        _roundRobin[roundRobinKey] = (next + 1) % samples.Count;
-        return samples[next];
+        lock (_roundRobin)
+        {
+            int next = _roundRobin.TryGetValue(roundRobinKey, out int value) ? value : 0;
+            _roundRobin[roundRobinKey] = (next + 1) % samples.Count;
+            return samples[next];
+        }
     }
 
     private double ResolvePitchFactor(double packVariation)
@@ -218,23 +234,22 @@ public sealed class AudioEngine : IAsyncDisposable
         }
     }
 
-    public bool TryGetLoadedPack(string soundPackId, out LoadedSoundPack? pack) =>
-        _packs.TryGetValue(soundPackId, out pack);
+    public bool TryGetLoadedPack(string soundPackId, out LoadedSoundPack? pack)
+    {
+        lock (_packLock)
+        {
+            return _packs.TryGetValue(soundPackId, out pack);
+        }
+    }
 
     public async ValueTask DisposeAsync()
     {
-        _queue.Writer.TryComplete();
-        _shutdown.Cancel();
-        try
+        _disposed = true;
+        await Task.Yield();
+        lock (_mixerLock)
         {
-            await _worker.WaitAsync(TimeSpan.FromSeconds(1));
+            _output.Stop();
+            _output.Dispose();
         }
-        catch
-        {
-            // Shutdown is best-effort.
-        }
-
-        _output.Dispose();
-        _shutdown.Dispose();
     }
 }

@@ -162,7 +162,7 @@ public sealed class SoundPackLoader
                 samples.AddRange(buffer.Take(read));
             }
 
-            return AudioSampleTrimmer.TrimLeadingSilence(samples.ToArray(), PlaybackWaveFormat.Channels);
+            return AudioSampleTrimmer.TrimSilence(samples.ToArray(), PlaybackWaveFormat.Channels);
         }
         catch (Exception ex) when (ex is InvalidDataException or EndOfStreamException or IOException)
         {
