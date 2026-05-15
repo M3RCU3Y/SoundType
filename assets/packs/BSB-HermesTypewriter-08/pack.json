@@ -1,0 +1,70 @@
+{
+  "id": "bsb-hermes-roomy-flow",
+  "name": "Hermes Precisa Roomy Flow",
+  "author": "Joseph SARDIN / BigSoundBank",
+  "version": "1.0.0",
+  "description": "CC0 Hermes Precisa 305 typewriter one-shots extracted from BigSoundBank Typewriter #8.",
+  "license": "CC0/public domain equivalent. Source: BigSoundBank Hermes Precisa 305 typewriter recordings by Joseph SARDIN.",
+  "tags": [
+    "typewriter",
+    "mechanical",
+    "vintage",
+    "cc0",
+    "bigsoundbank"
+  ],
+  "groups": {
+    "normal": [
+      "normal/key-01.wav",
+      "normal/key-02.wav",
+      "normal/key-03.wav",
+      "normal/key-04.wav",
+      "normal/key-05.wav",
+      "normal/key-06.wav",
+      "normal/key-07.wav",
+      "normal/key-08.wav",
+      "normal/key-09.wav",
+      "normal/key-10.wav",
+      "normal/key-11.wav",
+      "normal/key-12.wav",
+      "normal/key-13.wav",
+      "normal/key-14.wav",
+      "normal/key-15.wav",
+      "normal/key-16.wav",
+      "normal/key-17.wav",
+      "normal/key-18.wav",
+      "normal/key-19.wav",
+      "normal/key-20.wav",
+      "normal/key-21.wav",
+      "normal/key-22.wav",
+      "normal/key-23.wav",
+      "normal/key-24.wav",
+      "normal/key-25.wav",
+      "normal/key-26.wav",
+      "normal/key-27.wav",
+      "normal/key-28.wav",
+      "normal/key-29.wav",
+      "normal/key-30.wav",
+      "normal/key-31.wav",
+      "normal/key-32.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "enter": [
+      "enter/bell.wav"
+    ],
+    "backspace": [
+      "backspace/key.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.72,
+    "pitchVariation": 0,
+    "randomize": true
+  }
+}

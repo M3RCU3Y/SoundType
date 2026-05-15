@@ -9,6 +9,7 @@ SoundType also adapts backend/audio concepts from Keyboard Sounds Pro into nativ
 - support KSP-style key release samples through optional `*-release` sound groups;
 - keep default pitch variation at 0 so sourced recordings are not resampled unless the user opts in;
 - keep Mechvibes full-travel packs in per-file `mp3` form to reuse their press/release mapping without adding runtime codec weight;
+- extract long CC0 typewriter recordings into short one-shot clips before bundling so each key press stays low-latency and does not start a long background typing loop;
 - expose 10-band equalizer controls at 60, 170, 310, 600, 1k, 3k, 6k, 12k, 14k, and 16k Hz;
 - support stereo panning by key position or randomized placement;
 - render waveform previews from decoded sample peaks.
@@ -17,5 +18,6 @@ Reference reviewed:
 
 - Keyboard Sounds Pro, MIT License, copyright 2025 Nathan Fiscaletti.
 - Mechvibes, MIT License, copyright 2021 Hai Nguyen. SoundType imports selected sound profiles only; no Mechvibes implementation code is copied.
+- BigSoundBank Hermes Precisa 305 typewriter recordings, CC0/public-domain equivalent, by Joseph SARDIN. SoundType imports extracted one-shot clips only.
 
 SoundType keeps its existing WPF architecture and control flow. The styling and audio changes live in WPF resource dictionaries, native controls, and SoundType's C# audio pipeline.

@@ -42,6 +42,16 @@ SoundType includes selected full-travel keyboard sound profiles from `src/audio`
 
 The copied profile folders in `assets/packs/Mechvibes-*` preserve the upstream MIT license and source `config.json` as `SOURCE_CONFIG.json`.
 
+## BigSoundBank Typewriter Recordings
+
+Source: https://bigsoundbank.com/search?q=typewriter
+
+Author: Joseph SARDIN
+
+License: CC0/public-domain equivalent as stated on the BigSoundBank download pages.
+
+SoundType includes ten Hermes Precisa 305 typewriter packs in `assets/packs/BSB-HermesTypewriter-*`. The session packs are short one-shot clips extracted from the source recordings so each keystroke can play independently without starting a long typing loop. Each copied pack includes `SOURCE.txt` with the exact source pages used.
+
 ## OpenGameArt Keyboard Soundpack #1
 
 Source: https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes

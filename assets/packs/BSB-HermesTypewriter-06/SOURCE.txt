@@ -1,0 +1,10 @@
+Source: BigSoundBank Hermes Precisa 305 typewriter recordings
+Author: Joseph SARDIN
+License: CC0/public-domain equivalent as stated on each BigSoundBank download page.
+Processing: SoundType extracted short one-shot key clips from the source recordings and kept the samples mono WAV for low-latency playback.
+
+Source pages:
+- Typewriter #6: https://bigsoundbank.com/typewriter-6-s2839.html
+- Typewriter, Key: https://bigsoundbank.com/typewriter-key-s2842.html
+- Typewriter, space: https://bigsoundbank.com/typewriter-space-s2843.html
+- Typewriter, Bell #1: https://bigsoundbank.com/typewriter-bell-s2844.html

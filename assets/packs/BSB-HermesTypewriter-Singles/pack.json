@@ -1,0 +1,39 @@
+{
+  "id": "bsb-hermes-singles",
+  "name": "Hermes Precisa Singles",
+  "author": "Joseph SARDIN / BigSoundBank",
+  "version": "1.0.0",
+  "description": "CC0 Hermes Precisa 305 dedicated key, space, and bell recordings from BigSoundBank.",
+  "license": "CC0/public domain equivalent. Source: BigSoundBank Hermes Precisa 305 typewriter recordings by Joseph SARDIN.",
+  "tags": [
+    "typewriter",
+    "mechanical",
+    "vintage",
+    "cc0",
+    "bigsoundbank"
+  ],
+  "groups": {
+    "normal": [
+      "normal/key-01.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "enter": [
+      "enter/bell.wav"
+    ],
+    "backspace": [
+      "backspace/key.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.74,
+    "pitchVariation": 0,
+    "randomize": true
+  }
+}

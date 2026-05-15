@@ -13,7 +13,7 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | Area | What SoundType Does |
 | --- | --- |
 | Sound packs | Built-in sourced switch and typewriter packs |
-| Authentic profiles | MIT/CC0 profiles including Cherry MX, Gateron Ink, Holy Panda, Alpaca, NovelKeys Cream, Logitech G915 Brown, Mechvibes full-travel switches, Opera GX, Cherry KC 1000, and typewriters |
+| Authentic profiles | MIT/CC0 profiles including Cherry MX, Gateron Ink, Holy Panda, Alpaca, NovelKeys Cream, Logitech G915 Brown, Mechvibes full-travel switches, Opera GX, Cherry KC 1000, and multiple real typewriter sessions |
 | Realistic switch motion | KSP-style press and release samples for supported mechanical profiles |
 | Keyboard control | Full visual keyboard for excluding keys without typing raw characters |
 | Per-app rules | Disable, force enable, override pack, or adjust volume by foreground app |
@@ -30,6 +30,7 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | KSP switch profiles | MIT-licensed Alpaca, Cherry MX, Gateron Ink, Holy Panda, NovelKeys Cream, Logitech G915 Brown, and Opera GX profiles with press/release samples where available |
 | Mechvibes full-travel profiles | MIT-licensed Turquoise, Cream, MX Black, MX Brown, and MX Blue full-travel profiles with release samples where available |
 | Cherry KC 1000 Real Keys | CC0 single-key recordings from OpenGameArt |
+| Hermes Precisa typewriter sessions | Ten CC0 BigSoundBank packs extracted from real Hermes Precisa 305 recordings |
 | Antique Typewriter | KeyboardSounds Pro's antique typewriter profile |
 | Cassie Typewriter CC0 | Authentic CC0 typewriter one-shots from OpenGameArt |
 
