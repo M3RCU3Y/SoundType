@@ -26,6 +26,18 @@
     ],
     "backspace": [
       "backspace/backspace.mp3"
+    ],
+    "backspace-release": [
+      "backspace-release/release_back.mp3"
+    ],
+    "enter-release": [
+      "enter-release/release_enter.mp3"
+    ],
+    "normal-release": [
+      "normal-release/release_key.mp3"
+    ],
+    "space-release": [
+      "space-release/release_space.mp3"
     ]
   },
   "keyOverrides": {

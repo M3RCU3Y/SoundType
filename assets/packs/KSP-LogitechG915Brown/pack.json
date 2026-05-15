@@ -32,6 +32,26 @@
     "backspace": [
       "backspace/backspace-press-1.wav",
       "backspace/backspace-press-2.wav"
+    ],
+    "backspace-release": [
+      "backspace-release/backspace-enter-release-1.wav",
+      "backspace-release/backspace-enter-release-2.wav"
+    ],
+    "enter-release": [
+      "enter-release/enter-release-1.wav",
+      "enter-release/enter-release-2.wav"
+    ],
+    "normal-release": [
+      "normal-release/key-release-1.wav",
+      "normal-release/key-release-2.wav",
+      "normal-release/key-release-3.wav",
+      "normal-release/key-release-4.wav",
+      "normal-release/key-release-5.wav"
+    ],
+    "space-release": [
+      "space-release/space-release-1.wav",
+      "space-release/space-release-2.wav",
+      "space-release/space-release-3.wav"
     ]
   },
   "keyOverrides": {

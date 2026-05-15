@@ -17,6 +17,9 @@
       "normal/press_key3.mp3",
       "normal/press_key4.mp3",
       "normal/press_key5.mp3"
+    ],
+    "normal-release": [
+      "normal-release/release.mp3"
     ]
   },
   "keyOverrides": {},

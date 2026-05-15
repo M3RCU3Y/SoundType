@@ -8,6 +8,8 @@ public sealed class KeyboardHookService : IDisposable
     private const int WhKeyboardLl = 13;
     private const int WmKeydown = 0x0100;
     private const int WmSyskeydown = 0x0104;
+    private const int WmKeyup = 0x0101;
+    private const int WmSyskeyup = 0x0105;
     private readonly LowLevelKeyboardProc _proc;
     private readonly ConcurrentDictionary<int, DateTimeOffset> _lastKeyDown = new();
     private IntPtr _hookId;
@@ -46,19 +48,29 @@ public sealed class KeyboardHookService : IDisposable
 
     private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && (wParam == WmKeydown || wParam == WmSyskeydown))
+        if (nCode >= 0 && (wParam == WmKeydown || wParam == WmSyskeydown || wParam == WmKeyup || wParam == WmSyskeyup))
         {
             KbdLlHookStruct hookData = Marshal.PtrToStructure<KbdLlHookStruct>(lParam);
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            bool isRepeat = _lastKeyDown.TryGetValue(hookData.VkCode, out DateTimeOffset previous) &&
-                            now - previous < TimeSpan.FromMilliseconds(35);
-            _lastKeyDown[hookData.VkCode] = now;
+            bool isRelease = wParam == WmKeyup || wParam == WmSyskeyup;
+            bool isRepeat = false;
+            if (isRelease)
+            {
+                _lastKeyDown.TryRemove(hookData.VkCode, out _);
+            }
+            else
+            {
+                isRepeat = _lastKeyDown.TryGetValue(hookData.VkCode, out DateTimeOffset previous) &&
+                           now - previous < TimeSpan.FromMilliseconds(35);
+                _lastKeyDown[hookData.VkCode] = now;
+            }
 
             KeyPressed?.Invoke(this, new KeyPressedEvent
             {
                 Key = KeyIdentityMapper.FromVirtualKey(hookData.VkCode),
                 Timestamp = now,
-                IsRepeat = isRepeat
+                IsRepeat = isRepeat,
+                IsRelease = isRelease
             });
         }
 

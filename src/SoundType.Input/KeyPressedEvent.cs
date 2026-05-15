@@ -7,4 +7,5 @@ public sealed class KeyPressedEvent : EventArgs
     public required KeyIdentity Key { get; init; }
     public required DateTimeOffset Timestamp { get; init; }
     public required bool IsRepeat { get; init; }
+    public required bool IsRelease { get; init; }
 }

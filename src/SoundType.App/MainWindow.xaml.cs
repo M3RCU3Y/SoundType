@@ -84,7 +84,7 @@ public partial class MainWindow : Window
 
     private void KeyboardHook_KeyPressed(object? sender, KeyPressedEvent e)
     {
-        if (_settings.IgnoreKeyRepeats && e.IsRepeat)
+        if (!e.IsRelease && _settings.IgnoreKeyRepeats && e.IsRepeat)
         {
             return;
         }
@@ -96,14 +96,45 @@ public partial class MainWindow : Window
             return;
         }
 
+        string? soundGroup = ResolveSoundGroupForEvent(ResolveDecisionPack(decision.SoundPackId), decision.SoundGroup, e.IsRelease);
+        if (soundGroup is null)
+        {
+            return;
+        }
+
         _audio.TryPlay(new PlaybackRequest
         {
             Key = e.Key,
-            SoundGroup = decision.SoundGroup,
+            SoundGroup = soundGroup,
             SoundPackId = decision.SoundPackId,
             VolumeMultiplier = decision.VolumeMultiplier * _settings.GroupVolumes.GetVolumeForGroup(decision.SoundGroup),
             ActiveProcessName = processName
         });
+    }
+
+    private SoundPackMetadata? ResolveDecisionPack(string? soundPackId)
+    {
+        if (!string.IsNullOrWhiteSpace(soundPackId))
+        {
+            return _packs.FirstOrDefault(pack => pack.Id.Equals(soundPackId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return _activePack;
+    }
+
+    private static string? ResolveSoundGroupForEvent(SoundPackMetadata? pack, string baseGroup, bool isRelease)
+    {
+        if (!isRelease)
+        {
+            return baseGroup;
+        }
+
+        if (HasGroup(pack, $"{baseGroup}-release"))
+        {
+            return $"{baseGroup}-release";
+        }
+
+        return HasGroup(pack, "normal-release") ? "normal-release" : null;
     }
 
     private void LoadPacks()
@@ -1277,6 +1308,11 @@ public partial class MainWindow : Window
 
     private static bool HasTag(SoundPackMetadata pack, string tag) =>
         pack.Tags.Any(candidate => candidate.Equals(tag, StringComparison.OrdinalIgnoreCase));
+
+    private static bool HasGroup(SoundPackMetadata? pack, string group) =>
+        pack is not null &&
+        pack.Groups.TryGetValue(group, out List<string>? files) &&
+        files.Count > 0;
 
     private void RefreshSelectedPackDetails(SoundPackMetadata? pack)
     {
