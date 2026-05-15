@@ -15,3 +15,5 @@ Source pages:
 - Typewriter, Key: https://bigsoundbank.com/typewriter-key-s2842.html
 - Typewriter, space: https://bigsoundbank.com/typewriter-space-s2843.html
 - Typewriter, Bell #1: https://bigsoundbank.com/typewriter-bell-s2844.html
+
+2026-05 cleanup: retained as one of two Hermes variants, reduced bell/return level, filtered harsh highs, and removed redundant Hermes session packs.

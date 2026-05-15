@@ -295,7 +295,7 @@
                             </StackPanel>
                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
                                 <TextBox x:Name="PackSearchTextBox" AutomationProperties.AutomationId="PackSearchTextBox" Width="290" Height="42" Margin="0,0,12,0" TextChanged="PackSearchTextBox_TextChanged"/>
-                                <ComboBox x:Name="PackTypeComboBox" Width="170" Height="42" SelectionChanged="PackTypeComboBox_SelectionChanged"/>
+                                <ComboBox x:Name="PackTypeComboBox" Width="210" Height="42" SelectionChanged="PackTypeComboBox_SelectionChanged"/>
                             </StackPanel>
                         </DockPanel>
 
@@ -324,6 +324,17 @@
                                 </StackPanel>
                             </Border>
                         </Grid>
+
+                        <Border Style="{StaticResource CompactPanelStyle}" Margin="0,0,0,18" Padding="14">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Browse packs" Foreground="{StaticResource MutedTextBrush}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,18,0"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="AllPacksCategoryButton" Content="All" Width="110" Height="42" Click="AllPacksCategory_Click"/>
+                                    <Button x:Name="MechanicalCategoryButton" Content="Mechanical switches" Width="190" Height="42" Click="MechanicalCategory_Click"/>
+                                    <Button x:Name="TypewriterCategoryButton" Content="Typewriters" Width="150" Height="42" Click="TypewriterCategory_Click"/>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
 
                         <ListBox x:Name="PacksList" MinHeight="360" MaxHeight="520" SelectionChanged="PacksList_SelectionChanged" HorizontalContentAlignment="Stretch">
                             <ListBox.ItemTemplate>

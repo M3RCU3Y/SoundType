@@ -1,0 +1,4 @@
+Source: https://freesound.org/people/nvmbky/sounds/801118/
+Author: nvmbky / Freesound
+License: CC0 1.0. Source: Freesound sound 801118 by nvmbky.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

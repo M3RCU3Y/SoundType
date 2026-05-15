@@ -1,0 +1,4 @@
+Source: https://opengameart.org/content/mechanical-sounds
+Author: BMacZero / OpenGameArt
+License: CC0. Source: OpenGameArt Mechanical Sounds by BMacZero.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

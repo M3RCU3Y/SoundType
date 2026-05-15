@@ -1,0 +1,4 @@
+Source: https://www.chosic.com/download-audio/54458/
+Author: Sound Effects / Chosic
+License: Creative Commons CC0 Public Domain. Source: Chosic download-audio/54458.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

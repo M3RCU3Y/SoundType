@@ -1,9 +1,9 @@
 {
   "id": "bsb-hermes-mixed-desk",
-  "name": "Hermes Precisa Mixed Desk",
+  "name": "Hermes Precisa Clean Mix",
   "author": "Joseph SARDIN / BigSoundBank",
   "version": "1.0.0",
-  "description": "CC0 mixed Hermes Precisa 305 one-shot set built from multiple BigSoundBank typing sessions.",
+  "description": "Cleaned CC0 mixed Hermes Precisa 305 one-shot set built from multiple BigSoundBank typing sessions. Bell/return accents are reduced and filtered to avoid harsh ringing.",
   "license": "CC0/public domain equivalent. Source: BigSoundBank Hermes Precisa 305 typewriter recordings by Joseph SARDIN.",
   "tags": [
     "typewriter",
@@ -63,8 +63,8 @@
     "Backspace": "backspace"
   },
   "defaults": {
-    "volume": 0.72,
-    "pitchVariation": 0,
+    "volume": 0.64,
+    "pitchVariation": 0.01,
     "randomize": true
   }
 }

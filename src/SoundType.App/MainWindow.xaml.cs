@@ -331,6 +331,7 @@ public partial class MainWindow : Window
         PackTypeComboBox.SelectedItem = PackFilter.All;
         PackSearchTextBox.Text = "";
         _packFiltersConfigured = true;
+        RefreshPackCategoryButtons();
     }
 
     private void BindSettingsToUi()
@@ -732,7 +733,28 @@ public partial class MainWindow : Window
     private void PackTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_loading) return;
+        RefreshPackCategoryButtons();
         RefreshPackLibrary();
+    }
+
+    private void AllPacksCategory_Click(object sender, RoutedEventArgs e) =>
+        SetPackFilter(PackFilter.All);
+
+    private void MechanicalCategory_Click(object sender, RoutedEventArgs e) =>
+        SetPackFilter(PackFilter.Switches);
+
+    private void TypewriterCategory_Click(object sender, RoutedEventArgs e) =>
+        SetPackFilter(PackFilter.Typewriters);
+
+    private void SetPackFilter(string filter)
+    {
+        if (PackTypeComboBox.SelectedItem as string == filter)
+        {
+            RefreshPackLibrary();
+            return;
+        }
+
+        PackTypeComboBox.SelectedItem = filter;
     }
 
     private void PreviewNormal_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("normal");
@@ -1295,6 +1317,27 @@ public partial class MainWindow : Window
         PackCountText.Text = visiblePacks.Count == _packs.Count
             ? (_packs.Count == 1 ? "1 pack available." : $"{_packs.Count} packs available.")
             : $"{visiblePacks.Count} of {_packs.Count} packs shown.";
+        RefreshPackCategoryButtons();
+    }
+
+    private void RefreshPackCategoryButtons()
+    {
+        string filter = PackTypeComboBox.SelectedItem as string ?? PackFilter.All;
+        ApplyCategoryButtonState(AllPacksCategoryButton, filter == PackFilter.All);
+        ApplyCategoryButtonState(MechanicalCategoryButton, filter == PackFilter.Switches);
+        ApplyCategoryButtonState(TypewriterCategoryButton, filter == PackFilter.Typewriters);
+    }
+
+    private void ApplyCategoryButtonState(System.Windows.Controls.Button button, bool selected)
+    {
+        button.Background = selected
+            ? (MediaBrush)FindResource("AccentBrush")
+            : (MediaBrush)FindResource("PanelBrush");
+        button.BorderBrush = selected
+            ? (MediaBrush)FindResource("AccentHoverBrush")
+            : (MediaBrush)FindResource("ControlBorderBrush");
+        button.Foreground = (MediaBrush)FindResource("TextBrush");
+        button.FontWeight = selected ? FontWeights.Bold : FontWeights.SemiBold;
     }
 
     private bool PackMatchesCurrentFilters(SoundPackMetadata pack)
@@ -1380,7 +1423,7 @@ public partial class MainWindow : Window
     private static class PackFilter
     {
         public const string All = "All";
-        public const string Switches = "Switches";
+        public const string Switches = "Mechanical switches";
         public const string Typewriters = "Typewriters";
         public const string Quiet = "Quiet";
         public const string Digital = "Digital";

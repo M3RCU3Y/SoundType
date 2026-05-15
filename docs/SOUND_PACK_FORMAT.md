@@ -56,7 +56,7 @@ OGG files are not supported with the current NAudio dependency set. Packs that l
 Use the developer validator to check a folder pack:
 
 ```powershell
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\KSP-Typewriter
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\Freesound-RoyalQuietDeluxe
 ```
 
 Use the same command for a `.soundpack` or `.zip` archive:

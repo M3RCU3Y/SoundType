@@ -1,0 +1,4 @@
+Source: https://freesound.org/people/Gate13/sounds/697389/
+Author: Gate13 / Freesound
+License: CC0 1.0. Source: Freesound sound 697389 by Gate13.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

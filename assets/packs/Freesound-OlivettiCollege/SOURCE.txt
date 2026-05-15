@@ -1,0 +1,4 @@
+Source: https://freesound.org/people/Spacekittycat/sounds/770623/
+Author: Spacekittycat / Freesound
+License: CC0 1.0. Source: Freesound sound 770623 by Spacekittycat.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

@@ -19,5 +19,8 @@ Reference reviewed:
 - Keyboard Sounds Pro, MIT License, copyright 2025 Nathan Fiscaletti.
 - Mechvibes, MIT License, copyright 2021 Hai Nguyen. SoundType imports selected sound profiles only; no Mechvibes implementation code is copied.
 - BigSoundBank Hermes Precisa 305 typewriter recordings, CC0/public-domain equivalent, by Joseph SARDIN. SoundType imports extracted one-shot clips only.
+- Freesound CC0 typewriter recordings by videog, exterminat, TOC1, nvmbky, Spacekittycat, Gate13, cabled_mess, and bubblegump1977. SoundType imports preview/download audio as segmented one-shot clips with per-pack `SOURCE.txt` files.
+- Chosic Typewriter, Creative Commons CC0 Public Domain, imported as segmented one-shot clips.
+- OpenGameArt Mechanical Sounds by BMacZero, CC0, imported as a short typewriter tap pack.
 
 SoundType keeps its existing WPF architecture and control flow. The styling and audio changes live in WPF resource dictionaries, native controls, and SoundType's C# audio pipeline.

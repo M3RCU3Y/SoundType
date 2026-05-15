@@ -13,7 +13,7 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | Area | What SoundType Does |
 | --- | --- |
 | Sound packs | Built-in sourced switch and typewriter packs |
-| Authentic profiles | MIT/CC0 profiles including Cherry MX, Gateron Ink, Holy Panda, Alpaca, NovelKeys Cream, Logitech G915 Brown, Mechvibes full-travel switches, Opera GX, Cherry KC 1000, and multiple real typewriter sessions |
+| Authentic profiles | MIT/CC0 profiles including Cherry MX, Gateron Ink, Holy Panda, Alpaca, NovelKeys Cream, Logitech G915 Brown, Mechvibes full-travel switches, Opera GX, Cherry KC 1000, and curated typewriter recordings |
 | Realistic switch motion | KSP-style press and release samples for supported mechanical profiles |
 | Keyboard control | Full visual keyboard for excluding keys without typing raw characters |
 | Per-app rules | Disable, force enable, override pack, or adjust volume by foreground app |
@@ -30,9 +30,8 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | KSP switch profiles | MIT-licensed Alpaca, Cherry MX, Gateron Ink, Holy Panda, NovelKeys Cream, Logitech G915 Brown, and Opera GX profiles with press/release samples where available |
 | Mechvibes full-travel profiles | MIT-licensed Turquoise, Cream, MX Black, MX Brown, and MX Blue full-travel profiles with release samples where available |
 | Cherry KC 1000 Real Keys | CC0 single-key recordings from OpenGameArt |
-| Hermes Precisa typewriter sessions | Ten CC0 BigSoundBank packs extracted from real Hermes Precisa 305 recordings |
-| Antique Typewriter | KeyboardSounds Pro's antique typewriter profile |
-| Cassie Typewriter CC0 | Authentic CC0 typewriter one-shots from OpenGameArt |
+| Curated typewriter profiles | CC0 Freesound, Chosic, OpenGameArt, and cleaned BigSoundBank typewriter profiles segmented into one-shot samples |
+| Hermes Precisa clean profiles | Two CC0 BigSoundBank Hermes Precisa 305 variants with reduced/filtered bell accents |
 
 The bundled audio now favors sourced profiles over generated placeholders. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
@@ -83,7 +82,7 @@ SoundType folder packs use a `pack.json` manifest plus grouped WAV/MP3 samples. 
 Validate a folder pack or archive:
 
 ```powershell
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\KSP-Typewriter
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\Freesound-RoyalQuietDeluxe
 .\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\MyPack.soundpack
 ```
 

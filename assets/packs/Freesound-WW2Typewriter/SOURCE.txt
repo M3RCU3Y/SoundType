@@ -1,0 +1,4 @@
+Source: https://freesound.org/people/exterminat/sounds/164807/
+Author: exterminat / Freesound
+License: CC0 1.0. Source: Freesound sound 164807 by exterminat.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

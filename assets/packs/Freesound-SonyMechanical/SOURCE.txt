@@ -1,0 +1,4 @@
+Source: https://freesound.org/people/TOC1/sounds/244414/
+Author: TOC1 / Freesound
+License: CC0 1.0. Source: Freesound sound 244414 by TOC1.
+Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

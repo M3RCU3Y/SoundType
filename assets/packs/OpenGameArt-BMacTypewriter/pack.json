@@ -1,0 +1,39 @@
+{
+  "id": "oga-bmaczero-typewriter",
+  "name": "BMacZero Typewriter Tap",
+  "author": "BMacZero / OpenGameArt",
+  "version": "1.0.0",
+  "description": "CC0 short mechanical typewriter tap from BMacZero\u2019s mechanical sounds set.",
+  "license": "CC0. Source: OpenGameArt Mechanical Sounds by BMacZero.",
+  "tags": [
+    "typewriter",
+    "mechanical",
+    "tap",
+    "cc0",
+    "opengameart"
+  ],
+  "groups": {
+    "normal": [
+      "normal/key-01.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "enter": [
+      "enter/return.wav"
+    ],
+    "backspace": [
+      "backspace/key.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.64,
+    "pitchVariation": 0.015,
+    "randomize": true
+  }
+}

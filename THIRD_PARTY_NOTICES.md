@@ -21,7 +21,6 @@ SoundType also includes selected bundled keyboard sound profiles whose profile f
 - Cherry MX Brown
 - NovelKeys Cream
 - Logitech G915 TKL Brown
-- Antique Typewriter
 - Opera GX
 
 The copied profile folders in `assets/packs/KSP-*` preserve their upstream license file. The original copyright belongs to the upstream authors named in those license files.
@@ -50,7 +49,33 @@ Author: Joseph SARDIN
 
 License: CC0/public-domain equivalent as stated on the BigSoundBank download pages.
 
-SoundType includes ten Hermes Precisa 305 typewriter packs in `assets/packs/BSB-HermesTypewriter-*`. The session packs are short one-shot clips extracted from the source recordings so each keystroke can play independently without starting a long typing loop. Each copied pack includes `SOURCE.txt` with the exact source pages used.
+SoundType includes two cleaned Hermes Precisa 305 typewriter packs in `assets/packs/BSB-HermesTypewriter-*`. The retained packs are short one-shot clips extracted from the source recordings so each keystroke can play independently without starting a long typing loop. Bell and return accents are filtered and lowered to avoid harsh ringing. Each copied pack includes `SOURCE.txt` with the exact source pages used.
+
+## Freesound Typewriter Recordings
+
+Source: https://freesound.org
+
+License: Creative Commons 0 on each source page.
+
+SoundType includes curated CC0 typewriter packs from these Freesound recordings:
+
+- `assets/packs/Freesound-RoyalQuietDeluxe` from https://freesound.org/people/videog/sounds/240839/
+- `assets/packs/Freesound-WW2Typewriter` from https://freesound.org/people/exterminat/sounds/164807/
+- `assets/packs/Freesound-SonyMechanical` from https://freesound.org/people/TOC1/sounds/244414/
+- `assets/packs/Freesound-CloseVintage` from https://freesound.org/people/nvmbky/sounds/801118/
+- `assets/packs/Freesound-OlivettiCollege` from https://freesound.org/people/Spacekittycat/sounds/770623/
+- `assets/packs/Freesound-Gate13Actions` from https://freesound.org/people/Gate13/sounds/697389/
+- `assets/packs/Freesound-PortableKeyPair` from https://freesound.org/people/cabled_mess/sounds/360601/ and https://freesound.org/people/bubblegump1977/sounds/785412/
+
+Each pack includes `SOURCE.txt`. Long recordings were segmented into short one-shot samples with fade-out headroom for low-latency overlapping playback.
+
+## Chosic Typewriter Sound
+
+Source: https://www.chosic.com/download-audio/54458/
+
+License: Creative Commons CC0 Public Domain as stated on the Chosic page.
+
+SoundType bundles this recording as `assets/packs/Chosic-TypewriterDesk` after one-shot segmentation.
 
 ## OpenGameArt Keyboard Soundpack #1
 
@@ -62,12 +87,12 @@ License: CC0
 
 SoundType bundles the single-key Cherry KC 1000 recordings as `assets/packs/OGACherryKC1000`.
 
-## OpenGameArt Typewriter Sounds
+## OpenGameArt Mechanical Typewriter Tap
 
-Source: https://opengameart.org/content/typewriter-sounds
+Source: https://opengameart.org/content/mechanical-sounds
 
-Author: Cassie-OrbitGames
+Author: BMacZero
 
 License: CC0
 
-SoundType bundles these files as `assets/packs/OGACassieTypewriter`. CC0 does not require attribution, but the source is recorded here for provenance.
+SoundType bundles the short typewriter tap from this set as `assets/packs/OpenGameArt-BMacTypewriter`. CC0 does not require attribution, but the source is recorded here for provenance.

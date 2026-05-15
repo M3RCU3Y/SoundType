@@ -1,0 +1,40 @@
+{
+  "id": "fs-portable-key-pair",
+  "name": "Portable Key Pair",
+  "author": "cabled_mess + bubblegump1977 / Freesound",
+  "version": "1.0.0",
+  "description": "CC0 portable mechanical typewriter single-key hits for a crisp, dry typing profile.",
+  "license": "CC0 1.0. Sources: Freesound sounds 360601 by cabled_mess and 785412 by bubblegump1977.",
+  "tags": [
+    "typewriter",
+    "single-key",
+    "portable",
+    "cc0",
+    "freesound"
+  ],
+  "groups": {
+    "normal": [
+      "normal/key-01.wav",
+      "normal/key-02.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "enter": [
+      "enter/return.wav"
+    ],
+    "backspace": [
+      "backspace/key.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.62,
+    "pitchVariation": 0.015,
+    "randomize": true
+  }
+}
