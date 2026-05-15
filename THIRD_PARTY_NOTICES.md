@@ -26,6 +26,22 @@ SoundType also includes selected bundled keyboard sound profiles whose profile f
 
 The copied profile folders in `assets/packs/KSP-*` preserve their upstream license file. The original copyright belongs to the upstream authors named in those license files.
 
+## Mechvibes
+
+Source: https://github.com/hainguyents13/mechvibes
+
+Mechvibes is licensed under the MIT License.
+
+SoundType includes selected full-travel keyboard sound profiles from `src/audio`:
+
+- Turquoise Full Travel
+- Cream Full Travel
+- MX Black Full Travel
+- MX Brown Full Travel
+- MX Blue Full Travel
+
+The copied profile folders in `assets/packs/Mechvibes-*` preserve the upstream MIT license and source `config.json` as `SOURCE_CONFIG.json`.
+
 ## OpenGameArt Keyboard Soundpack #1
 
 Source: https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes

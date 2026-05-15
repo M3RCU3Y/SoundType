@@ -1,0 +1,55 @@
+{
+  "id": "mv-cream-full-travel",
+  "name": "Cream Full Travel",
+  "author": "Hai Nguyen / Mechvibes community",
+  "version": "1.0.0",
+  "description": "MIT-licensed Mechvibes full-travel creamy switch profile with press and release samples.",
+  "license": "MIT. Source: hainguyents13/mechvibes src/audio/cream-travel at b7cb633. Preserve bundled LICENSE and SOURCE_CONFIG.json.",
+  "tags": [
+    "switch",
+    "mechanical",
+    "full-travel",
+    "mechvibes",
+    "creamy"
+  ],
+  "groups": {
+    "normal": [
+      "normal/generic-r0.mp3",
+      "normal/generic-r1.mp3",
+      "normal/generic-r2.mp3",
+      "normal/generic-r3.mp3",
+      "normal/generic-r4.mp3"
+    ],
+    "enter": [
+      "enter/enter.mp3"
+    ],
+    "space": [
+      "space/space.mp3"
+    ],
+    "backspace": [
+      "backspace/backspace.mp3"
+    ],
+    "normal-release": [
+      "normal-release/generic-release.mp3"
+    ],
+    "enter-release": [
+      "enter-release/enter-release.mp3"
+    ],
+    "space-release": [
+      "space-release/space-release.mp3"
+    ],
+    "backspace-release": [
+      "backspace-release/backspace-release.mp3"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.7,
+    "pitchVariation": 0,
+    "randomize": true
+  }
+}

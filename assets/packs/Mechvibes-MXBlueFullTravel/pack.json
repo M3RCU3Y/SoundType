@@ -1,0 +1,33 @@
+{
+  "id": "mv-mxblue-full-travel",
+  "name": "MX Blue Full Travel",
+  "author": "Hai Nguyen / Mechvibes community",
+  "version": "1.0.0",
+  "description": "MIT-licensed Mechvibes Cherry MX Blue-style full-travel clicky profile with generic press and release samples.",
+  "license": "MIT. Source: hainguyents13/mechvibes src/audio/mxblue-travel at b7cb633. Preserve bundled LICENSE and SOURCE_CONFIG.json.",
+  "tags": [
+    "switch",
+    "mechanical",
+    "clicky",
+    "full-travel",
+    "mechvibes"
+  ],
+  "groups": {
+    "normal": [
+      "normal/generic-r0.mp3",
+      "normal/generic-r1.mp3",
+      "normal/generic-r2.mp3",
+      "normal/generic-r3.mp3",
+      "normal/generic-r4.mp3"
+    ],
+    "normal-release": [
+      "normal-release/generic-release.mp3"
+    ]
+  },
+  "keyOverrides": {},
+  "defaults": {
+    "volume": 0.68,
+    "pitchVariation": 0,
+    "randomize": true
+  }
+}
