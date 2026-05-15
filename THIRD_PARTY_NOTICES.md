@@ -22,8 +22,19 @@ SoundType also includes selected bundled keyboard sound profiles whose profile f
 - NovelKeys Cream
 - Logitech G915 TKL Brown
 - Antique Typewriter
+- Opera GX
 
 The copied profile folders in `assets/packs/KSP-*` preserve their upstream license file. The original copyright belongs to the upstream authors named in those license files.
+
+## OpenGameArt Keyboard Soundpack #1
+
+Source: https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes
+
+Author: unicaegames
+
+License: CC0
+
+SoundType bundles the single-key Cherry KC 1000 recordings as `assets/packs/OGACherryKC1000`.
 
 ## OpenGameArt Typewriter Sounds
 

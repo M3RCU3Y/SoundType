@@ -61,7 +61,7 @@ public sealed class SettingsService
         settings.MasterVolume = Math.Clamp(settings.MasterVolume, 0.0, 1.0);
         settings.PitchVariation = Math.Clamp(settings.PitchVariation, 0.0, 0.12);
         settings.ActiveSoundPackId = string.IsNullOrWhiteSpace(settings.ActiveSoundPackId)
-            ? "classic-typewriter"
+            ? AppSettings.DefaultSoundPackId
             : settings.ActiveSoundPackId;
         settings.ExcludedKeys ??= AppSettings.DefaultExcludedKeys();
         settings.AppRules ??= [];

@@ -39,6 +39,8 @@ public partial class MainWindow : Window
     private readonly List<TextBlock> _eqBandValueTexts = [];
     private AppSettings _settings = new();
     private IReadOnlyList<SoundPackMetadata> _packs = [];
+    private IReadOnlyDictionary<string, SoundPackMetadata> _packsById = new Dictionary<string, SoundPackMetadata>(StringComparer.OrdinalIgnoreCase);
+    private HashSet<string> _releasePackIds = new(StringComparer.OrdinalIgnoreCase);
     private SoundPackMetadata? _activePack;
     private HwndSource? _hotkeySource;
     private string? _currentProcessName;
@@ -89,6 +91,11 @@ public partial class MainWindow : Window
             return;
         }
 
+        if (e.IsRelease && _releasePackIds.Count == 0)
+        {
+            return;
+        }
+
         string? processName = _currentProcessName;
         PlaybackDecision decision = _ruleEngine.Decide(e.Key, processName, _settings, _activePack);
         if (!decision.ShouldPlay || decision.SoundGroup is null)
@@ -96,7 +103,13 @@ public partial class MainWindow : Window
             return;
         }
 
-        string? soundGroup = ResolveSoundGroupForEvent(ResolveDecisionPack(decision.SoundPackId), decision.SoundGroup, e.IsRelease);
+        SoundPackMetadata? decisionPack = ResolveDecisionPack(decision.SoundPackId);
+        if (e.IsRelease && !HasAnyReleaseGroup(decisionPack))
+        {
+            return;
+        }
+
+        string? soundGroup = ResolveSoundGroupForEvent(decisionPack, decision.SoundGroup, e.IsRelease);
         if (soundGroup is null)
         {
             return;
@@ -114,9 +127,9 @@ public partial class MainWindow : Window
 
     private SoundPackMetadata? ResolveDecisionPack(string? soundPackId)
     {
-        if (!string.IsNullOrWhiteSpace(soundPackId))
+        if (!string.IsNullOrWhiteSpace(soundPackId) && _packsById.TryGetValue(soundPackId, out SoundPackMetadata? pack))
         {
-            return _packs.FirstOrDefault(pack => pack.Id.Equals(soundPackId, StringComparison.OrdinalIgnoreCase));
+            return pack;
         }
 
         return _activePack;
@@ -140,6 +153,11 @@ public partial class MainWindow : Window
     private void LoadPacks()
     {
         _packs = _packLoader.DiscoverPacks(_packsRoot);
+        _packsById = _packs.ToDictionary(pack => pack.Id, StringComparer.OrdinalIgnoreCase);
+        _releasePackIds = _packs
+            .Where(HasAnyReleaseGroup)
+            .Select(pack => pack.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         RulePackComboBox.Items.Clear();
         foreach (SoundPackMetadata pack in _packs)
         {
@@ -1313,6 +1331,12 @@ public partial class MainWindow : Window
         pack is not null &&
         pack.Groups.TryGetValue(group, out List<string>? files) &&
         files.Count > 0;
+
+    private static bool HasAnyReleaseGroup(SoundPackMetadata? pack) =>
+        pack is not null &&
+        pack.Groups.Any(group =>
+            group.Key.EndsWith("-release", StringComparison.OrdinalIgnoreCase) &&
+            group.Value.Count > 0);
 
     private void RefreshSelectedPackDetails(SoundPackMetadata? pack)
     {

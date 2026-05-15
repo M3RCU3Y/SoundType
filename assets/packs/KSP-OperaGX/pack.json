@@ -1,0 +1,49 @@
+{
+  "id": "ksp-opera-gx",
+  "name": "Opera GX Keyboard",
+  "author": "Mechvibes Community / KeyboardSounds Pro",
+  "version": "1.0.0",
+  "description": "Crisp Opera GX browser keyboard profile imported from KeyboardSounds Pro.",
+  "license": "MIT. Source: keyboard-sounds/keyboardsounds-pro desktop/bundled-profiles/opera-gx.",
+  "tags": [
+    "switch",
+    "keyboard",
+    "crisp",
+    "keyboardsounds-pro"
+  ],
+  "groups": {
+    "normal": [
+      "normal/1real.wav",
+      "normal/2real.wav",
+      "normal/3real.wav",
+      "normal/4real.wav",
+      "normal/5real.wav",
+      "normal/6real.wav",
+      "normal/7real.wav",
+      "normal/8real.wav",
+      "normal/9real.wav",
+      "normal/10real.wav",
+      "normal/11real.wav",
+      "normal/12real.wav"
+    ],
+    "enter": [
+      "enter/enter.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "backspace": [
+      "backspace/backspace.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.64,
+    "pitchVariation": 0,
+    "randomize": true
+  }
+}

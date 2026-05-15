@@ -7,6 +7,7 @@ SoundType also adapts backend/audio concepts from Keyboard Sounds Pro into nativ
 - preload decoded audio into memory before playback;
 - use non-blocking overlapping sample playback instead of restarting one shared sample cursor;
 - support KSP-style key release samples through optional `*-release` sound groups;
+- keep default pitch variation at 0 so sourced recordings are not resampled unless the user opts in;
 - expose 10-band equalizer controls at 60, 170, 310, 600, 1k, 3k, 6k, 12k, 14k, and 16k Hz;
 - support stereo panning by key position or randomized placement;
 - render waveform previews from decoded sample peaks.

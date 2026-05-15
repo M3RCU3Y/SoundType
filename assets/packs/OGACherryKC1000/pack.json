@@ -1,0 +1,56 @@
+{
+  "id": "oga-cherry-kc1000",
+  "name": "Cherry KC 1000 Real Keys",
+  "author": "unicaegames / OpenGameArt",
+  "version": "1.0.0",
+  "description": "CC0 single keypress recordings from a Cherry KC 1000 keyboard recorded with a Shure SM7B.",
+  "license": "CC0. Source: https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes",
+  "tags": [
+    "switch",
+    "keyboard",
+    "recorded",
+    "cc0"
+  ],
+  "groups": {
+    "normal": [
+      "normal/keypress-001.wav",
+      "normal/keypress-002.wav",
+      "normal/keypress-003.wav",
+      "normal/keypress-004.wav",
+      "normal/keypress-005.wav",
+      "normal/keypress-006.wav",
+      "normal/keypress-007.wav",
+      "normal/keypress-008.wav",
+      "normal/keypress-009.wav",
+      "normal/keypress-010.wav",
+      "normal/keypress-011.wav",
+      "normal/keypress-012.wav",
+      "normal/keypress-013.wav",
+      "normal/keypress-014.wav",
+      "normal/keypress-015.wav",
+      "normal/keypress-016.wav",
+      "normal/keypress-017.wav",
+      "normal/keypress-018.wav",
+      "normal/keypress-019.wav",
+      "normal/keypress-020.wav",
+      "normal/keypress-021.wav",
+      "normal/keypress-022.wav",
+      "normal/keypress-023.wav",
+      "normal/keypress-024.wav",
+      "normal/keypress-025.wav",
+      "normal/keypress-026.wav",
+      "normal/keypress-027.wav",
+      "normal/keypress-028.wav",
+      "normal/keypress-029.wav",
+      "normal/keypress-030.wav",
+      "normal/keypress-031.wav",
+      "normal/keypress-032.wav"
+    ]
+  },
+  "keyOverrides": {},
+  "defaults": {
+    "volume": 0.7,
+    "pitchVariation": 0,
+    "randomize": true
+  }
+}

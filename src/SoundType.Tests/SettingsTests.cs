@@ -15,7 +15,7 @@ public sealed class SettingsTests
 
         Assert.True(settings.Enabled);
         Assert.Equal(0.75, settings.MasterVolume);
-        Assert.Equal(0.02, settings.PitchVariation);
+        Assert.Equal(0.0, settings.PitchVariation);
         Assert.Contains("LeftShift", settings.ExcludedKeys);
     }
 
@@ -69,7 +69,25 @@ public sealed class SettingsTests
         AppSettings settings = await service.LoadAsync();
 
         Assert.True(settings.Enabled);
-        Assert.Equal("classic-typewriter", settings.ActiveSoundPackId);
+        Assert.Equal(AppSettings.DefaultSoundPackId, settings.ActiveSoundPackId);
+    }
+
+    [Fact]
+    public async Task LoadAsync_UsesDefaultPack_WhenActivePackIsBlank()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "activeSoundPackId": ""
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.Equal(AppSettings.DefaultSoundPackId, settings.ActiveSoundPackId);
     }
 
     [Fact]

@@ -69,7 +69,7 @@
   },
   "defaults": {
     "volume": 0.68,
-    "pitchVariation": 0.008,
+    "pitchVariation": 0,
     "randomize": true
   }
 }

@@ -33,7 +33,7 @@ public sealed class AudioEngine : IAsyncDisposable
     }
 
     public double MasterVolume { get; set; } = 0.75;
-    public double PitchVariation { get; set; } = 0.02;
+    public double PitchVariation { get; set; }
     public EqSettings Eq { get; set; } = new();
     public PanSettings Pan { get; set; } = new();
     public int MaxCachedPacks { get; init; } = DefaultMaxCachedPacks;
