@@ -9,6 +9,7 @@ public sealed class SoundGroupVolumeSettingsTests
     [InlineData("enter", 0.8)]
     [InlineData("space", 0.9)]
     [InlineData("backspace", 1.1)]
+    [InlineData("tab", 0.6)]
     [InlineData("missing", 0.7)]
     [InlineData(null, 0.7)]
     public void GetVolumeForGroup_ReturnsConfiguredGroupVolume(string? group, double expected)
@@ -18,7 +19,8 @@ public sealed class SoundGroupVolumeSettingsTests
             Normal = 0.7,
             Enter = 0.8,
             Space = 0.9,
-            Backspace = 1.1
+            Backspace = 1.1,
+            Tab = 0.6
         };
 
         Assert.Equal(expected, settings.GetVolumeForGroup(group));
@@ -32,7 +34,8 @@ public sealed class SoundGroupVolumeSettingsTests
             Normal = -1,
             Enter = 2,
             Space = 0.5,
-            Backspace = 1.25
+            Backspace = 1.25,
+            Tab = 1.75
         };
 
         settings.Clamp();
@@ -41,5 +44,6 @@ public sealed class SoundGroupVolumeSettingsTests
         Assert.Equal(1.5, settings.Enter);
         Assert.Equal(0.5, settings.Space);
         Assert.Equal(1.25, settings.Backspace);
+        Assert.Equal(1.5, settings.Tab);
     }
 }

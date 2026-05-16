@@ -192,6 +192,26 @@ public sealed class SoundPackTests
         }
     }
 
+    [Fact]
+    public void BuiltInSwitchPacks_HavePreviewPngArtwork()
+    {
+        string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
+        SoundPackLoader loader = new();
+
+        IReadOnlyList<SoundPackMetadata> packs = loader.DiscoverPacks(packsRoot)
+            .Where(pack => pack.Tags.Any(tag => tag.Equals("switch", StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
+        Assert.NotEmpty(packs);
+        foreach (SoundPackMetadata pack in packs)
+        {
+            Assert.Equal("preview.png", pack.PreviewImage);
+            string previewPath = Path.Combine(pack.FolderPath, pack.PreviewImage!);
+            Assert.True(File.Exists(previewPath), $"{pack.Id} is missing preview.png.");
+            Assert.True(new FileInfo(previewPath).Length > 0, $"{pack.Id} preview.png is empty.");
+        }
+    }
+
     private static string CreatePackRoot(string json)
     {
         string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

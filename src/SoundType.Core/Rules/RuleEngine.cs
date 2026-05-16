@@ -8,37 +8,33 @@ public sealed class RuleEngine
         KeyIdentity key,
         string? currentProcessName,
         AppSettings settings,
+        SoundPackMetadata? activePack) =>
+        Decide(key, currentProcessName, RuntimePlaybackProfile.FromSettings(settings), activePack);
+
+    public PlaybackDecision Decide(
+        KeyIdentity key,
+        string? currentProcessName,
+        RuntimePlaybackProfile profile,
         SoundPackMetadata? activePack)
     {
-        if (!settings.Enabled)
+        if (!profile.Enabled)
         {
             return PlaybackDecision.Skip("SoundType is muted.");
         }
 
-        if (settings.ExcludedKeys.Contains(key.Code))
+        if (profile.IsKeyExcluded(key.Code))
         {
             return PlaybackDecision.Skip($"{key.DisplayName} is excluded.");
         }
 
-        AppRule? appRule = null;
-        bool enabledOnlyModeActive = false;
-        foreach (AppRule rule in settings.AppRules)
-        {
-            enabledOnlyModeActive |= rule.Mode == AppRuleMode.EnabledOnly;
-            if (appRule is null &&
-                !string.IsNullOrWhiteSpace(rule.ProcessName) &&
-                string.Equals(rule.ProcessName, currentProcessName, StringComparison.OrdinalIgnoreCase))
-            {
-                appRule = rule;
-            }
-        }
+        _ = profile.TryGetRule(currentProcessName, out RuntimeAppRule? appRule);
 
         if (appRule?.Mode == AppRuleMode.Disabled)
         {
             return PlaybackDecision.Skip($"{currentProcessName} is disabled.");
         }
 
-        if (enabledOnlyModeActive && appRule?.Mode != AppRuleMode.EnabledOnly)
+        if (profile.EnabledOnlyModeActive && appRule?.Mode != AppRuleMode.EnabledOnly)
         {
             return PlaybackDecision.Skip($"{currentProcessName ?? "Current app"} is not enabled-only.");
         }
@@ -49,12 +45,12 @@ public sealed class RuleEngine
         return PlaybackDecision.Play(group, volumeMultiplier, soundPackId);
     }
 
-    private static double ResolveVolumeMultiplier(AppRule? appRule) =>
+    private static double ResolveVolumeMultiplier(RuntimeAppRule? appRule) =>
         appRule?.VolumeOverride is double volumeOverride
             ? Math.Clamp(volumeOverride, 0.0, 1.5)
             : 1.0;
 
-    private static string? ResolveSoundPackId(AppRule? appRule)
+    private static string? ResolveSoundPackId(RuntimeAppRule? appRule)
     {
         if (appRule?.Mode == AppRuleMode.UseSpecificPack &&
             !string.IsNullOrWhiteSpace(appRule.SoundPackId))

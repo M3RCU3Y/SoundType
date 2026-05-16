@@ -34,7 +34,8 @@ public sealed class ReleaseReadinessTests
 
         Assert.DoesNotContain("Text=\"Git\"", xaml);
         Assert.DoesNotContain("Text=\"Chat\"", xaml);
-        Assert.Contains("WindowStyle=\"SingleBorderWindow\"", xaml);
+        Assert.Contains("WindowStyle=\"None\"", xaml);
+        Assert.Contains("<shell:WindowChrome", xaml);
         Assert.Contains("ResizeMode=\"CanResize\"", xaml);
     }
 

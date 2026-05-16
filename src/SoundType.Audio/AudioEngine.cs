@@ -8,12 +8,14 @@ namespace SoundType.Audio;
 public sealed class AudioEngine : IAsyncDisposable
 {
     private const int DefaultMaxCachedPacks = 4;
+    private const int DefaultMaxActiveVoices = 32;
     private readonly Random _random = new();
     private readonly object _packLock = new();
     private readonly object _mixerLock = new();
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, long> _packLastUsedTicks = new(StringComparer.OrdinalIgnoreCase);
+    private readonly VoiceLimiter _voiceLimiter = new(DefaultMaxActiveVoices);
     private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private readonly MixingSampleProvider _mixer;
     private readonly WaveOutEvent _output;
@@ -54,6 +56,13 @@ public sealed class AudioEngine : IAsyncDisposable
     }
 
     public int MaxCachedPacks { get; init; } = DefaultMaxCachedPacks;
+    public int MaxActiveVoices
+    {
+        get => _voiceLimiter.MaxVoices;
+        set => _voiceLimiter.MaxVoices = value;
+    }
+
+    public int ActiveVoiceCount => _voiceLimiter.ActiveVoices;
     public int LoadedPackCount
     {
         get
@@ -115,8 +124,7 @@ public sealed class AudioEngine : IAsyncDisposable
 
         try
         {
-            PlayNow(request);
-            return true;
+            return PlayNow(request);
         }
         catch
         {
@@ -134,26 +142,26 @@ public sealed class AudioEngine : IAsyncDisposable
         });
     }
 
-    private void PlayNow(PlaybackRequest request)
+    private bool PlayNow(PlaybackRequest request)
     {
         LoadedSoundPack? pack = ResolvePack(request.SoundPackId);
         if (pack is null)
         {
-            return;
+            return false;
         }
 
         if (!pack.Samples.TryGetValue(request.SoundGroup, out IReadOnlyList<LoadedSoundSample>? samples) || samples.Count == 0)
         {
             if (!pack.Samples.TryGetValue("normal", out samples) || samples.Count == 0)
             {
-                return;
+                return false;
             }
         }
 
         LoadedSoundSample sample = SelectSample(pack.Metadata, request.SoundGroup, samples);
         if (sample.DecodedSamples.Length == 0)
         {
-            return;
+            return false;
         }
 
         EqSettings eq = _eq;
@@ -187,10 +195,26 @@ public sealed class AudioEngine : IAsyncDisposable
         };
         sampleProvider = new LimiterSampleProvider(sampleProvider);
 
-        lock (_mixerLock)
+        if (!_voiceLimiter.TryAcquire(out IDisposable voiceLease))
         {
-            _mixer.AddMixerInput(sampleProvider);
+            return false;
         }
+
+        sampleProvider = new ActiveVoiceSampleProvider(sampleProvider, voiceLease);
+        try
+        {
+            lock (_mixerLock)
+            {
+                _mixer.AddMixerInput(sampleProvider);
+            }
+        }
+        catch
+        {
+            voiceLease.Dispose();
+            throw;
+        }
+
+        return true;
     }
 
     private LoadedSoundPack? ResolvePack(string? soundPackId)

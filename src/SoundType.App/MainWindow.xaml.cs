@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using SoundType.App.Controls;
 using SoundType.Audio;
@@ -37,8 +38,11 @@ public partial class MainWindow : Window
     private readonly List<Slider> _eqBandSliders = [];
     private readonly List<TextBlock> _eqBandValueTexts = [];
     private readonly List<string> _startupWarnings = [];
+    private readonly DebouncedAsyncAction _settingsSaveQueue;
+    private readonly WaveformPeakCache _waveformPeakCache = new();
     private AudioEngine? _audio;
     private AppSettings _settings = new();
+    private RuntimePlaybackProfile _playbackProfile = RuntimePlaybackProfile.FromSettings(new AppSettings());
     private IReadOnlyList<SoundPackMetadata> _packs = [];
     private IReadOnlyDictionary<string, SoundPackMetadata> _packsById = new Dictionary<string, SoundPackMetadata>(StringComparer.OrdinalIgnoreCase);
     private HashSet<string> _releasePackIds = new(StringComparer.OrdinalIgnoreCase);
@@ -50,10 +54,18 @@ public partial class MainWindow : Window
     private bool _exitRequested;
     private bool _packFiltersConfigured;
     private bool _refreshingPackLibrary;
+    private bool _updatingAppRuleEditor;
+    private bool _updatingKeyboardInspector;
+    private string _selectedKeyboardCode = "Space";
+    private KeyboardKeyFilter _keyboardFilter = KeyboardKeyFilter.All;
+    private int _packActivationVersion;
 
     public MainWindow()
     {
         InitializeComponent();
+        _settingsSaveQueue = new DebouncedAsyncAction(
+            TimeSpan.FromMilliseconds(400),
+            cancellationToken => _settingsService.SaveAsync(_settings, cancellationToken));
         BuildEqBandControls();
         _packsRoot = Path.Combine(AppContext.BaseDirectory, "assets", "packs");
         Loaded += MainWindow_Loaded;
@@ -66,14 +78,17 @@ public partial class MainWindow : Window
     {
         _settings = await _settingsService.LoadAsync();
         _settings.StartWithWindows = _startup.IsEnabled();
+        RebuildPlaybackProfile();
         ConfigureAppRuleEditors();
         ConfigurePanControls();
+        ConfigureKeyboardRuleEditors();
         ConfigurePackFilters();
         TryStartAudio();
-        LoadPacks();
+        await LoadPacksAsync();
         BuildKeyRules();
         ConfigureTray();
         BindSettingsToUi();
+        ShowPage(LibraryPage);
         KeyboardHookStartResult keyboardHookStart = _keyboardHook.Start();
         if (!keyboardHookStart.Started)
         {
@@ -81,6 +96,7 @@ public partial class MainWindow : Window
         }
         _activeAppTimer.Start();
         _loading = false;
+        ShowPage(LibraryPage);
         RefreshStatus();
         RefreshCurrentApp();
         RegisterGlobalHotkey();
@@ -93,7 +109,8 @@ public partial class MainWindow : Window
 
     private void KeyboardHook_KeyPressed(object? sender, KeyPressedEvent e)
     {
-        if (!e.IsRelease && _settings.IgnoreKeyRepeats && e.IsRepeat)
+        RuntimePlaybackProfile profile = _playbackProfile;
+        if (!e.IsRelease && profile.IgnoreKeyRepeats && e.IsRepeat)
         {
             return;
         }
@@ -104,7 +121,7 @@ public partial class MainWindow : Window
         }
 
         string? processName = _currentProcessName;
-        PlaybackDecision decision = _ruleEngine.Decide(e.Key, processName, _settings, _activePack);
+        PlaybackDecision decision = _ruleEngine.Decide(e.Key, processName, profile, _activePack);
         if (!decision.ShouldPlay || decision.SoundGroup is null)
         {
             return;
@@ -127,7 +144,7 @@ public partial class MainWindow : Window
             Key = e.Key,
             SoundGroup = soundGroup,
             SoundPackId = decision.SoundPackId,
-            VolumeMultiplier = decision.VolumeMultiplier * _settings.GroupVolumes.GetVolumeForGroup(decision.SoundGroup),
+            VolumeMultiplier = decision.VolumeMultiplier * profile.GetVolumeForGroup(decision.SoundGroup),
             ActiveProcessName = processName
         });
     }
@@ -157,8 +174,9 @@ public partial class MainWindow : Window
         return HasGroup(pack, "normal-release") ? "normal-release" : null;
     }
 
-    private void LoadPacks()
+    private async Task LoadPacksAsync()
     {
+        _waveformPeakCache.Clear();
         _packs = _packLoader.DiscoverPacks(_packsRoot);
         _packsById = _packs.ToDictionary(pack => pack.Id, StringComparer.OrdinalIgnoreCase);
         _releasePackIds = _packs
@@ -166,10 +184,14 @@ public partial class MainWindow : Window
             .Select(pack => pack.Id)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         RulePackComboBox.Items.Clear();
+        SelectedKeyPackOverrideComboBox.Items.Clear();
+        SelectedKeyPackOverrideComboBox.Items.Add("Default Pack");
         foreach (SoundPackMetadata pack in _packs)
         {
             RulePackComboBox.Items.Add(new PackListItem(pack));
+            SelectedKeyPackOverrideComboBox.Items.Add(pack.Name);
         }
+        SelectedKeyPackOverrideComboBox.SelectedIndex = 0;
 
         RefreshPackLibrary(_settings.ActiveSoundPackId);
 
@@ -177,7 +199,7 @@ public partial class MainWindow : Window
 
         if (selected is not null)
         {
-            ActivatePack(selected.Metadata);
+            await ActivatePackAsync(selected.Metadata);
             RulePackComboBox.SelectedItem ??= RulePackComboBox.Items
                 .OfType<PackListItem>()
                 .FirstOrDefault(item => item.Metadata.Id.Equals(selected.Metadata.Id, StringComparison.OrdinalIgnoreCase));
@@ -238,8 +260,9 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ActivatePack(SoundPackMetadata pack)
+    private async Task ActivatePackAsync(SoundPackMetadata pack)
     {
+        int activationVersion = Interlocked.Increment(ref _packActivationVersion);
         SoundPackValidationResult validation = _packLoader.Validate(pack);
         if (!validation.IsValid)
         {
@@ -255,17 +278,44 @@ public partial class MainWindow : Window
             PackValidationText.Foreground = (MediaBrush)FindResource("WarningBrush");
             PackValidationText.Text = $"{pack.Name} is selected, but audio is unavailable.";
             RefreshStatus();
+            RefreshSettingsOverview();
             _ = SaveSettingsAsync();
             return;
         }
 
         if (!_audio.SetActivePack(pack.Id))
         {
-            _audio.LoadPack(_packLoader.Load(pack));
+            PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
+            PackValidationText.Text = $"Loading {pack.Name}...";
+            LoadedSoundPack loadedPack;
+            try
+            {
+                loadedPack = await Task.Run(() => _packLoader.Load(pack));
+            }
+            catch (Exception ex)
+            {
+                if (activationVersion == Volatile.Read(ref _packActivationVersion))
+                {
+                    ShowPackError(ex.Message);
+                }
+
+                return;
+            }
+
+            if (activationVersion != Volatile.Read(ref _packActivationVersion))
+            {
+                return;
+            }
+
+            _audio.LoadPack(loadedPack);
         }
+
         PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
         PackValidationText.Text = $"{pack.Name} by {pack.Author} is active. {pack.Description}";
+        RefreshWaveformPreview(pack);
         RefreshStatus();
+        RefreshSelectedKeyInspector();
+        RefreshSettingsOverview();
         _ = SaveSettingsAsync();
     }
 
@@ -315,21 +365,44 @@ public partial class MainWindow : Window
 
     private void ConfigureAppRuleEditors()
     {
-        RuleModeComboBox.Items.Clear();
-        RuleModeComboBox.Items.Add(AppRuleMode.Disabled);
-        RuleModeComboBox.Items.Add(AppRuleMode.Default);
-        RuleModeComboBox.Items.Add(AppRuleMode.EnabledOnly);
-        RuleModeComboBox.Items.Add(AppRuleMode.UseSpecificPack);
-        RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
-        RuleVolumeSlider.Value = 1.0;
-        RuleVolumeText.Text = "100%";
+        _updatingAppRuleEditor = true;
+        try
+        {
+            RuleModeComboBox.Items.Clear();
+            RuleModeComboBox.Items.Add(AppRuleMode.Disabled);
+            RuleModeComboBox.Items.Add(AppRuleMode.Default);
+            RuleModeComboBox.Items.Add(AppRuleMode.EnabledOnly);
+            RuleModeComboBox.Items.Add(AppRuleMode.UseSpecificPack);
+            RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
+            RuleVolumeSlider.Value = 1.0;
+            RuleVolumeText.Text = "100%";
+            RuleEnabledCheckBox.IsChecked = false;
+        }
+        finally
+        {
+            _updatingAppRuleEditor = false;
+        }
     }
 
     private void ConfigurePanControls()
     {
         PanModeComboBox.Items.Clear();
-        PanModeComboBox.Items.Add(PanMode.KeyPosition);
-        PanModeComboBox.Items.Add(PanMode.Random);
+        PanModeComboBox.Items.Add(new PanModeListItem(PanMode.KeyPosition, "Stereo"));
+        PanModeComboBox.Items.Add(new PanModeListItem(PanMode.Random, "Random"));
+    }
+
+    private void ConfigureKeyboardRuleEditors()
+    {
+        SelectedKeyGroupComboBox.Items.Clear();
+        SelectedKeySoundSlotComboBox.Items.Clear();
+        foreach (string group in new[] { "Normal", "Enter", "Space", "Backspace", "Tab" })
+        {
+            SelectedKeyGroupComboBox.Items.Add(group);
+            SelectedKeySoundSlotComboBox.Items.Add(group);
+        }
+
+        SelectedKeyGroupComboBox.SelectedItem = "Space";
+        SelectedKeySoundSlotComboBox.SelectedItem = "Space";
     }
 
     private void BuildEqBandControls()
@@ -346,7 +419,8 @@ public partial class MainWindow : Window
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                 Foreground = (MediaBrush)FindResource("AccentHoverBrush"),
                 FontWeight = FontWeights.Bold,
-                FontSize = 12
+                FontSize = 12,
+                Visibility = Visibility.Collapsed
             };
 
             Slider slider = new()
@@ -416,6 +490,7 @@ public partial class MainWindow : Window
         EnterVolumeSlider.Value = _settings.GroupVolumes.Enter;
         SpaceVolumeSlider.Value = _settings.GroupVolumes.Space;
         BackspaceVolumeSlider.Value = _settings.GroupVolumes.Backspace;
+        TabVolumeSlider.Value = _settings.GroupVolumes.Tab;
         _settings.Eq.Normalize();
         for (int i = 0; i < _eqBandSliders.Count; i++)
         {
@@ -423,7 +498,9 @@ public partial class MainWindow : Window
         }
 
         PanEnabledCheck.IsChecked = _settings.Pan.Enabled;
-        PanModeComboBox.SelectedItem = _settings.Pan.Mode;
+        PanModeComboBox.SelectedItem = PanModeComboBox.Items
+            .OfType<PanModeListItem>()
+            .FirstOrDefault(item => item.Mode == _settings.Pan.Mode);
         PanStrengthSlider.Value = _settings.Pan.Strength;
         if (_audio is not null)
         {
@@ -438,13 +515,18 @@ public partial class MainWindow : Window
         RefreshPanText();
         RefreshTrayStatus();
         RefreshStartupStatus();
+        RefreshSettingsOverview();
         RefreshStatus();
+        RefreshSelectedKeyInspector();
     }
 
     private void BuildKeyRules()
     {
         VisualKeyboard.SetExcludedKeys(_settings.ExcludedKeys);
+        VisualKeyboard.SelectKey(_selectedKeyboardCode);
+        ApplyKeyboardFilter();
         RefreshExcludedKeysText();
+        RefreshSelectedKeyInspector();
     }
 
     private void RefreshAppRules()
@@ -452,7 +534,25 @@ public partial class MainWindow : Window
         AppRulesList.Items.Clear();
         foreach (AppRule rule in _settings.AppRules.OrderBy(rule => rule.ProcessName))
         {
-            AppRulesList.Items.Add(new AppRuleListItem(rule));
+            AppRulesList.Items.Add(new AppRuleListItem(rule, _packsById));
+        }
+
+        int enabledRules = _settings.AppRules.Count(rule => rule.Mode != AppRuleMode.Disabled);
+        RuleCountText.Text = _settings.AppRules.Count.ToString();
+        ActiveRulesText.Text = $"{enabledRules} active";
+        AppRuleSelectionText.Text = $"{_settings.AppRules.Count} rules total";
+        DefaultProfileText.Text = _activePack?.Name ?? "No pack selected";
+        DefaultProfileTagText.Text = _activePack is null
+            ? "Default"
+            : new PackListItem(_activePack).TypeLabel;
+
+        if (AppRulesList.SelectedItem is AppRuleListItem selected)
+        {
+            RuleEditorProcessText.Text = selected.ProcessName;
+        }
+        else if (string.IsNullOrWhiteSpace(ProcessRuleTextBox.Text))
+        {
+            RuleEditorProcessText.Text = "New rule";
         }
     }
 
@@ -467,12 +567,15 @@ public partial class MainWindow : Window
             RefreshRecentApps();
         }
 
-        CurrentAppText.Text = string.IsNullOrWhiteSpace(processName)
-            ? "Current app: unknown"
-            : $"Current app: {processName}";
+        string displayName = string.IsNullOrWhiteSpace(processName) ? "Unknown" : processName;
+        CurrentAppText.Text = displayName;
+        CurrentAppStatusText.Text = string.IsNullOrWhiteSpace(processName) ? "Waiting for focus" : "Active now";
+        LastDetectedAppText.Text = displayName;
+        LastDetectedTimeText.Text = string.IsNullOrWhiteSpace(processName) ? "No app detected" : "Updated just now";
         if (string.IsNullOrWhiteSpace(ProcessRuleTextBox.Text) && processName is not null)
         {
             ProcessRuleTextBox.Text = processName;
+            RuleEditorProcessText.Text = processName;
         }
     }
 
@@ -498,13 +601,18 @@ public partial class MainWindow : Window
         {
             packItem.Text = $"Pack: {_activePack?.Name ?? "None"}";
         }
+
+        if (KeyboardActivePackText is not null)
+        {
+            KeyboardActivePackText.Text = _activePack?.Name ?? "No pack";
+        }
     }
 
     private void RefreshTrayStatus()
     {
         TrayStatusText.Text = _settings.MinimizeToTray
-            ? "Closing the window hides SoundType, keeps sounds active, and leaves controls in the tray."
-            : "Closing the window exits SoundType. Use Hide to tray when you want it running quietly.";
+            ? "Don't exit when the window is closed"
+            : "Closing the window exits SoundType";
     }
 
     private void RefreshStartupStatus()
@@ -512,13 +620,75 @@ public partial class MainWindow : Window
         StartupStatusText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
         if (!_settings.StartWithWindows)
         {
-            StartupStatusText.Text = "Off. SoundType only starts when you open it.";
+            StartupStatusText.Text = "Disabled";
             return;
         }
 
+        StartupStatusText.Foreground = (MediaBrush)FindResource("AccentHoverBrush");
         StartupStatusText.Text = _settings.StartHiddenInTray
-            ? "Enabled. Windows will launch SoundType directly into the system tray."
-            : "Enabled. Windows will launch SoundType after you sign in.";
+            ? "Enabled, hidden"
+            : "Enabled";
+    }
+
+    private void RefreshSettingsOverview()
+    {
+        if (SettingsActivePackNameText is null)
+        {
+            return;
+        }
+
+        SettingsActivePackNameText.Text = _activePack?.Name ?? "No pack selected";
+        SettingsActivePackSizeText.Text = _activePack is null ? "--" : FormatBytes(GetDirectorySize(_activePack.FolderPath));
+        SettingsActivePackPreviewImage.Source = _activePack is null ? null : CreatePackPreviewImageSource(_activePack);
+        PacksFolderPathText.Text = _packsRoot;
+        SettingsPacksInstalledText.Text = _packs.Count.ToString();
+    }
+
+    private static long GetDirectorySize(string folderPath)
+    {
+        if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+        {
+            return 0;
+        }
+
+        try
+        {
+            return Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories)
+                .Sum(file => new FileInfo(file).Length);
+        }
+        catch (IOException)
+        {
+            return 0;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return 0;
+        }
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        string[] units = ["B", "KB", "MB", "GB"];
+        double value = bytes;
+        int unit = 0;
+        while (value >= 1024 && unit < units.Length - 1)
+        {
+            value /= 1024;
+            unit++;
+        }
+
+        return unit == 0 ? $"{value:0} {units[unit]}" : $"{value:0.#} {units[unit]}";
+    }
+
+    private void SelectPackInLibrary(string packId)
+    {
+        PackListItem? selected = PacksList.Items
+            .OfType<PackListItem>()
+            .FirstOrDefault(item => item.Metadata.Id.Equals(packId, StringComparison.OrdinalIgnoreCase));
+        if (selected is not null)
+        {
+            PacksList.SelectedItem = selected;
+        }
     }
 
     private static bool ShouldStartHiddenInTray() =>
@@ -530,10 +700,10 @@ public partial class MainWindow : Window
     private void UpdateEnableButton()
     {
         EnabledToggle.IsChecked = _settings.Enabled;
-        EnabledToggle.Content = _settings.Enabled ? "||  DISABLE" : ">  ENABLE";
-        EnabledToggle.Background = (MediaBrush)FindResource(_settings.Enabled ? "DangerBrush" : "AccentBrush");
-        EnabledToggle.BorderBrush = (MediaBrush)FindResource(_settings.Enabled ? "DangerBrush" : "AccentHoverBrush");
-        EnabledToggle.Foreground = (MediaBrush)FindResource("TextBrush");
+        EnabledToggle.Content = _settings.Enabled ? "Listening" : "Muted";
+        EnabledToggle.Background = (MediaBrush)FindResource(_settings.Enabled ? "AccentSoftBrush" : "DisabledBackgroundBrush");
+        EnabledToggle.BorderBrush = (MediaBrush)FindResource(_settings.Enabled ? "AccentBrush" : "ControlBorderBrush");
+        EnabledToggle.Foreground = (MediaBrush)FindResource(_settings.Enabled ? "AccentHoverBrush" : "MutedTextBrush");
     }
 
     private void ShowLibrary_Click(object sender, RoutedEventArgs e) => ShowPage(LibraryPage);
@@ -543,6 +713,23 @@ public partial class MainWindow : Window
     private void ShowSettings_Click(object sender, RoutedEventArgs e) => ShowPage(SettingsPage);
     private void FocusNewRule_Click(object sender, RoutedEventArgs e)
     {
+        ShowPage(RulesPage);
+        AppRulesList.SelectedItem = null;
+        RuleEditorProcessText.Text = string.IsNullOrWhiteSpace(ProcessRuleTextBox.Text)
+            ? "New rule"
+            : ProcessRuleTextBox.Text.Trim();
+        ProcessRuleTextBox.Focus();
+    }
+
+    private void DetectCurrentApp_Click(object sender, RoutedEventArgs e)
+    {
+        RefreshCurrentApp();
+        if (!string.IsNullOrWhiteSpace(_currentProcessName))
+        {
+            ProcessRuleTextBox.Text = _currentProcessName;
+            RuleEditorProcessText.Text = _currentProcessName;
+        }
+
         ShowPage(RulesPage);
         ProcessRuleTextBox.Focus();
     }
@@ -564,6 +751,41 @@ public partial class MainWindow : Window
         }
 
         UpdateNavigationState(activePage);
+        UpdateHeaderText(activePage);
+    }
+
+    private void UpdateHeaderText(FrameworkElement activePage)
+    {
+        if (ReferenceEquals(activePage, LibraryPage))
+        {
+            PageTitleText.Text = "Library";
+            PageSubtitleText.Text = "Browse packs";
+            return;
+        }
+
+        if (ReferenceEquals(activePage, AudioPage))
+        {
+            PageTitleText.Text = "Audio Effects";
+            PageSubtitleText.Text = "Tune playback";
+            return;
+        }
+
+        if (ReferenceEquals(activePage, KeyboardPage))
+        {
+            PageTitleText.Text = "Keyboard Rules";
+            PageSubtitleText.Text = "Per-key controls";
+            return;
+        }
+
+        if (ReferenceEquals(activePage, RulesPage))
+        {
+            PageTitleText.Text = "App Rules";
+            PageSubtitleText.Text = "Foreground profiles";
+            return;
+        }
+
+        PageTitleText.Text = "Settings";
+        PageSubtitleText.Text = "Startup and privacy";
     }
 
     private void UpdateNavigationState(FrameworkElement activePage)
@@ -580,9 +802,9 @@ public partial class MainWindow : Window
         foreach ((System.Windows.Controls.Button button, FrameworkElement page) in nav)
         {
             bool selected = ReferenceEquals(page, activePage);
-            button.Background = selected ? (MediaBrush)FindResource("AccentBrush") : System.Windows.Media.Brushes.Transparent;
-            button.BorderBrush = selected ? (MediaBrush)FindResource("AccentHoverBrush") : System.Windows.Media.Brushes.Transparent;
-            button.Foreground = (MediaBrush)FindResource(selected ? "TextBrush" : "MutedTextBrush");
+            button.Background = selected ? (MediaBrush)FindResource("AccentSoftBrush") : System.Windows.Media.Brushes.Transparent;
+            button.BorderBrush = selected ? (MediaBrush)FindResource("AccentBrush") : System.Windows.Media.Brushes.Transparent;
+            button.Foreground = (MediaBrush)FindResource(selected ? "AccentHoverBrush" : "MutedTextBrush");
         }
     }
 
@@ -692,8 +914,13 @@ public partial class MainWindow : Window
             return;
         }
 
-        await _settingsService.SaveAsync(_settings);
+        RebuildPlaybackProfile();
+        _settingsSaveQueue.Schedule();
+        await Task.CompletedTask;
     }
+
+    private void RebuildPlaybackProfile() =>
+        _playbackProfile = RuntimePlaybackProfile.FromSettings(_settings);
 
     private void ConfigureTray()
     {
@@ -795,14 +1022,24 @@ public partial class MainWindow : Window
         if (_loading || _refreshingPackLibrary) return;
         if (PacksList.SelectedItem is PackListItem item)
         {
-            ActivatePack(item.Metadata);
+            _ = ActivatePackAsync(item.Metadata);
         }
     }
 
     private void PackSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+        PackSearchPlaceholder.Visibility = string.IsNullOrWhiteSpace(PackSearchTextBox.Text)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
         if (_loading) return;
         RefreshPackLibrary();
+    }
+
+    private void ClearPackSearch_Click(object sender, RoutedEventArgs e)
+    {
+        PackSearchTextBox.Clear();
+        PackSearchTextBox.Focus();
     }
 
     private void PackTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -838,18 +1075,18 @@ public partial class MainWindow : Window
     private void PreviewBackspace_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("backspace");
     private void PreviewTab_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("tab");
 
-    private void PreviewPackGroup(string group)
+    private async void PreviewPackGroup(string group)
     {
         if (PacksList.SelectedItem is PackListItem item &&
             (_activePack is null || !item.Metadata.Id.Equals(_activePack.Id, StringComparison.OrdinalIgnoreCase)))
         {
-            ActivatePack(item.Metadata);
+            await ActivatePackAsync(item.Metadata);
         }
 
         _audio?.Preview(group);
     }
 
-    private void ImportSoundPack_Click(object sender, RoutedEventArgs e)
+    private async void ImportSoundPack_Click(object sender, RoutedEventArgs e)
     {
         Microsoft.Win32.OpenFileDialog dialog = new()
         {
@@ -864,7 +1101,7 @@ public partial class MainWindow : Window
         try
         {
             SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: false);
-            ReloadPacksAndSelect(metadata.Id);
+            await ReloadPacksAndSelectAsync(metadata.Id);
             PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
             PackValidationText.Text = $"Imported {metadata.Name}.";
         }
@@ -885,7 +1122,7 @@ public partial class MainWindow : Window
             try
             {
                 SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: true);
-                ReloadPacksAndSelect(metadata.Id);
+                await ReloadPacksAndSelectAsync(metadata.Id);
                 PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
                 PackValidationText.Text = $"Replaced {metadata.Name}.";
             }
@@ -935,17 +1172,16 @@ public partial class MainWindow : Window
     private SoundPackMetadata TryImportPack(string archivePath, bool overwrite) =>
         _archiveService.ImportPack(archivePath, _packsRoot, overwrite);
 
-    private void ReloadPacksAndSelect(string packId)
+    private async Task ReloadPacksAndSelectAsync(string packId)
     {
         _settings.ActiveSoundPackId = packId;
-        LoadPacks();
+        await LoadPacksAsync();
         PackListItem? selected = PacksList.Items
             .OfType<PackListItem>()
             .FirstOrDefault(item => item.Metadata.Id.Equals(packId, StringComparison.OrdinalIgnoreCase));
         if (selected is not null)
         {
             PacksList.SelectedItem = selected;
-            ActivatePack(selected.Metadata);
         }
     }
 
@@ -968,6 +1204,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        _selectedKeyboardCode = e.Code;
         if (e.IsExcluded)
         {
             _settings.ExcludedKeys.Add(e.Code);
@@ -978,7 +1215,14 @@ public partial class MainWindow : Window
         }
 
         RefreshExcludedKeysText();
+        RefreshSelectedKeyInspector();
         _ = SaveSettingsAsync();
+    }
+
+    private void VisualKeyboard_KeySelected(object sender, KeyboardKeySelectedEventArgs e)
+    {
+        _selectedKeyboardCode = e.Code;
+        RefreshSelectedKeyInspector();
     }
 
     private void EnableAllKeys_Click(object sender, RoutedEventArgs e)
@@ -1005,6 +1249,90 @@ public partial class MainWindow : Window
         _ = SaveSettingsAsync();
     }
 
+    private void KeyboardSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        ApplyKeyboardFilter();
+    }
+
+    private void KeyboardShowAll_Click(object sender, RoutedEventArgs e) =>
+        SetKeyboardFilter(KeyboardKeyFilter.All);
+
+    private void KeyboardShowEnabled_Click(object sender, RoutedEventArgs e) =>
+        SetKeyboardFilter(KeyboardKeyFilter.Enabled);
+
+    private void KeyboardShowExcluded_Click(object sender, RoutedEventArgs e) =>
+        SetKeyboardFilter(KeyboardKeyFilter.Excluded);
+
+    private void SetKeyboardFilter(KeyboardKeyFilter filter)
+    {
+        _keyboardFilter = filter;
+        KeyboardShowAllButton.Style = (Style)FindResource(filter == KeyboardKeyFilter.All
+            ? "KeyboardSelectedToolbarButtonStyle"
+            : "KeyboardToolbarButtonStyle");
+        KeyboardShowEnabledButton.Style = (Style)FindResource(filter == KeyboardKeyFilter.Enabled
+            ? "KeyboardSelectedToolbarButtonStyle"
+            : "KeyboardToolbarButtonStyle");
+        KeyboardShowExcludedButton.Style = (Style)FindResource(filter == KeyboardKeyFilter.Excluded
+            ? "KeyboardSelectedToolbarButtonStyle"
+            : "KeyboardToolbarButtonStyle");
+        ApplyKeyboardFilter();
+    }
+
+    private void ApplyKeyboardFilter()
+    {
+        if (VisualKeyboard is null || KeyboardSearchTextBox is null)
+        {
+            return;
+        }
+
+        VisualKeyboard.ApplyFilter(KeyboardSearchTextBox.Text, _keyboardFilter);
+    }
+
+    private void SelectedKeyEnabledChanged(object sender, RoutedEventArgs e)
+    {
+        if (_loading || _updatingKeyboardInspector)
+        {
+            return;
+        }
+
+        bool isExcluded = SelectedKeyEnabledCheck.IsChecked != true;
+        if (isExcluded)
+        {
+            _settings.ExcludedKeys.Add(_selectedKeyboardCode);
+        }
+        else
+        {
+            _settings.ExcludedKeys.Remove(_selectedKeyboardCode);
+        }
+
+        VisualKeyboard.SetKeyExcluded(_selectedKeyboardCode, isExcluded);
+        RefreshExcludedKeysText();
+        RefreshSelectedKeyInspector();
+        _ = SaveSettingsAsync();
+    }
+
+    private void PreviewSelectedKey_Click(object sender, RoutedEventArgs e) =>
+        PreviewPackGroup(ResolveSoundGroupForKey(_selectedKeyboardCode));
+
+    private void ResetSelectedKey_Click(object sender, RoutedEventArgs e)
+    {
+        HashSet<string> defaults = AppSettings.DefaultExcludedKeys();
+        bool isExcluded = defaults.Contains(_selectedKeyboardCode);
+        if (isExcluded)
+        {
+            _settings.ExcludedKeys.Add(_selectedKeyboardCode);
+        }
+        else
+        {
+            _settings.ExcludedKeys.Remove(_selectedKeyboardCode);
+        }
+
+        VisualKeyboard.SetKeyExcluded(_selectedKeyboardCode, isExcluded);
+        RefreshExcludedKeysText();
+        RefreshSelectedKeyInspector();
+        _ = SaveSettingsAsync();
+    }
+
     private void RefreshExcludedKeysText()
     {
         if (ExcludedKeysText is null)
@@ -1015,6 +1343,7 @@ public partial class MainWindow : Window
         if (_settings.ExcludedKeys.Count == 0)
         {
             ExcludedKeysText.Text = "Every key is active.";
+            RefreshKeyboardStats();
             return;
         }
 
@@ -1027,7 +1356,99 @@ public partial class MainWindow : Window
         ExcludedKeysText.Text = remaining > 0
             ? $"Muted: {mutedKeys}, +{remaining} more"
             : $"Muted: {mutedKeys}";
+        RefreshKeyboardStats();
     }
+
+    private void RefreshKeyboardStats()
+    {
+        if (KeyboardEnabledCountText is null)
+        {
+            return;
+        }
+
+        KeyboardEnabledCountText.Text = VisualKeyboard.EnabledCount.ToString();
+        KeyboardExcludedCountText.Text = VisualKeyboard.ExcludedCount.ToString();
+        KeyboardActivePackText.Text = _activePack?.Name ?? "No pack";
+        KeyboardPreviewKeyText.Text = KeyIdentityMapper.GetDisplayName(_selectedKeyboardCode);
+    }
+
+    private void RefreshSelectedKeyInspector()
+    {
+        if (SelectedKeyNameText is null)
+        {
+            return;
+        }
+
+        string displayName = KeyIdentityMapper.GetDisplayName(_selectedKeyboardCode);
+        string soundGroup = ResolveSoundGroupForKey(_selectedKeyboardCode);
+        bool isExcluded = _settings.ExcludedKeys.Contains(_selectedKeyboardCode);
+
+        _updatingKeyboardInspector = true;
+        try
+        {
+            SelectedKeyTokenText.Text = displayName;
+            SelectedKeyNameText.Text = displayName;
+            SelectedKeyEnabledCheck.IsChecked = !isExcluded;
+            SelectedKeyGroupComboBox.SelectedItem = ToTitleCase(soundGroup);
+            SelectedKeySoundSlotComboBox.SelectedItem = ToTitleCase(soundGroup);
+            KeyboardPreviewSelectedButton.Content = $"Preview {displayName}";
+            KeyboardPreviewKeyText.Text = displayName;
+            SelectedKeyWaveformTitleText.Text = $"Waveform ({displayName})";
+        }
+        finally
+        {
+            _updatingKeyboardInspector = false;
+        }
+
+        RefreshSelectedKeyWaveform(soundGroup);
+        RefreshKeyboardStats();
+    }
+
+    private void RefreshSelectedKeyWaveform(string soundGroup)
+    {
+        if (SelectedKeyWaveformPreview is null)
+        {
+            return;
+        }
+
+        if (_audio is null ||
+            _activePack is null ||
+            !_audio.TryGetLoadedPack(_activePack.Id, out LoadedSoundPack? loadedPack) ||
+            loadedPack is null)
+        {
+            SelectedKeyWaveformPreview.Peaks = [];
+            return;
+        }
+
+        LoadedSoundSample? sample = loadedPack.Samples
+            .Where(group => group.Key.Equals(soundGroup, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(group => group.Value)
+            .FirstOrDefault(candidate => candidate.DecodedSamples.Length > 0);
+        if (sample is null)
+        {
+            sample = loadedPack.Samples
+                .OrderBy(group => group.Key.Equals("normal", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                .SelectMany(group => group.Value)
+                .FirstOrDefault(candidate => candidate.DecodedSamples.Length > 0);
+        }
+
+        SelectedKeyWaveformPreview.Peaks = sample is null
+            ? []
+            : _waveformPeakCache.GetPeaks(sample);
+    }
+
+    private static string ResolveSoundGroupForKey(string code) =>
+        code switch
+        {
+            "Enter" => "enter",
+            "Space" => "space",
+            "Backspace" => "backspace",
+            "Tab" => "tab",
+            _ => "normal"
+        };
+
+    private static string ToTitleCase(string value) =>
+        value.Length == 0 ? value : char.ToUpperInvariant(value[0]) + value[1..];
 
     private void AddAppRule_Click(object sender, RoutedEventArgs e)
     {
@@ -1045,6 +1466,11 @@ public partial class MainWindow : Window
         AppRuleMode mode = RuleModeComboBox.SelectedItem is AppRuleMode selectedMode
             ? selectedMode
             : AppRuleMode.Disabled;
+        if (RuleEnabledCheckBox.IsChecked != true)
+        {
+            mode = AppRuleMode.Disabled;
+        }
+
         string? packId = RulePackComboBox.SelectedItem is PackListItem packItem
             ? packItem.Metadata.Id
             : null;
@@ -1070,6 +1496,7 @@ public partial class MainWindow : Window
         }
 
         RefreshAppRules();
+        RuleEditorProcessText.Text = processName;
         _ = SaveSettingsAsync();
     }
 
@@ -1094,7 +1521,8 @@ public partial class MainWindow : Window
 
         string? selected = RecentAppsList.SelectedItem as string;
         RecentAppsList.Items.Clear();
-        foreach (RecentAppEntry app in _recentApps.ListRecentApps())
+        IReadOnlyList<RecentAppEntry> recentApps = _recentApps.ListRecentApps();
+        foreach (RecentAppEntry app in recentApps.Take(8))
         {
             RecentAppsList.Items.Add(app.ProcessName);
         }
@@ -1103,6 +1531,10 @@ public partial class MainWindow : Window
         {
             RecentAppsList.SelectedItem = selected;
         }
+
+        RecentAppSummaryText.Text = recentApps.Count == 0
+            ? "No recent apps detected yet."
+            : string.Join(Environment.NewLine, recentApps.Take(4).Select(FormatRecentAppSummary));
     }
 
     private void RecentAppsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1110,7 +1542,20 @@ public partial class MainWindow : Window
         if (RecentAppsList.SelectedItem is string processName)
         {
             ProcessRuleTextBox.Text = processName;
+            RuleEditorProcessText.Text = processName;
         }
+    }
+
+    private static string FormatRecentAppSummary(RecentAppEntry app)
+    {
+        TimeSpan age = DateTimeOffset.UtcNow - app.LastSeenUtc;
+        string seen = age.TotalSeconds < 30
+            ? "Now"
+            : age.TotalMinutes < 60
+                ? $"{Math.Max(1, Math.Round(age.TotalMinutes))}m ago"
+                : $"{Math.Round(age.TotalHours)}h ago";
+
+        return $"{app.ProcessName}    {seen}";
     }
 
     private void AppRulesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1121,16 +1566,50 @@ public partial class MainWindow : Window
         }
 
         AppRule rule = selected.Rule;
-        ProcessRuleTextBox.Text = rule.ProcessName;
-        RuleModeComboBox.SelectedItem = rule.Mode;
-        RuleVolumeSlider.Value = rule.VolumeOverride ?? 1.0;
-
-        if (!string.IsNullOrWhiteSpace(rule.SoundPackId))
+        _updatingAppRuleEditor = true;
+        try
         {
-            RulePackComboBox.SelectedItem = RulePackComboBox.Items
-                .OfType<PackListItem>()
-                .FirstOrDefault(item => item.Metadata.Id.Equals(rule.SoundPackId, StringComparison.OrdinalIgnoreCase));
+            ProcessRuleTextBox.Text = rule.ProcessName;
+            RuleEditorProcessText.Text = rule.ProcessName;
+            RuleModeComboBox.SelectedItem = rule.Mode;
+            RuleVolumeSlider.Value = rule.VolumeOverride ?? 1.0;
+            RuleEnabledCheckBox.IsChecked = rule.Mode != AppRuleMode.Disabled;
+
+            if (!string.IsNullOrWhiteSpace(rule.SoundPackId))
+            {
+                RulePackComboBox.SelectedItem = RulePackComboBox.Items
+                    .OfType<PackListItem>()
+                    .FirstOrDefault(item => item.Metadata.Id.Equals(rule.SoundPackId, StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                RulePackComboBox.SelectedItem = null;
+            }
         }
+        finally
+        {
+            _updatingAppRuleEditor = false;
+        }
+    }
+
+    private void RuleEnabledCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_updatingAppRuleEditor)
+        {
+            return;
+        }
+
+        if (RuleEnabledCheckBox.IsChecked == true)
+        {
+            if (RuleModeComboBox.SelectedItem is AppRuleMode.Disabled)
+            {
+                RuleModeComboBox.SelectedItem = AppRuleMode.Default;
+            }
+
+            return;
+        }
+
+        RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
     }
 
     private void SettingsCheckChanged(object sender, RoutedEventArgs e)
@@ -1167,6 +1646,42 @@ public partial class MainWindow : Window
 
     private void HideToTray_Click(object sender, RoutedEventArgs e) => HideToTray();
 
+    private async void ApplySettings_Click(object sender, RoutedEventArgs e)
+    {
+        await SaveSettingsAsync();
+        RefreshSettingsOverview();
+    }
+
+    private async void ResetSettingsToDefaults_Click(object sender, RoutedEventArgs e)
+    {
+        bool wasLoading = _loading;
+        _loading = true;
+        _settings = new AppSettings
+        {
+            StartWithWindows = _startup.IsEnabled()
+        };
+        BindSettingsToUi();
+        SelectPackInLibrary(_settings.ActiveSoundPackId);
+        _loading = wasLoading;
+
+        if (PacksList.SelectedItem is PackListItem selected)
+        {
+            await ActivatePackAsync(selected.Metadata);
+        }
+
+        await SaveSettingsAsync();
+        RefreshSettingsOverview();
+    }
+
+    private void ClearWaveformCache_Click(object sender, RoutedEventArgs e)
+    {
+        _waveformPeakCache.Clear();
+        if (_activePack is not null)
+        {
+            RefreshWaveformPreview(_activePack);
+        }
+    }
+
     private void EqChanged(object sender, RoutedEventArgs e)
     {
         if (_loading) return;
@@ -1201,7 +1716,11 @@ public partial class MainWindow : Window
     {
         if (_loading) return;
         _settings.Pan.Enabled = PanEnabledCheck.IsChecked == true;
-        if (PanModeComboBox.SelectedItem is PanMode mode)
+        if (PanModeComboBox.SelectedItem is PanModeListItem item)
+        {
+            _settings.Pan.Mode = item.Mode;
+        }
+        else if (PanModeComboBox.SelectedItem is PanMode mode)
         {
             _settings.Pan.Mode = mode;
         }
@@ -1223,6 +1742,7 @@ public partial class MainWindow : Window
         _settings.GroupVolumes.Enter = EnterVolumeSlider.Value;
         _settings.GroupVolumes.Space = SpaceVolumeSlider.Value;
         _settings.GroupVolumes.Backspace = BackspaceVolumeSlider.Value;
+        _settings.GroupVolumes.Tab = TabVolumeSlider.Value;
         _settings.GroupVolumes.Clamp();
         RefreshGroupVolumeText();
         _ = SaveSettingsAsync();
@@ -1239,6 +1759,7 @@ public partial class MainWindow : Window
         EnterVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Enter * 100)}%";
         SpaceVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Space * 100)}%";
         BackspaceVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Backspace * 100)}%";
+        TabVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.Tab * 100)}%";
     }
 
     private void RefreshEqText()
@@ -1266,9 +1787,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        PanStatusText.Text = _settings.Pan.Enabled
-            ? $"{FormatPanMode(_settings.Pan.Mode)} at {Math.Round(_settings.Pan.Strength * 100)}% width"
-            : "Centered stereo playback";
+        PanStatusText.Text = $"{Math.Round(_settings.Pan.Strength * 100)}%";
     }
 
     private static string FormatDb(double value)
@@ -1334,7 +1853,57 @@ public partial class MainWindow : Window
         {
             await _audio.DisposeAsync();
         }
+        RebuildPlaybackProfile();
+        await _settingsSaveQueue.DisposeAsync();
         await _settingsService.SaveAsync(_settings);
+    }
+
+    private static string? ResolvePackPreviewImagePath(SoundPackMetadata metadata)
+    {
+        if (string.IsNullOrWhiteSpace(metadata.PreviewImage) ||
+            string.IsNullOrWhiteSpace(metadata.FolderPath))
+        {
+            return null;
+        }
+
+        string previewPath = Path.GetFullPath(Path.Combine(metadata.FolderPath, metadata.PreviewImage));
+        string packFolder = Path.GetFullPath(metadata.FolderPath);
+        if (!previewPath.StartsWith(packFolder, StringComparison.OrdinalIgnoreCase) ||
+            !File.Exists(previewPath))
+        {
+            return null;
+        }
+
+        string extension = Path.GetExtension(previewPath);
+        return extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)
+                ? previewPath
+                : null;
+    }
+
+    private static ImageSource? CreatePackPreviewImageSource(SoundPackMetadata metadata)
+    {
+        string? previewPath = ResolvePackPreviewImagePath(metadata);
+        if (previewPath is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            BitmapImage image = new();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = new Uri(previewPath, UriKind.Absolute);
+            image.EndInit();
+            image.Freeze();
+            return image;
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or NotSupportedException)
+        {
+            return null;
+        }
     }
 
     private sealed class PackListItem(SoundPackMetadata metadata)
@@ -1346,8 +1915,9 @@ public partial class MainWindow : Window
         public string TagsText => Metadata.Tags.Count == 0
             ? TypeLabel
             : string.Join(" / ", Metadata.Tags.Take(3).Select(tag => tag.ToUpperInvariant()));
-        public string DetailLine => $"{SampleCount} samples";
-        private int SampleCount => Metadata.Groups.Values.Sum(files => files.Count);
+        public string DetailLine => FormatBytes(GetDirectorySize(Metadata.FolderPath));
+        public int SampleCount => Metadata.Groups.Values.Sum(files => files.Count);
+        public string? PreviewImagePath => ResolvePackPreviewImagePath(Metadata);
 
         public override string ToString() => $"{Metadata.Name} - {Metadata.Description}";
 
@@ -1378,9 +1948,18 @@ public partial class MainWindow : Window
             ?? (PacksList.SelectedItem as PackListItem)?.Metadata.Id
             ?? _activePack?.Id;
 
+        string? priorityPackId = preferredPackId
+            ?? _activePack?.Id
+            ?? _settings.ActiveSoundPackId;
+
         List<PackListItem> visiblePacks = _packs
             .Where(PackMatchesCurrentFilters)
             .Select(pack => new PackListItem(pack))
+            .OrderBy(item => !string.IsNullOrWhiteSpace(priorityPackId) &&
+                item.Metadata.Id.Equals(priorityPackId, StringComparison.OrdinalIgnoreCase)
+                    ? 0
+                    : 1)
+            .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         _refreshingPackLibrary = true;
@@ -1397,6 +1976,10 @@ public partial class MainWindow : Window
                 item.Metadata.Id.Equals(previousSelection, StringComparison.OrdinalIgnoreCase))
                 ?? visiblePacks.FirstOrDefault();
             PacksList.SelectedItem = selected;
+            if (selected is not null)
+            {
+                PacksList.ScrollIntoView(selected);
+            }
             RefreshSelectedPackDetails(selected?.Metadata);
         }
         finally
@@ -1405,8 +1988,8 @@ public partial class MainWindow : Window
         }
 
         PackCountText.Text = visiblePacks.Count == _packs.Count
-            ? (_packs.Count == 1 ? "1 pack available." : $"{_packs.Count} packs available.")
-            : $"{visiblePacks.Count} of {_packs.Count} packs shown.";
+            ? (_packs.Count == 1 ? "1 pack" : $"{_packs.Count} packs")
+            : $"{visiblePacks.Count} of {_packs.Count} packs";
         RefreshPackCategoryButtons();
     }
 
@@ -1421,12 +2004,12 @@ public partial class MainWindow : Window
     private void ApplyCategoryButtonState(System.Windows.Controls.Button button, bool selected)
     {
         button.Background = selected
-            ? (MediaBrush)FindResource("AccentBrush")
+            ? (MediaBrush)FindResource("AccentSoftBrush")
             : (MediaBrush)FindResource("PanelBrush");
         button.BorderBrush = selected
-            ? (MediaBrush)FindResource("AccentHoverBrush")
+            ? (MediaBrush)FindResource("AccentBrush")
             : (MediaBrush)FindResource("ControlBorderBrush");
-        button.Foreground = (MediaBrush)FindResource("TextBrush");
+        button.Foreground = (MediaBrush)FindResource(selected ? "AccentHoverBrush" : "TextBrush");
         button.FontWeight = selected ? FontWeights.Bold : FontWeights.SemiBold;
     }
 
@@ -1479,7 +2062,9 @@ public partial class MainWindow : Window
             SelectedPackTypeText.Text = "";
             SelectedPackDescriptionText.Text = "Try another search or category.";
             SelectedPackDetailsText.Text = "";
+            SelectedPackPreviewImage.Source = null;
             PackWaveformPreview.Peaks = [];
+            AudioWaveformPreview.Peaks = [];
             return;
         }
 
@@ -1487,8 +2072,9 @@ public partial class MainWindow : Window
         SelectedPackNameText.Text = pack.Name;
         SelectedPackTypeText.Text = item.TypeLabel;
         SelectedPackDescriptionText.Text = pack.Description;
+        SelectedPackPreviewImage.Source = CreatePackPreviewImageSource(pack);
         SelectedPackDetailsText.Text =
-            $"{item.TagsText} | {item.DetailLine} | {pack.Author} | {pack.License}";
+            $"Samples     {item.SampleCount:N0}\nKeys        104 keys\nCompatibility  All keyboards";
         RefreshWaveformPreview(pack);
     }
 
@@ -1497,6 +2083,7 @@ public partial class MainWindow : Window
         if (_audio is null || !_audio.TryGetLoadedPack(pack.Id, out LoadedSoundPack? loadedPack) || loadedPack is null)
         {
             PackWaveformPreview.Peaks = [];
+            AudioWaveformPreview.Peaks = [];
             return;
         }
 
@@ -1505,9 +2092,11 @@ public partial class MainWindow : Window
             .SelectMany(group => group.Value)
             .FirstOrDefault(candidate => candidate.DecodedSamples.Length > 0);
 
-        PackWaveformPreview.Peaks = sample is null
+        IReadOnlyList<double> peaks = sample is null
             ? []
-            : WaveformPeakBuilder.BuildPeaks(sample);
+            : _waveformPeakCache.GetPeaks(sample);
+        PackWaveformPreview.Peaks = peaks;
+        AudioWaveformPreview.Peaks = peaks;
     }
 
     private static class PackFilter
@@ -1519,15 +2108,53 @@ public partial class MainWindow : Window
         public const string Digital = "Digital";
     }
 
-    private sealed class AppRuleListItem(AppRule rule)
+    private sealed class AppRuleListItem(AppRule rule, IReadOnlyDictionary<string, SoundPackMetadata> packsById)
     {
         public AppRule Rule { get; } = rule;
+        public string ProcessName => Rule.ProcessName;
+        public string ProcessInitial => string.IsNullOrWhiteSpace(Rule.ProcessName)
+            ? "?"
+            : Rule.ProcessName.Trim()[0].ToString().ToUpperInvariant();
+        public string ModeLabel => Rule.Mode switch
+        {
+            AppRuleMode.Default => "Default",
+            AppRuleMode.Disabled => "Disabled",
+            AppRuleMode.EnabledOnly => "Enabled Only",
+            AppRuleMode.UseSpecificPack => "Use Specific Pack",
+            _ => Rule.Mode.ToString()
+        };
+
+        public string PackDisplayName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Rule.SoundPackId))
+                {
+                    return "(Default)";
+                }
+
+                return packsById.TryGetValue(Rule.SoundPackId, out SoundPackMetadata? pack)
+                    ? pack.Name
+                    : Rule.SoundPackId;
+            }
+        }
+
+        public int VolumePercent => (int)Math.Round(Math.Clamp(Rule.VolumeOverride ?? 1.0, 0.0, 1.5) * 100);
+        public string VolumeText => $"{VolumePercent}%";
+        public string LastSeenText => "Now";
 
         public override string ToString()
         {
-            string pack = string.IsNullOrWhiteSpace(Rule.SoundPackId) ? "" : $" | Pack: {Rule.SoundPackId}";
+            string pack = string.IsNullOrWhiteSpace(Rule.SoundPackId) ? "" : $" | Pack: {PackDisplayName}";
             string volume = Rule.VolumeOverride is double value ? $" | Volume: {Math.Round(value * 100)}%" : "";
-            return $"{Rule.ProcessName} | {Rule.Mode}{pack}{volume}";
+            return $"{Rule.ProcessName} | {ModeLabel}{pack}{volume}";
         }
+    }
+
+    private sealed class PanModeListItem(PanMode mode, string displayName)
+    {
+        public PanMode Mode { get; } = mode;
+
+        public override string ToString() => displayName;
     }
 }

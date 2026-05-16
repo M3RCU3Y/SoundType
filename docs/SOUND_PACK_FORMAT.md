@@ -26,6 +26,7 @@ A SoundType sound pack is a folder with a `pack.json` file and WAV or MP3 assets
   "version": "1.0.0",
   "description": "Soft vintage typewriter sounds with a warm enter ding.",
   "license": "Personal use",
+  "previewImage": "preview.png",
   "tags": [ "typewriter", "vintage" ],
   "groups": {
     "normal": [

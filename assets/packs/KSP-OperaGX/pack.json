@@ -45,5 +45,6 @@
     "volume": 0.64,
     "pitchVariation": 0,
     "randomize": true
-  }
+  },
+  "previewImage": "preview.png"
 }

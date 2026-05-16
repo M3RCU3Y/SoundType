@@ -52,5 +52,6 @@
     "volume": 0.7,
     "pitchVariation": 0,
     "randomize": true
-  }
+  },
+  "previewImage": "preview.png"
 }

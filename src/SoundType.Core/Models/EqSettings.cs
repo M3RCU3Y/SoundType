@@ -4,7 +4,7 @@ public sealed class EqSettings
 {
     public const int BandCount = 10;
 
-    public static readonly int[] Frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
+    public static readonly int[] Frequencies = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
     public bool Enabled { get; set; }
     public double BassGainDb { get; set; }
