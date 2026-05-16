@@ -30,13 +30,14 @@ public partial class MainWindow : Window
     private readonly KeyboardHookService _keyboardHook = new();
     private readonly GlobalHotkeyService _globalHotkey = new();
     private readonly ActiveWindowService _activeWindow = new();
-    private readonly AudioEngine _audio = new();
     private readonly StartupService _startup = new();
     private readonly DispatcherTimer _activeAppTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private readonly string _packsRoot;
     private readonly Forms.NotifyIcon _trayIcon = new();
     private readonly List<Slider> _eqBandSliders = [];
     private readonly List<TextBlock> _eqBandValueTexts = [];
+    private readonly List<string> _startupWarnings = [];
+    private AudioEngine? _audio;
     private AppSettings _settings = new();
     private IReadOnlyList<SoundPackMetadata> _packs = [];
     private IReadOnlyDictionary<string, SoundPackMetadata> _packsById = new Dictionary<string, SoundPackMetadata>(StringComparer.OrdinalIgnoreCase);
@@ -68,16 +69,22 @@ public partial class MainWindow : Window
         ConfigureAppRuleEditors();
         ConfigurePanControls();
         ConfigurePackFilters();
+        TryStartAudio();
         LoadPacks();
         BuildKeyRules();
         ConfigureTray();
         BindSettingsToUi();
-        _keyboardHook.Start();
+        KeyboardHookStartResult keyboardHookStart = _keyboardHook.Start();
+        if (!keyboardHookStart.Started)
+        {
+            AddStartupWarning(keyboardHookStart.ErrorMessage ?? "Keyboard hook unavailable.");
+        }
         _activeAppTimer.Start();
         _loading = false;
         RefreshStatus();
         RefreshCurrentApp();
         RegisterGlobalHotkey();
+        RefreshStartupWarnings();
         if (ShouldStartHiddenInTray())
         {
             HideToTray(showBalloon: false);
@@ -115,7 +122,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        _audio.TryPlay(new PlaybackRequest
+        _audio?.TryPlay(new PlaybackRequest
         {
             Key = e.Key,
             SoundGroup = soundGroup,
@@ -184,6 +191,53 @@ public partial class MainWindow : Window
         }
     }
 
+    private void TryStartAudio()
+    {
+        try
+        {
+            _audio = new AudioEngine
+            {
+                MasterVolume = _settings.MasterVolume,
+                PitchVariation = _settings.PitchVariation,
+                Eq = _settings.Eq,
+                Pan = _settings.Pan
+            };
+        }
+        catch (Exception ex)
+        {
+            _audio = null;
+            AddStartupWarning($"Audio unavailable: {ex.Message}");
+        }
+    }
+
+    private void AddStartupWarning(string message)
+    {
+        if (_startupWarnings.Contains(message, StringComparer.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _startupWarnings.Add(message);
+        RefreshStartupWarnings();
+        RefreshStatus();
+    }
+
+    private void RefreshStartupWarnings()
+    {
+        if (_startupWarnings.Count == 0 || PackValidationText is null)
+        {
+            return;
+        }
+
+        PackValidationText.Foreground = (MediaBrush)FindResource("WarningBrush");
+        PackValidationText.Text = string.Join(Environment.NewLine, _startupWarnings);
+
+        if (_trayIcon.Visible)
+        {
+            ShowTrayBalloon(_startupWarnings[^1]);
+        }
+    }
+
     private void ActivatePack(SoundPackMetadata pack)
     {
         SoundPackValidationResult validation = _packLoader.Validate(pack);
@@ -196,6 +250,15 @@ public partial class MainWindow : Window
 
         _activePack = pack;
         _settings.ActiveSoundPackId = pack.Id;
+        if (_audio is null)
+        {
+            PackValidationText.Foreground = (MediaBrush)FindResource("WarningBrush");
+            PackValidationText.Text = $"{pack.Name} is selected, but audio is unavailable.";
+            RefreshStatus();
+            _ = SaveSettingsAsync();
+            return;
+        }
+
         if (!_audio.SetActivePack(pack.Id))
         {
             _audio.LoadPack(_packLoader.Load(pack));
@@ -208,6 +271,11 @@ public partial class MainWindow : Window
 
     private void TryPreloadPack(SoundPackMetadata pack)
     {
+        if (_audio is null)
+        {
+            return;
+        }
+
         try
         {
             if (_audio.TryGetLoadedPack(pack.Id, out _) || !_packLoader.Validate(pack).IsValid)
@@ -357,10 +425,13 @@ public partial class MainWindow : Window
         PanEnabledCheck.IsChecked = _settings.Pan.Enabled;
         PanModeComboBox.SelectedItem = _settings.Pan.Mode;
         PanStrengthSlider.Value = _settings.Pan.Strength;
-        _audio.MasterVolume = _settings.MasterVolume;
-        _audio.PitchVariation = _settings.PitchVariation;
-        _audio.Eq = _settings.Eq;
-        _audio.Pan = _settings.Pan;
+        if (_audio is not null)
+        {
+            _audio.MasterVolume = _settings.MasterVolume;
+            _audio.PitchVariation = _settings.PitchVariation;
+            _audio.Eq = _settings.Eq;
+            _audio.Pan = _settings.Pan;
+        }
         RefreshAppRules();
         RefreshGroupVolumeText();
         RefreshEqText();
@@ -407,8 +478,13 @@ public partial class MainWindow : Window
 
     private void RefreshStatus()
     {
-        StatusText.Text = _settings.Enabled ? "Listening" : "Muted";
-        StatusDot.Fill = (MediaBrush)FindResource(_settings.Enabled ? "AccentBrush" : "DangerBrush");
+        bool degraded = _settings.Enabled && _startupWarnings.Count > 0;
+        StatusText.Text = !_settings.Enabled
+            ? "Muted"
+            : degraded
+                ? "Needs attention"
+                : "Listening";
+        StatusDot.Fill = (MediaBrush)FindResource(!_settings.Enabled || degraded ? "DangerBrush" : "AccentBrush");
         UpdateEnableButton();
         VolumeText.Text = $"{Math.Round(_settings.MasterVolume * 100)}%";
         PitchVariationText.Text = $"+/- {Math.Round(_settings.PitchVariation * 100)}%";
@@ -567,7 +643,7 @@ public partial class MainWindow : Window
         {
             _settings.GlobalToggleHotkey = HotkeyGesture.DefaultText;
             gesture = HotkeyGesture.Default;
-            ShowHotkeyStatus("Invalid global hotkey. Using Ctrl+Alt+K.");
+            AddStartupWarning("Invalid global hotkey. Using Ctrl+Alt+K.");
             _ = SaveSettingsAsync();
         }
 
@@ -577,8 +653,7 @@ public partial class MainWindow : Window
 
         if (!_globalHotkey.TryRegister(windowHandle, ToggleHotkeyId, gesture, out string? errorMessage))
         {
-            ShowHotkeyStatus(errorMessage ?? "Global hotkey unavailable.");
-            ShowTrayBalloon("Global hotkey unavailable");
+            AddStartupWarning(errorMessage ?? "Global hotkey unavailable.");
         }
     }
 
@@ -600,12 +675,6 @@ public partial class MainWindow : Window
         RefreshStatus();
         ShowTrayBalloon(_settings.Enabled ? "SoundType enabled" : "SoundType muted");
         await SaveSettingsAsync();
-    }
-
-    private void ShowHotkeyStatus(string message)
-    {
-        PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-        PackValidationText.Text = message;
     }
 
     private void ShowTrayBalloon(string message)
@@ -700,7 +769,10 @@ public partial class MainWindow : Window
     {
         if (_loading) return;
         _settings.MasterVolume = Math.Clamp(MasterVolumeSlider.Value, 0.0, 1.0);
-        _audio.MasterVolume = _settings.MasterVolume;
+        if (_audio is not null)
+        {
+            _audio.MasterVolume = _settings.MasterVolume;
+        }
         RefreshStatus();
         _ = SaveSettingsAsync();
     }
@@ -709,7 +781,10 @@ public partial class MainWindow : Window
     {
         if (_loading) return;
         _settings.PitchVariation = Math.Clamp(PitchVariationSlider.Value, 0.0, 0.12);
-        _audio.PitchVariation = _settings.PitchVariation;
+        if (_audio is not null)
+        {
+            _audio.PitchVariation = _settings.PitchVariation;
+        }
         RefreshStatus();
         _ = SaveSettingsAsync();
     }
@@ -771,7 +846,7 @@ public partial class MainWindow : Window
             ActivatePack(item.Metadata);
         }
 
-        _audio.Preview(group);
+        _audio?.Preview(group);
     }
 
     private void ImportSoundPack_Click(object sender, RoutedEventArgs e)
@@ -1096,7 +1171,10 @@ public partial class MainWindow : Window
     {
         if (_loading) return;
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
-        _audio.Eq = _settings.Eq;
+        if (_audio is not null)
+        {
+            _audio.Eq = _settings.Eq;
+        }
         RefreshEqText();
         _ = SaveSettingsAsync();
     }
@@ -1111,7 +1189,10 @@ public partial class MainWindow : Window
 
         _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
         _settings.Eq.PresetName = "Custom";
-        _audio.Eq = _settings.Eq;
+        if (_audio is not null)
+        {
+            _audio.Eq = _settings.Eq;
+        }
         RefreshEqText();
         _ = SaveSettingsAsync();
     }
@@ -1127,7 +1208,10 @@ public partial class MainWindow : Window
 
         _settings.Pan.Strength = PanStrengthSlider.Value;
         _settings.Pan.Normalize();
-        _audio.Pan = _settings.Pan;
+        if (_audio is not null)
+        {
+            _audio.Pan = _settings.Pan;
+        }
         RefreshPanText();
         _ = SaveSettingsAsync();
     }
@@ -1224,7 +1308,10 @@ public partial class MainWindow : Window
         }
 
         _loading = false;
-        _audio.Eq = _settings.Eq;
+        if (_audio is not null)
+        {
+            _audio.Eq = _settings.Eq;
+        }
         RefreshEqText();
         _ = SaveSettingsAsync();
     }
@@ -1243,7 +1330,10 @@ public partial class MainWindow : Window
         _globalHotkey.Dispose();
         _trayIcon.Visible = false;
         _trayIcon.Dispose();
-        await _audio.DisposeAsync();
+        if (_audio is not null)
+        {
+            await _audio.DisposeAsync();
+        }
         await _settingsService.SaveAsync(_settings);
     }
 
@@ -1404,7 +1494,7 @@ public partial class MainWindow : Window
 
     private void RefreshWaveformPreview(SoundPackMetadata pack)
     {
-        if (!_audio.TryGetLoadedPack(pack.Id, out LoadedSoundPack? loadedPack) || loadedPack is null)
+        if (_audio is null || !_audio.TryGetLoadedPack(pack.Id, out LoadedSoundPack? loadedPack) || loadedPack is null)
         {
             PackWaveformPreview.Peaks = [];
             return;

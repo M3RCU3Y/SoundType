@@ -32,4 +32,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SoundType-win-x64-Release-portable
-          path: artifacts\SoundType-win-x64-Release-portable.zip
+          path: |
+            artifacts\SoundType-win-x64-Release-portable.zip
+            artifacts\SoundType-win-x64-Release-portable.sha256

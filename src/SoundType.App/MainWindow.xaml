@@ -5,8 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SoundType" Height="900" Width="1480" MinHeight="780" MinWidth="1180"
-        WindowStyle="None" ResizeMode="NoResize" Background="#05070D">
+        Title="SoundType" Height="860" Width="1320" MinHeight="720" MinWidth="1040"
+        WindowStyle="SingleBorderWindow" ResizeMode="CanResize" Background="#05070D">
     <Window.Resources>
         <LinearGradientBrush x:Key="HeroPanelBrush" StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#18313B" Offset="0"/>
@@ -204,17 +204,9 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="0,0,0,24">
-                    <DockPanel Margin="0,0,0,28">
-                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                            <Button Style="{StaticResource MacDotButtonStyle}" Background="#FF5F57" Click="CloseDot_Click"/>
-                            <Button Style="{StaticResource MacDotButtonStyle}" Background="#FFBD2E" Click="MinimizeDot_Click"/>
-                            <Button Style="{StaticResource MacDotButtonStyle}" Background="#28C840" Click="MaximizeDot_Click"/>
-                        </StackPanel>
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <TextBlock Text="Git" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" Margin="0,0,20,0"/>
-                            <TextBlock Text="Chat" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold"/>
-                        </StackPanel>
-                    </DockPanel>
+                    <Border Style="{StaticResource TinyPillStyle}" HorizontalAlignment="Left" Margin="0,0,0,22">
+                        <TextBlock Text="Portable Windows app" Foreground="{StaticResource AccentHoverBrush}" FontWeight="Bold"/>
+                    </Border>
                     <TextBlock Text="SoundType" FontSize="36" FontWeight="Bold"/>
                     <TextBlock Text="Keyboard sound studio" Foreground="{StaticResource MutedTextBrush}" FontSize="15" Margin="0,6,0,0"/>
                 </StackPanel>

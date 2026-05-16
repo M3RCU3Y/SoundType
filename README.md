@@ -37,7 +37,7 @@ The bundled audio now favors sourced profiles over generated placeholders. See [
 
 ## Quick Start
 
-Requirements:
+Developer requirements:
 
 - Windows 10 or Windows 11
 - .NET 8 SDK, or the local ignored SDK at `.tools/dotnet` used in this workspace
@@ -62,6 +62,7 @@ powershell -ExecutionPolicy Bypass -File .\tools\publish-portable.ps1
 ```
 
 The portable build is written to `artifacts\SoundType-win-x64-Release-portable.zip`.
+It is self-contained for Windows x64, so end users do not need to install the .NET runtime separately. A matching SHA-256 checksum is written beside the zip.
 
 ## Using SoundType
 
@@ -123,4 +124,4 @@ It does not store typed words, typed characters, passwords, or a key history, an
 
 ## Status
 
-SoundType is an active desktop build. The core app, tray behavior, startup setting, pack validation, built-in audio, importer, EQ, and tests are implemented. The next polish targets are installer signing, richer pack marketplace-style browsing, and more manual UI QA on physical Windows machines.
+SoundType is an active desktop build. The core app, tray behavior, startup setting, pack validation, built-in audio, importer, EQ, tests, and self-contained portable packaging are implemented. The next polish targets are code signing, richer pack marketplace-style browsing, and more manual UI QA on physical Windows machines.
