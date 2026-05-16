@@ -73,6 +73,32 @@ public sealed class SettingsTests
     }
 
     [Fact]
+    public async Task SaveAsync_CancellationLeavesExistingSettingsFileIntact()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "Enabled": false,
+              "MasterVolume": 0.25,
+              "ActiveSoundPackId": "existing-pack"
+            }
+            """);
+        SettingsService service = new(path);
+        using CancellationTokenSource cancellation = new();
+        cancellation.Cancel();
+
+        await Assert.ThrowsAsync<OperationCanceledException>(() =>
+            service.SaveAsync(new AppSettings { Enabled = true }, cancellation.Token));
+
+        AppSettings restored = await service.LoadAsync();
+        Assert.False(restored.Enabled);
+        Assert.Equal(0.25, restored.MasterVolume);
+        Assert.Equal("existing-pack", restored.ActiveSoundPackId);
+    }
+
+    [Fact]
     public async Task LoadAsync_UsesDefaultPack_WhenActivePackIsBlank()
     {
         string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

@@ -50,9 +50,36 @@ public sealed class SettingsService
 
     public async Task SaveAsync(AppSettings settings, CancellationToken cancellationToken = default)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath)!);
-        await using FileStream stream = File.Create(SettingsPath);
-        await JsonSerializer.SerializeAsync(stream, Normalize(settings), _jsonOptions, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        string settingsDirectory = Path.GetDirectoryName(SettingsPath)!;
+        Directory.CreateDirectory(settingsDirectory);
+        string tempPath = Path.Combine(settingsDirectory, $"{Path.GetFileName(SettingsPath)}.{Guid.NewGuid():N}.tmp");
+
+        try
+        {
+            await using (FileStream stream = new(
+                             tempPath,
+                             FileMode.CreateNew,
+                             FileAccess.Write,
+                             FileShare.None,
+                             bufferSize: 4096,
+                             FileOptions.Asynchronous | FileOptions.WriteThrough))
+            {
+                await JsonSerializer.SerializeAsync(stream, Normalize(settings), _jsonOptions, cancellationToken);
+                await stream.FlushAsync(cancellationToken);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            File.Move(tempPath, SettingsPath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
     }
 
     private static AppSettings Normalize(AppSettings? settings)

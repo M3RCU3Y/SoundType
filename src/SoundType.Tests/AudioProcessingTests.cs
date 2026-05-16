@@ -105,6 +105,57 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public void PitchVariationSampleProvider_ReadsLoadedSampleWithoutSourceCopy()
+    {
+        WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+        LoadedSoundSample sample = new(
+            "normal/key.wav",
+            SoundSampleFormat.Wav,
+            [],
+            [0f, 0f, 2f, 2f, 4f, 4f],
+            format);
+        PitchVariationSampleProvider pitch = new(sample, speedFactor: 0.5);
+        float[] buffer = new float[12];
+
+        int read = pitch.Read(buffer, 0, buffer.Length);
+
+        Assert.Equal(12, read);
+        Assert.Equal([0f, 0f, 1f, 1f, 2f, 2f], buffer.Take(6).ToArray());
+    }
+
+    [Fact]
+    public async Task AudioEngine_TryPlay_DoesNotMutateLiveEqOrPanSettings()
+    {
+        AudioEngine engine = new();
+        EqSettings eq = new()
+        {
+            Enabled = true,
+            BassGainDb = 3,
+            MidGainDb = 0,
+            TrebleGainDb = -2
+        };
+        PanSettings pan = new()
+        {
+            Enabled = true,
+            Strength = 2.0
+        };
+        engine.Eq = eq;
+        engine.Pan = pan;
+        engine.LoadPack(CreateLoadedPack("snapshot-test"));
+
+        bool played = engine.TryPlay(new PlaybackRequest
+        {
+            Key = new KeyIdentity("A", "A", KeyCategory.Character),
+            SoundGroup = "normal"
+        });
+
+        Assert.True(played);
+        Assert.Empty(eq.BandGainsDb);
+        Assert.Equal(2.0, pan.Strength);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void MultiBandEqSampleProvider_ProcessesTenBandsWithoutChangingReadCount()
     {
         ArraySampleProvider source = new(CreateSineWave(512));

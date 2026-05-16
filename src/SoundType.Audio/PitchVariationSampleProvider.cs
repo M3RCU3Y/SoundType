@@ -11,16 +11,26 @@ public sealed class PitchVariationSampleProvider : ISampleProvider
     private double _position;
 
     public PitchVariationSampleProvider(ISampleProvider source, double speedFactor)
+        : this(source.WaveFormat, ReadAll(source), speedFactor)
+    {
+    }
+
+    public PitchVariationSampleProvider(LoadedSoundSample sample, double speedFactor)
+        : this(sample.WaveFormat, sample.DecodedSamples, speedFactor)
+    {
+    }
+
+    private PitchVariationSampleProvider(WaveFormat waveFormat, float[] source, double speedFactor)
     {
         if (speedFactor <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(speedFactor), "Speed factor must be greater than zero.");
         }
 
-        WaveFormat = source.WaveFormat;
+        WaveFormat = waveFormat;
         _channels = WaveFormat.Channels;
         _speedFactor = speedFactor;
-        _source = ReadAll(source);
+        _source = source;
         _frameCount = _source.Length / _channels;
     }
 
@@ -62,7 +72,10 @@ public sealed class PitchVariationSampleProvider : ISampleProvider
         int read;
         while ((read = source.Read(buffer, 0, buffer.Length)) > 0)
         {
-            samples.AddRange(buffer.Take(read));
+            for (int i = 0; i < read; i++)
+            {
+                samples.Add(buffer[i]);
+            }
         }
 
         return samples.ToArray();

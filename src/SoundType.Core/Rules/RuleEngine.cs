@@ -20,11 +20,18 @@ public sealed class RuleEngine
             return PlaybackDecision.Skip($"{key.DisplayName} is excluded.");
         }
 
-        AppRule? appRule = settings.AppRules.FirstOrDefault(rule =>
-            !string.IsNullOrWhiteSpace(rule.ProcessName) &&
-            string.Equals(rule.ProcessName, currentProcessName, StringComparison.OrdinalIgnoreCase));
-
-        bool enabledOnlyModeActive = settings.AppRules.Any(rule => rule.Mode == AppRuleMode.EnabledOnly);
+        AppRule? appRule = null;
+        bool enabledOnlyModeActive = false;
+        foreach (AppRule rule in settings.AppRules)
+        {
+            enabledOnlyModeActive |= rule.Mode == AppRuleMode.EnabledOnly;
+            if (appRule is null &&
+                !string.IsNullOrWhiteSpace(rule.ProcessName) &&
+                string.Equals(rule.ProcessName, currentProcessName, StringComparison.OrdinalIgnoreCase))
+            {
+                appRule = rule;
+            }
+        }
 
         if (appRule?.Mode == AppRuleMode.Disabled)
         {

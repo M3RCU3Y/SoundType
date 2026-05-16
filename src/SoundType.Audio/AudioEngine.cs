@@ -17,6 +17,9 @@ public sealed class AudioEngine : IAsyncDisposable
     private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private readonly MixingSampleProvider _mixer;
     private readonly WaveOutEvent _output;
+    private EqSettings _eq = CreateEqSnapshot(new EqSettings());
+    private PanSettings _pan = CreatePanSnapshot(new PanSettings());
+    private double _eqOutputTrim = 1.0;
     private LoadedSoundPack? _activePack;
     private bool _disposed;
 
@@ -34,8 +37,22 @@ public sealed class AudioEngine : IAsyncDisposable
 
     public double MasterVolume { get; set; } = 0.75;
     public double PitchVariation { get; set; }
-    public EqSettings Eq { get; set; } = new();
-    public PanSettings Pan { get; set; } = new();
+    public EqSettings Eq
+    {
+        get => CreateEqSnapshot(_eq);
+        set
+        {
+            _eq = CreateEqSnapshot(value);
+            _eqOutputTrim = ResolveEqOutputTrim(_eq);
+        }
+    }
+
+    public PanSettings Pan
+    {
+        get => CreatePanSnapshot(_pan);
+        set => _pan = CreatePanSnapshot(value);
+    }
+
     public int MaxCachedPacks { get; init; } = DefaultMaxCachedPacks;
     public int LoadedPackCount
     {
@@ -139,19 +156,23 @@ public sealed class AudioEngine : IAsyncDisposable
             return;
         }
 
-        ISampleProvider sampleProvider = new LoadedSoundSampleProvider(sample);
-        double pitchFactor = ResolvePitchFactor(pack.Metadata.Defaults.PitchVariation);
-        if (Math.Abs(pitchFactor - 1.0) > 0.001)
+        EqSettings eq = _eq;
+        PanSettings panSettings = _pan;
+        double eqOutputTrim = _eqOutputTrim;
+        double masterVolume = MasterVolume;
+        double pitchVariation = PitchVariation;
+
+        double pitchFactor = ResolvePitchFactor(pitchVariation, pack.Metadata.Defaults.PitchVariation);
+        ISampleProvider sampleProvider = Math.Abs(pitchFactor - 1.0) > 0.001
+            ? new PitchVariationSampleProvider(sample, pitchFactor)
+            : new LoadedSoundSampleProvider(sample);
+
+        if (HasAudibleEq(eq))
         {
-            sampleProvider = new PitchVariationSampleProvider(sampleProvider, pitchFactor);
+            sampleProvider = new MultiBandEqSampleProvider(sampleProvider, eq);
         }
 
-        if (Eq.Enabled)
-        {
-            sampleProvider = new MultiBandEqSampleProvider(sampleProvider, Eq);
-        }
-
-        double pan = ResolvePan(request.Key);
+        double pan = ResolvePan(panSettings, request.Key);
         if (Math.Abs(pan) > 0.001)
         {
             sampleProvider = new StereoPanSampleProvider(sampleProvider, pan);
@@ -160,7 +181,7 @@ public sealed class AudioEngine : IAsyncDisposable
         sampleProvider = new VolumeSampleProvider(sampleProvider)
         {
             Volume = (float)Math.Clamp(
-                MasterVolume * pack.Metadata.Defaults.Volume * request.VolumeMultiplier * EqOutputTrim(),
+                masterVolume * pack.Metadata.Defaults.Volume * request.VolumeMultiplier * eqOutputTrim,
                 0.0,
                 1.0)
         };
@@ -211,9 +232,9 @@ public sealed class AudioEngine : IAsyncDisposable
         }
     }
 
-    private double ResolvePitchFactor(double packVariation)
+    private double ResolvePitchFactor(double pitchVariation, double packVariation)
     {
-        double variation = Math.Clamp(Math.Max(PitchVariation, packVariation), 0.0, 0.12);
+        double variation = Math.Clamp(Math.Max(pitchVariation, packVariation), 0.0, 0.12);
         if (variation <= 0.0001)
         {
             return 1.0;
@@ -225,30 +246,60 @@ public sealed class AudioEngine : IAsyncDisposable
         }
     }
 
-    private double EqOutputTrim()
+    private static EqSettings CreateEqSnapshot(EqSettings? settings)
     {
-        if (!Eq.Enabled)
+        settings ??= new EqSettings();
+        EqSettings snapshot = new()
+        {
+            Enabled = settings.Enabled,
+            BassGainDb = settings.BassGainDb,
+            MidGainDb = settings.MidGainDb,
+            TrebleGainDb = settings.TrebleGainDb,
+            BandGainsDb = settings.BandGainsDb?.ToList() ?? [],
+            PresetName = settings.PresetName
+        };
+        snapshot.Normalize();
+        return snapshot;
+    }
+
+    private static PanSettings CreatePanSnapshot(PanSettings? settings)
+    {
+        settings ??= new PanSettings();
+        PanSettings snapshot = new()
+        {
+            Enabled = settings.Enabled,
+            Mode = settings.Mode,
+            Strength = settings.Strength
+        };
+        snapshot.Normalize();
+        return snapshot;
+    }
+
+    private static bool HasAudibleEq(EqSettings eq) =>
+        eq.Enabled && eq.BandGainsDb.Any(gain => Math.Abs(gain) > 0.001);
+
+    private static double ResolveEqOutputTrim(EqSettings eq)
+    {
+        if (!eq.Enabled)
         {
             return 1.0;
         }
 
-        Eq.Normalize();
-        double maxGain = Eq.BandGainsDb.DefaultIfEmpty(0).Max();
+        double maxGain = eq.BandGainsDb.DefaultIfEmpty(0).Max();
         return maxGain <= 0 ? 1.0 : Math.Clamp(1.0 - maxGain / 48.0, 0.65, 1.0);
     }
 
-    private double ResolvePan(KeyIdentity key)
+    private double ResolvePan(PanSettings panSettings, KeyIdentity key)
     {
-        Pan.Normalize();
-        if (!Pan.Enabled || Pan.Strength <= 0)
+        if (!panSettings.Enabled || panSettings.Strength <= 0)
         {
             return 0;
         }
 
-        double pan = Pan.Mode == PanMode.Random
+        double pan = panSettings.Mode == PanMode.Random
             ? NextRandomPan()
             : KeyboardPanResolver.Resolve(key);
-        return Math.Clamp(pan * Pan.Strength, -1.0, 1.0);
+        return Math.Clamp(pan * panSettings.Strength, -1.0, 1.0);
     }
 
     private double NextRandomPan()
