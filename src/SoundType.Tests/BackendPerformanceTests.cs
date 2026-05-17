@@ -107,6 +107,19 @@ public sealed class BackendPerformanceTests
     }
 
     [Fact]
+    public void ActiveVoiceSampleProvider_ReleasesLeaseOnFinalPartialRead()
+    {
+        VoiceLimiter limiter = new(maxVoices: 1);
+        Assert.True(limiter.TryAcquire(out IDisposable lease));
+        ActiveVoiceSampleProvider provider = new(new ArraySampleProvider([0.25f]), lease);
+        float[] buffer = new float[2];
+
+        Assert.Equal(1, provider.Read(buffer, 0, buffer.Length));
+
+        Assert.Equal(0, limiter.ActiveVoices);
+    }
+
+    [Fact]
     public void WaveformPeakCache_ReusesPeaksForSameLoadedSample()
     {
         WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);

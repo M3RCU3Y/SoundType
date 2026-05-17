@@ -23,7 +23,7 @@ public sealed class ActiveVoiceSampleProvider : ISampleProvider
         try
         {
             int read = _source.Read(buffer, offset, count);
-            if (read == 0)
+            if (read == 0 || (count > 0 && read < count))
             {
                 Release();
             }
