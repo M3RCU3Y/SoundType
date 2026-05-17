@@ -1235,13 +1235,13 @@
 
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="124"/>
+                                    <ColumnDefinition Width="110"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="28"/>
                                 </Grid.ColumnDefinitions>
-                                <Border Width="124" Height="124" CornerRadius="6" Background="{StaticResource ThumbSwitchBrush}">
+                                <Border Width="110" Height="110" CornerRadius="6" Background="{StaticResource ThumbSwitchBrush}">
                                     <Grid>
-                                        <Border Width="62" Height="62" Background="#EFE7D8" BorderBrush="#BDAF99" BorderThickness="2" CornerRadius="7" RenderTransformOrigin="0.5,0.5">
+                                        <Border Width="55" Height="55" Background="#EFE7D8" BorderBrush="#BDAF99" BorderThickness="2" CornerRadius="7" RenderTransformOrigin="0.5,0.5">
                                             <Border.RenderTransform>
                                                 <RotateTransform Angle="45"/>
                                             </Border.RenderTransform>
@@ -1252,7 +1252,7 @@
                                                RenderOptions.BitmapScalingMode="HighQuality"/>
                                     </Grid>
                                 </Border>
-                                <StackPanel Grid.Column="1" Margin="18,2,8,0">
+                                <StackPanel Grid.Column="1" Margin="18,0,8,0">
                                     <TextBlock x:Name="SelectedPackNameText" FontSize="22" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock x:Name="SelectedPackAuthorText" Text="SoundType Team" FontSize="14" Foreground="{StaticResource MutedTextBrush}" Margin="0,7,0,9"/>
                                     <StackPanel Orientation="Horizontal">
@@ -1263,15 +1263,15 @@
                                             <TextBlock x:Name="SelectedPackTraitText" Text="Linear" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="14" LineHeight="19" Margin="0,10,0,0"/>
+                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="13" LineHeight="18" Margin="0,8,0,0"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="2" Text="☆" FontSize="24" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top"/>
                             </Grid>
 
                             <Rectangle Grid.Row="1" Fill="#2C353D"/>
 
-                            <StackPanel Grid.Row="2" Margin="0,12,0,12">
-                                <DockPanel Margin="0,0,0,8">
+                            <StackPanel Grid.Row="2" Margin="0,9,0,9">
+                                <DockPanel Margin="0,0,0,6">
                                     <TextBlock Text="Waveform" FontSize="15" FontWeight="Bold"/>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                         <TextBlock Text="↗" FontSize="18" Foreground="{StaticResource TextBrush}" Margin="0,0,14,0"/>
@@ -1279,21 +1279,21 @@
                                     </StackPanel>
                                 </DockPanel>
                                 <Grid>
-                                    <controls:WaveformPreviewControl x:Name="PackWaveformPreview" Height="96"/>
-                                    <StackPanel HorizontalAlignment="Left" Margin="0,12,0,0">
+                                    <controls:WaveformPreviewControl x:Name="PackWaveformPreview" Height="76"/>
+                                    <StackPanel HorizontalAlignment="Left" Margin="0,5,0,0">
                                         <TextBlock Text="0 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                                        <TextBlock Text="-12 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,18,0,0"/>
-                                        <TextBlock Text="-24 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,18,0,0"/>
-                                        <TextBlock Text="-36 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,18,0,0"/>
-                                        <TextBlock Text="-48 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,18,0,0"/>
+                                        <TextBlock Text="-12 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,0"/>
+                                        <TextBlock Text="-24 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,0"/>
+                                        <TextBlock Text="-36 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,0"/>
+                                        <TextBlock Text="-48 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,0"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
 
                             <Rectangle Grid.Row="3" Fill="#2C353D"/>
 
-                            <StackPanel Grid.Row="4" Margin="0,12,0,12">
-                                <TextBlock Text="Preview" FontWeight="Bold" FontSize="15" Margin="0,0,0,10"/>
+                            <StackPanel Grid.Row="4" Margin="0,9,0,9">
+                                <TextBlock Text="Preview" FontWeight="Bold" FontSize="15" Margin="0,0,0,8"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -1309,7 +1309,7 @@
                                     <Button Grid.Column="4" Content="▷ Space" Padding="8,0" FontSize="13" Click="PreviewSpace_Click"/>
                                     <Button Grid.Column="6" Content="▷ Backspace" Padding="8,0" FontSize="13" Click="PreviewBackspace_Click"/>
                                 </Grid>
-                                <Grid Margin="0,16,0,0">
+                                <Grid Margin="0,10,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28"/>
                                         <ColumnDefinition Width="*"/>
@@ -1325,7 +1325,7 @@
 
                             <Rectangle Grid.Row="5" Fill="#2C353D"/>
 
-                            <Grid Grid.Row="6" Margin="0,12,0,0">
+                            <Grid Grid.Row="6" Margin="0,10,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1.08*"/>
                                     <ColumnDefinition Width="1"/>
