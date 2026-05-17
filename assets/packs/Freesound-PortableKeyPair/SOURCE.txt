@@ -1,4 +1,0 @@
-Source: https://freesound.org/people/cabled_mess/sounds/360601/ and https://freesound.org/people/bubblegump1977/sounds/785412/
-Author: cabled_mess + bubblegump1977 / Freesound
-License: CC0 1.0. Sources: Freesound sounds 360601 by cabled_mess and 785412 by bubblegump1977.
-Processing: converted to mono 44.1 kHz WAV, high/low-pass filtered, segmented into short one-shot clips, peak-normalized with fade-out headroom for low-latency key playback.

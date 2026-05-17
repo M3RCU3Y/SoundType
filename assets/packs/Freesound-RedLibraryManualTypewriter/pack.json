@@ -1,0 +1,74 @@
+{
+  "id": "fs-red-library-manual-typewriter",
+  "name": "Red Library Manual Typewriter",
+  "author": "craigsmith, knufds, ramsamba, MasterNavigator / Freesound",
+  "version": "1.0.0",
+  "description": "CC0 manual typewriter one-shots cut from a high-quality Red Library recording, with dedicated carriage-return and margin-bell Enter samples.",
+  "license": "CC0 1.0. Sources: Freesound 483335, 345955, 318686, 318687, and 444813.",
+  "tags": [
+    "typewriter",
+    "manual",
+    "vintage",
+    "bell",
+    "cc0",
+    "freesound"
+  ],
+  "groups": {
+    "normal": [
+      "normal/key-01.wav",
+      "normal/key-02.wav",
+      "normal/key-03.wav",
+      "normal/key-04.wav",
+      "normal/key-05.wav",
+      "normal/key-06.wav",
+      "normal/key-07.wav",
+      "normal/key-08.wav",
+      "normal/key-09.wav",
+      "normal/key-10.wav",
+      "normal/key-11.wav",
+      "normal/key-12.wav",
+      "normal/key-13.wav",
+      "normal/key-14.wav",
+      "normal/key-15.wav",
+      "normal/key-16.wav",
+      "normal/key-17.wav",
+      "normal/key-18.wav",
+      "normal/key-19.wav",
+      "normal/key-20.wav",
+      "normal/key-21.wav",
+      "normal/key-22.wav",
+      "normal/key-23.wav",
+      "normal/key-24.wav",
+      "normal/key-25.wav",
+      "normal/key-26.wav",
+      "normal/key-27.wav",
+      "normal/key-28.wav",
+      "normal/key-29.wav",
+      "normal/key-30.wav",
+      "normal/key-31.wav",
+      "normal/key-32.wav"
+    ],
+    "space": [
+      "space/space.wav"
+    ],
+    "enter": [
+      "enter/bell-carriage-reset.wav",
+      "enter/carriage-return.wav",
+      "enter/margin-bell.wav",
+      "enter/clean-bell.wav"
+    ],
+    "backspace": [
+      "backspace/key.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter",
+    "Space": "space",
+    "Backspace": "backspace"
+  },
+  "defaults": {
+    "volume": 0.58,
+    "pitchVariation": 0.01,
+    "randomize": true
+  }
+}

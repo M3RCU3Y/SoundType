@@ -41,16 +41,6 @@ SoundType includes selected full-travel keyboard sound profiles from `src/audio`
 
 The copied profile folders in `assets/packs/Mechvibes-*` preserve the upstream MIT license and source `config.json` as `SOURCE_CONFIG.json`.
 
-## BigSoundBank Typewriter Recordings
-
-Source: https://bigsoundbank.com/search?q=typewriter
-
-Author: Joseph SARDIN
-
-License: CC0/public-domain equivalent as stated on the BigSoundBank download pages.
-
-SoundType includes two cleaned Hermes Precisa 305 typewriter packs in `assets/packs/BSB-HermesTypewriter-*`. The retained packs are short one-shot clips extracted from the source recordings so each keystroke can play independently without starting a long typing loop. Bell and return accents are filtered and lowered to avoid harsh ringing. Each copied pack includes `SOURCE.txt` with the exact source pages used.
-
 ## Freesound Typewriter Recordings
 
 Source: https://freesound.org
@@ -65,7 +55,7 @@ SoundType includes curated CC0 typewriter packs from these Freesound recordings:
 - `assets/packs/Freesound-CloseVintage` from https://freesound.org/people/nvmbky/sounds/801118/
 - `assets/packs/Freesound-OlivettiCollege` from https://freesound.org/people/Spacekittycat/sounds/770623/
 - `assets/packs/Freesound-Gate13Actions` from https://freesound.org/people/Gate13/sounds/697389/
-- `assets/packs/Freesound-PortableKeyPair` from https://freesound.org/people/cabled_mess/sounds/360601/ and https://freesound.org/people/bubblegump1977/sounds/785412/
+- `assets/packs/Freesound-RedLibraryManualTypewriter` from https://freesound.org/people/craigsmith/sounds/483335/, https://freesound.org/people/knufds/sounds/345955/, https://freesound.org/people/ramsamba/sounds/318686/, https://freesound.org/people/ramsamba/sounds/318687/, and https://freesound.org/people/MasterNavigator/sounds/444813/
 
 Each pack includes `SOURCE.txt`. Long recordings were segmented into short one-shot samples with fade-out headroom for low-latency overlapping playback.
 

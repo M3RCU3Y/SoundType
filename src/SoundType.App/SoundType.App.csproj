@@ -10,6 +10,12 @@
     <PackageReference Include="NAudio" Version="2.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\SoundTypeLogo.png" />
+    <Resource Include="Assets\SoundType.ico" />
+    <None Update="Assets\SoundType.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>

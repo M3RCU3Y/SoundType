@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -958,10 +959,18 @@ public partial class MainWindow : Window
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(exit);
 
-        _trayIcon.Icon = System.Drawing.SystemIcons.Application;
+        _trayIcon.Icon = CreateTrayIcon();
         _trayIcon.ContextMenuStrip = menu;
         _trayIcon.Visible = true;
         _trayIcon.DoubleClick += (_, _) => ShowFromTray();
+    }
+
+    private static System.Drawing.Icon CreateTrayIcon()
+    {
+        string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "SoundType.ico");
+        return File.Exists(iconPath)
+            ? new System.Drawing.Icon(iconPath)
+            : System.Drawing.SystemIcons.Application;
     }
 
     private void ShowFromTray()
@@ -1028,16 +1037,26 @@ public partial class MainWindow : Window
 
     private void PackSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        PackSearchPlaceholder.Visibility = string.IsNullOrWhiteSpace(PackSearchTextBox.Text)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        UpdatePackSearchPlaceholder();
 
         if (_loading) return;
         RefreshPackLibrary();
     }
 
+    private void PackSearchTextBox_FocusChanged(object sender, RoutedEventArgs e) =>
+        UpdatePackSearchPlaceholder();
+
+    private void UpdatePackSearchPlaceholder()
+    {
+        PackSearchPlaceholder.Visibility =
+            string.IsNullOrWhiteSpace(PackSearchTextBox.Text) && !PackSearchTextBox.IsKeyboardFocused
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+    }
+
     private void ClearPackSearch_Click(object sender, RoutedEventArgs e)
     {
+        e.Handled = true;
         PackSearchTextBox.Clear();
         PackSearchTextBox.Focus();
     }
@@ -1057,6 +1076,12 @@ public partial class MainWindow : Window
 
     private void TypewriterCategory_Click(object sender, RoutedEventArgs e) =>
         SetPackFilter(PackFilter.Typewriters);
+
+    private void QuietCategory_Click(object sender, RoutedEventArgs e) =>
+        SetPackFilter(PackFilter.Quiet);
+
+    private void DigitalCategory_Click(object sender, RoutedEventArgs e) =>
+        SetPackFilter(PackFilter.Digital);
 
     private void SetPackFilter(string filter)
     {
@@ -1084,6 +1109,57 @@ public partial class MainWindow : Window
         }
 
         _audio?.Preview(group);
+    }
+
+    private void HeaderMore_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        System.Windows.Controls.ContextMenu menu = new();
+        menu.Items.Add(CreateMenuItem("Open Packs Folder", (_, _) => OpenFolder(_packsRoot)));
+        menu.Items.Add(CreateMenuItem("Open Settings", (_, _) => ShowPage(SettingsPage)));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(CreateMenuItem("Reload Library", (_, _) => RefreshPackLibrary(_activePack?.Id)));
+        OpenContextMenu(menu, sender as FrameworkElement);
+    }
+
+    private void PackRowMenuButton_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        if (sender is not System.Windows.Controls.Button button || button.Tag is not PackListItem item)
+        {
+            return;
+        }
+
+        System.Windows.Controls.ContextMenu menu = new();
+        menu.Items.Add(CreateMenuItem("Use This Pack", async (_, _) => await SelectAndActivatePackAsync(item)));
+        menu.Items.Add(CreateMenuItem("Preview Normal", async (_, _) =>
+        {
+            await SelectAndActivatePackAsync(item);
+            _audio?.Preview("normal");
+        }));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(CreateMenuItem("Open Pack Folder", (_, _) => OpenFolder(item.Metadata.FolderPath)));
+        OpenContextMenu(menu, button);
+    }
+
+    private async Task SelectAndActivatePackAsync(PackListItem item)
+    {
+        PacksList.SelectedItem = item;
+        await ActivatePackAsync(item.Metadata);
+    }
+
+    private static MenuItem CreateMenuItem(string header, RoutedEventHandler click)
+    {
+        MenuItem item = new() { Header = header };
+        item.Click += click;
+        return item;
+    }
+
+    private static void OpenContextMenu(System.Windows.Controls.ContextMenu menu, FrameworkElement? placementTarget)
+    {
+        menu.PlacementTarget = placementTarget;
+        menu.Placement = PlacementMode.Bottom;
+        menu.IsOpen = true;
     }
 
     private async void ImportSoundPack_Click(object sender, RoutedEventArgs e)
@@ -1193,8 +1269,13 @@ public partial class MainWindow : Window
 
     private void OpenPackFolder_Click(object sender, RoutedEventArgs e)
     {
-        Directory.CreateDirectory(_packsRoot);
-        Process.Start(new ProcessStartInfo(_packsRoot) { UseShellExecute = true });
+        OpenFolder(_activePack?.FolderPath ?? _packsRoot);
+    }
+
+    private static void OpenFolder(string folderPath)
+    {
+        Directory.CreateDirectory(folderPath);
+        Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
     }
 
     private void VisualKeyboard_KeyToggled(object sender, KeyboardKeyToggledEventArgs e)
@@ -1915,8 +1996,12 @@ public partial class MainWindow : Window
         public string TagsText => Metadata.Tags.Count == 0
             ? TypeLabel
             : string.Join(" / ", Metadata.Tags.Take(3).Select(tag => tag.ToUpperInvariant()));
+        public string TraitLabel => ResolveTraitLabel(Metadata);
         public string DetailLine => FormatBytes(GetDirectorySize(Metadata.FolderPath));
         public int SampleCount => Metadata.Groups.Values.Sum(files => files.Count);
+        public string KeyCountText => Metadata.KeyOverrides.Count == 0
+            ? "104 keys"
+            : $"{Metadata.KeyOverrides.Count:N0} custom";
         public string? PreviewImagePath => ResolvePackPreviewImagePath(Metadata);
 
         public override string ToString() => $"{Metadata.Name} - {Metadata.Description}";
@@ -1939,6 +2024,19 @@ public partial class MainWindow : Window
             }
 
             return "Pack";
+        }
+
+        private static string ResolveTraitLabel(SoundPackMetadata metadata)
+        {
+            string? tag = metadata.Tags.FirstOrDefault(tag =>
+                !tag.Equals("switch", StringComparison.OrdinalIgnoreCase) &&
+                !tag.Equals("typewriter", StringComparison.OrdinalIgnoreCase) &&
+                !tag.Equals("keyboard", StringComparison.OrdinalIgnoreCase) &&
+                !tag.Equals("mechanical", StringComparison.OrdinalIgnoreCase));
+
+            return string.IsNullOrWhiteSpace(tag)
+                ? "Linear"
+                : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(tag.Replace('-', ' '));
         }
     }
 
@@ -1999,6 +2097,8 @@ public partial class MainWindow : Window
         ApplyCategoryButtonState(AllPacksCategoryButton, filter == PackFilter.All);
         ApplyCategoryButtonState(MechanicalCategoryButton, filter == PackFilter.Switches);
         ApplyCategoryButtonState(TypewriterCategoryButton, filter == PackFilter.Typewriters);
+        ApplyCategoryButtonState(QuietCategoryButton, filter == PackFilter.Quiet);
+        ApplyCategoryButtonState(DigitalCategoryButton, filter == PackFilter.Digital);
     }
 
     private void ApplyCategoryButtonState(System.Windows.Controls.Button button, bool selected)
@@ -2059,9 +2159,17 @@ public partial class MainWindow : Window
         if (pack is null)
         {
             SelectedPackNameText.Text = "No pack selected";
+            SelectedPackAuthorText.Text = "";
             SelectedPackTypeText.Text = "";
+            SelectedPackTraitText.Text = "";
             SelectedPackDescriptionText.Text = "Try another search or category.";
-            SelectedPackDetailsText.Text = "";
+            SelectedPackVersionText.Text = "";
+            SelectedPackReleasedText.Text = "";
+            SelectedPackSizeText.Text = "";
+            SelectedPackSamplesText.Text = "";
+            SelectedPackKeysText.Text = "";
+            SelectedPackCompatibilityText.Text = "";
+            SelectedPackNotesText.Text = "";
             SelectedPackPreviewImage.Source = null;
             PackWaveformPreview.Peaks = [];
             AudioWaveformPreview.Peaks = [];
@@ -2070,12 +2178,52 @@ public partial class MainWindow : Window
 
         PackListItem item = new(pack);
         SelectedPackNameText.Text = pack.Name;
+        SelectedPackAuthorText.Text = string.IsNullOrWhiteSpace(pack.Author) ? "Unknown author" : pack.Author;
         SelectedPackTypeText.Text = item.TypeLabel;
+        SelectedPackTraitText.Text = item.TraitLabel;
         SelectedPackDescriptionText.Text = pack.Description;
         SelectedPackPreviewImage.Source = CreatePackPreviewImageSource(pack);
-        SelectedPackDetailsText.Text =
-            $"Samples     {item.SampleCount:N0}\nKeys        104 keys\nCompatibility  All keyboards";
+        SelectedPackVersionText.Text = string.IsNullOrWhiteSpace(pack.Version) ? "1.0.0" : pack.Version;
+        SelectedPackReleasedText.Text = GetPackReleasedDate(pack);
+        SelectedPackSizeText.Text = item.DetailLine;
+        SelectedPackSamplesText.Text = item.SampleCount.ToString("N0");
+        SelectedPackKeysText.Text = item.KeyCountText;
+        SelectedPackCompatibilityText.Text = "All keyboards";
+        SelectedPackNotesText.Text = BuildPackNotes(pack);
         RefreshWaveformPreview(pack);
+    }
+
+    private static string GetPackReleasedDate(SoundPackMetadata pack)
+    {
+        if (!Directory.Exists(pack.FolderPath))
+        {
+            return "--";
+        }
+
+        DateTime timestamp = Directory.GetLastWriteTime(pack.FolderPath);
+        return timestamp == DateTime.MinValue ? "--" : timestamp.ToString("MMM d, yyyy");
+    }
+
+    private static string BuildPackNotes(SoundPackMetadata pack)
+    {
+        List<string> notes = [];
+        if (!string.IsNullOrWhiteSpace(pack.License))
+        {
+            notes.Add($"{pack.License} license.");
+        }
+
+        int groupCount = pack.Groups.Count(group => group.Value.Count > 0);
+        if (groupCount > 0)
+        {
+            notes.Add($"{groupCount:N0} sound groups available.");
+        }
+
+        if (notes.Count == 0)
+        {
+            notes.Add("No additional notes.");
+        }
+
+        return string.Join(Environment.NewLine, notes);
     }
 
     private void RefreshWaveformPreview(SoundPackMetadata pack)

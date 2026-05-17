@@ -30,8 +30,8 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | KSP switch profiles | MIT-licensed Alpaca, Cherry MX, Gateron Ink, Holy Panda, NovelKeys Cream, Logitech G915 Brown, and Opera GX profiles with press/release samples where available |
 | Mechvibes full-travel profiles | MIT-licensed Turquoise, Cream, MX Black, MX Brown, and MX Blue full-travel profiles with release samples where available |
 | Cherry KC 1000 Real Keys | CC0 single-key recordings from OpenGameArt |
-| Curated typewriter profiles | CC0 Freesound, Chosic, OpenGameArt, and cleaned BigSoundBank typewriter profiles segmented into one-shot samples |
-| Hermes Precisa clean profiles | Two CC0 BigSoundBank Hermes Precisa 305 variants with reduced/filtered bell accents |
+| Curated typewriter profiles | CC0 Freesound, Chosic, and OpenGameArt typewriter profiles segmented into one-shot samples |
+| Red Library Manual Typewriter | CC0 high-variation manual typewriter keys with dedicated carriage-return and margin-bell Enter samples |
 
 The bundled audio now favors sourced profiles over generated placeholders. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
