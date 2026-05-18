@@ -19,7 +19,7 @@ Reference reviewed:
 
 - Keyboard Sounds Pro, MIT License, copyright 2025 Nathan Fiscaletti.
 - Mechvibes, MIT License, copyright 2021 Hai Nguyen. SoundType imports selected sound profiles only; no Mechvibes implementation code is copied.
-- Freesound CC0 typewriter recordings by videog, exterminat, TOC1, nvmbky, Spacekittycat, Gate13, craigsmith, knufds, ramsamba, and MasterNavigator. SoundType imports preview/download audio as segmented one-shot clips with per-pack `SOURCE.txt` files.
+- Freesound CC0 typewriter recordings by videog, exterminat, TOC1, nvmbky, Spacekittycat, Gate13, craigsmith, evsecrets, knufds, ramsamba, sprinkleCipher, and MasterNavigator. SoundType imports preview/download audio as segmented one-shot clips with per-pack `SOURCE.txt` files.
 - Chosic Typewriter, Creative Commons CC0 Public Domain, imported as segmented one-shot clips.
 - OpenGameArt Mechanical Sounds by BMacZero, CC0, imported as a short typewriter tap pack.
 

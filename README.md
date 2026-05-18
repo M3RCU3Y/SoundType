@@ -32,6 +32,7 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | Cherry KC 1000 Real Keys | CC0 single-key recordings from OpenGameArt |
 | Curated typewriter profiles | CC0 Freesound, Chosic, and OpenGameArt typewriter profiles segmented into one-shot samples |
 | Red Library Manual Typewriter | CC0 high-variation manual typewriter keys with dedicated carriage-return and margin-bell Enter samples |
+| Line Bell Typewriter | CC0 ding-forward typewriter keys with seven Enter bell/carriage-return samples |
 
 The bundled audio now favors sourced profiles over generated placeholders. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
