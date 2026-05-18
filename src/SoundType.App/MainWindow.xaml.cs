@@ -25,6 +25,21 @@ public partial class MainWindow : Window
 {
     private const int ToggleHotkeyId = 0x534B;
     private const string EnterDingPackId = "soundtype-enter-ding";
+    private static readonly TimeSpan EnterDingMinimumInterval = TimeSpan.FromMilliseconds(150);
+    private static readonly IReadOnlyList<EnterDingSoundListItem> EnterDingSounds =
+    [
+        new("random", "Random"),
+        new("ding-01", "Desk Bell 1"),
+        new("ding-02", "Desk Bell 2"),
+        new("ding-03", "Desk Bell 3"),
+        new("ding-04", "Desk Bell 4"),
+        new("ding-05", "Desk Bell 5"),
+        new("ding-06", "Desk Bell 6"),
+        new("ding-07", "Desk Bell 7"),
+        new("ding-08", "Desk Bell 8"),
+        new("ding-09", "Desk Bell 9"),
+        new("ding-10", "Desk Bell 10")
+    ];
     private readonly SettingsService _settingsService = new();
     private readonly SoundPackLoader _packLoader = new();
     private readonly SoundPackArchiveService _archiveService = new();
@@ -84,6 +99,7 @@ public partial class MainWindow : Window
         RebuildPlaybackProfile();
         ConfigureAppRuleEditors();
         ConfigurePanControls();
+        ConfigureEnterDingControls();
         ConfigureKeyboardRuleEditors();
         ConfigurePackFilters();
         TryStartAudio();
@@ -388,16 +404,24 @@ public partial class MainWindow : Window
             return;
         }
 
+        string soundGroup = ResolveEnterDingSoundGroup(_settings.EnterDingSoundGroup);
         _audio?.TryPlay(new PlaybackRequest
         {
             Key = key,
-            SoundGroup = "enter",
+            SoundGroup = soundGroup,
             SoundPackId = EnterDingPackId,
             VolumeMultiplier = Math.Clamp(volumeMultiplier * _settings.EnterDingVolume, 0.0, 1.0),
             ActiveProcessName = processName,
-            BypassSoundShaping = true
+            BypassSoundShaping = true,
+            MinimumPlaybackInterval = EnterDingMinimumInterval,
+            ThrottleKey = $"{EnterDingPackId}:{soundGroup}"
         });
     }
+
+    private static string ResolveEnterDingSoundGroup(string? soundGroup) =>
+        string.IsNullOrWhiteSpace(soundGroup) || soundGroup.Equals("random", StringComparison.OrdinalIgnoreCase)
+            ? "enter"
+            : soundGroup;
 
     private void PreloadRulePacksInBackground(string? activePackId)
     {
@@ -447,6 +471,15 @@ public partial class MainWindow : Window
         PanModeComboBox.Items.Clear();
         PanModeComboBox.Items.Add(new PanModeListItem(PanMode.KeyPosition, "Stereo"));
         PanModeComboBox.Items.Add(new PanModeListItem(PanMode.Random, "Random"));
+    }
+
+    private void ConfigureEnterDingControls()
+    {
+        EnterDingSoundComboBox.Items.Clear();
+        foreach (EnterDingSoundListItem item in EnterDingSounds)
+        {
+            EnterDingSoundComboBox.Items.Add(item);
+        }
     }
 
     private void ConfigureKeyboardRuleEditors()
@@ -541,6 +574,10 @@ public partial class MainWindow : Window
         PitchVariationSlider.Value = _settings.PitchVariation;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         EnterDingEnabledCheck.IsChecked = _settings.EnterDingEnabled;
+        EnterDingSoundComboBox.SelectedItem = EnterDingSoundComboBox.Items
+            .OfType<EnterDingSoundListItem>()
+            .FirstOrDefault(item => item.SoundGroup.Equals(_settings.EnterDingSoundGroup, StringComparison.OrdinalIgnoreCase))
+            ?? EnterDingSoundComboBox.Items.OfType<EnterDingSoundListItem>().FirstOrDefault();
         MinimizeToTrayCheck.IsChecked = _settings.MinimizeToTray;
         StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
         StartHiddenInTrayCheck.IsChecked = _settings.StartHiddenInTray;
@@ -1764,6 +1801,20 @@ public partial class MainWindow : Window
         _ = SaveSettingsAsync();
     }
 
+    private void EnterDingSoundComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loading)
+        {
+            return;
+        }
+
+        if (EnterDingSoundComboBox.SelectedItem is EnterDingSoundListItem item)
+        {
+            _settings.EnterDingSoundGroup = item.SoundGroup;
+            _ = SaveSettingsAsync();
+        }
+    }
+
     private void StartWithWindowsChanged(object sender, RoutedEventArgs e)
     {
         if (_loading) return;
@@ -2364,6 +2415,13 @@ public partial class MainWindow : Window
     private sealed class PanModeListItem(PanMode mode, string displayName)
     {
         public PanMode Mode { get; } = mode;
+
+        public override string ToString() => displayName;
+    }
+
+    private sealed class EnterDingSoundListItem(string soundGroup, string displayName)
+    {
+        public string SoundGroup { get; } = soundGroup;
 
         public override string ToString() => displayName;
     }

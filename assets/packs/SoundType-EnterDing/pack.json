@@ -3,7 +3,7 @@
   "name": "SoundType Enter Ding",
   "author": "SoundType",
   "version": "1.0.0",
-  "description": "Hidden original soft Enter ding used by the optional Enter ding overlay setting.",
+  "description": "Hidden original short Enter ding options used by the optional Enter ding overlay setting.",
   "license": "Original SoundType asset.",
   "tags": [
     "hidden",
@@ -14,19 +14,43 @@
     "normal": [
       "normal/ding-01.wav",
       "normal/ding-02.wav",
-      "normal/ding-03.wav"
+      "normal/ding-03.wav",
+      "normal/ding-04.wav",
+      "normal/ding-05.wav",
+      "normal/ding-06.wav",
+      "normal/ding-07.wav",
+      "normal/ding-08.wav",
+      "normal/ding-09.wav",
+      "normal/ding-10.wav"
     ],
     "enter": [
       "enter/ding-01.wav",
       "enter/ding-02.wav",
-      "enter/ding-03.wav"
-    ]
+      "enter/ding-03.wav",
+      "enter/ding-04.wav",
+      "enter/ding-05.wav",
+      "enter/ding-06.wav",
+      "enter/ding-07.wav",
+      "enter/ding-08.wav",
+      "enter/ding-09.wav",
+      "enter/ding-10.wav"
+    ],
+    "ding-01": [ "enter/ding-01.wav" ],
+    "ding-02": [ "enter/ding-02.wav" ],
+    "ding-03": [ "enter/ding-03.wav" ],
+    "ding-04": [ "enter/ding-04.wav" ],
+    "ding-05": [ "enter/ding-05.wav" ],
+    "ding-06": [ "enter/ding-06.wav" ],
+    "ding-07": [ "enter/ding-07.wav" ],
+    "ding-08": [ "enter/ding-08.wav" ],
+    "ding-09": [ "enter/ding-09.wav" ],
+    "ding-10": [ "enter/ding-10.wav" ]
   },
   "keyOverrides": {
     "Enter": "enter"
   },
   "defaults": {
-    "volume": 0.82,
+    "volume": 0.7,
     "pitchVariation": 0.0,
     "randomize": true
   }

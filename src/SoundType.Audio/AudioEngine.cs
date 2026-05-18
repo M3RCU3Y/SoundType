@@ -13,6 +13,7 @@ public sealed class AudioEngine : IAsyncDisposable
     private readonly object _packLock = new();
     private readonly object _mixerLock = new();
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, long> _throttleLastPlayedTicks = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, long> _packLastUsedTicks = new(StringComparer.OrdinalIgnoreCase);
     private readonly VoiceLimiter _voiceLimiter = new(DefaultMaxActiveVoices);
@@ -144,6 +145,11 @@ public sealed class AudioEngine : IAsyncDisposable
 
     private bool PlayNow(PlaybackRequest request)
     {
+        if (IsThrottled(request))
+        {
+            return false;
+        }
+
         LoadedSoundPack? pack = ResolvePack(request.SoundPackId);
         if (pack is null)
         {
@@ -216,6 +222,28 @@ public sealed class AudioEngine : IAsyncDisposable
         }
 
         return true;
+    }
+
+    private bool IsThrottled(PlaybackRequest request)
+    {
+        if (request.MinimumPlaybackInterval <= TimeSpan.Zero || string.IsNullOrWhiteSpace(request.ThrottleKey))
+        {
+            return false;
+        }
+
+        long now = Stopwatch.GetTimestamp();
+        long minimumTicks = (long)(request.MinimumPlaybackInterval.TotalSeconds * Stopwatch.Frequency);
+        lock (_throttleLastPlayedTicks)
+        {
+            if (_throttleLastPlayedTicks.TryGetValue(request.ThrottleKey, out long lastPlayedTicks) &&
+                now - lastPlayedTicks < minimumTicks)
+            {
+                return true;
+            }
+
+            _throttleLastPlayedTicks[request.ThrottleKey] = now;
+            return false;
+        }
     }
 
     private LoadedSoundPack? ResolvePack(string? soundPackId)

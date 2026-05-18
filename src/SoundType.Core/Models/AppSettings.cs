@@ -16,6 +16,7 @@ public sealed class AppSettings
     public bool IgnoreKeyRepeats { get; set; } = true;
     public bool EnterDingEnabled { get; set; }
     public double EnterDingVolume { get; set; } = 0.55;
+    public string EnterDingSoundGroup { get; set; } = "random";
     public bool PauseInFullscreenApps { get; set; } = true;
     public HashSet<string> ExcludedKeys { get; set; } = DefaultExcludedKeys();
     public List<AppRule> AppRules { get; set; } = [];

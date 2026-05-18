@@ -156,6 +156,35 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_TryPlay_ThrottlesRepeatedOverlaySounds()
+    {
+        AudioEngine engine = new();
+        engine.LoadPack(CreateLoadedPack("overlay-test"));
+
+        PlaybackRequest request = new()
+        {
+            Key = new KeyIdentity("Enter", "Enter", KeyCategory.Special),
+            SoundGroup = "normal",
+            SoundPackId = "overlay-test",
+            MinimumPlaybackInterval = TimeSpan.FromMilliseconds(150),
+            ThrottleKey = "enter-ding"
+        };
+
+        Assert.True(engine.TryPlay(request));
+        Assert.False(engine.TryPlay(request));
+        Assert.True(engine.TryPlay(new PlaybackRequest
+        {
+            Key = new KeyIdentity("Space", "Space", KeyCategory.Special),
+            SoundGroup = "normal",
+            SoundPackId = "overlay-test",
+            MinimumPlaybackInterval = TimeSpan.FromMilliseconds(150),
+            ThrottleKey = "space-ding"
+        }));
+
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void MultiBandEqSampleProvider_ProcessesTenBandsWithoutChangingReadCount()
     {
         ArraySampleProvider source = new(CreateSineWave(512));
