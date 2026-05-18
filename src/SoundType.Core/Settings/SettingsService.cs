@@ -87,6 +87,7 @@ public sealed class SettingsService
         settings ??= new AppSettings();
         settings.MasterVolume = Math.Clamp(settings.MasterVolume, 0.0, 1.0);
         settings.PitchVariation = Math.Clamp(settings.PitchVariation, 0.0, 0.12);
+        settings.EnterDingVolume = Math.Clamp(settings.EnterDingVolume, 0.0, 1.0);
         settings.ActiveSoundPackId = string.IsNullOrWhiteSpace(settings.ActiveSoundPackId)
             ? AppSettings.DefaultSoundPackId
             : settings.ActiveSoundPackId;

@@ -31,8 +31,6 @@ Local keyboard events -> privacy-safe key groups -> pack rules -> mixer/EQ -> lo
 | Mechvibes full-travel profiles | MIT-licensed Turquoise, Cream, MX Black, MX Brown, and MX Blue full-travel profiles with release samples where available |
 | Cherry KC 1000 Real Keys | CC0 single-key recordings from OpenGameArt |
 | Curated typewriter profiles | CC0 Freesound, Chosic, and OpenGameArt typewriter profiles segmented into one-shot samples |
-| Red Library Manual Typewriter | CC0 high-variation manual typewriter keys with dedicated carriage-return and margin-bell Enter samples |
-| Line Bell Typewriter | CC0 ding-forward typewriter keys with seven Enter bell/carriage-return samples |
 
 The bundled audio now favors sourced profiles over generated placeholders. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
@@ -84,7 +82,7 @@ SoundType folder packs use a `pack.json` manifest plus grouped WAV/MP3 samples. 
 Validate a folder pack or archive:
 
 ```powershell
-.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\Freesound-RoyalQuietDeluxe
+.\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\assets\packs\Freesound-Gate13Actions
 .\.tools\dotnet\dotnet.exe run --project .\tools\SoundType.PackValidator\SoundType.PackValidator.csproj -- .\dist\MyPack.soundpack
 ```
 

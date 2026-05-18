@@ -1,0 +1,29 @@
+{
+  "id": "soundtype-enter-ding",
+  "name": "SoundType Enter Ding",
+  "author": "SoundType",
+  "version": "1.0.0",
+  "description": "Hidden original soft Enter ding used by the optional Enter ding overlay setting.",
+  "license": "Original SoundType asset.",
+  "tags": [
+    "hidden",
+    "system",
+    "ding"
+  ],
+  "groups": {
+    "normal": [
+      "normal/ding.wav"
+    ],
+    "enter": [
+      "enter/ding.wav"
+    ]
+  },
+  "keyOverrides": {
+    "Enter": "enter"
+  },
+  "defaults": {
+    "volume": 0.7,
+    "pitchVariation": 0.0,
+    "randomize": false
+  }
+}

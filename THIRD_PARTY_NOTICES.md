@@ -49,14 +49,10 @@ License: Creative Commons 0 on each source page.
 
 SoundType includes curated CC0 typewriter packs from these Freesound recordings:
 
-- `assets/packs/Freesound-RoyalQuietDeluxe` from https://freesound.org/people/videog/sounds/240839/
 - `assets/packs/Freesound-WW2Typewriter` from https://freesound.org/people/exterminat/sounds/164807/
-- `assets/packs/Freesound-SonyMechanical` from https://freesound.org/people/TOC1/sounds/244414/
 - `assets/packs/Freesound-CloseVintage` from https://freesound.org/people/nvmbky/sounds/801118/
 - `assets/packs/Freesound-OlivettiCollege` from https://freesound.org/people/Spacekittycat/sounds/770623/
 - `assets/packs/Freesound-Gate13Actions` from https://freesound.org/people/Gate13/sounds/697389/
-- `assets/packs/Freesound-RedLibraryManualTypewriter` from https://freesound.org/people/craigsmith/sounds/483335/, https://freesound.org/people/knufds/sounds/345955/, https://freesound.org/people/ramsamba/sounds/318686/, https://freesound.org/people/ramsamba/sounds/318687/, and https://freesound.org/people/MasterNavigator/sounds/444813/
-- `assets/packs/Freesound-LineBellTypewriter` from https://freesound.org/people/evsecrets/sounds/334458/, https://freesound.org/people/ramsamba/sounds/318686/, https://freesound.org/people/ramsamba/sounds/318687/, https://freesound.org/people/knufds/sounds/345955/, https://freesound.org/people/sprinkleCipher/sounds/752749/, and https://freesound.org/people/MasterNavigator/sounds/444813/
 
 Each pack includes `SOURCE.txt`. Long recordings were segmented into short one-shot samples with fade-out headroom for low-latency overlapping playback.
 

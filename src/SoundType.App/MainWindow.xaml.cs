@@ -24,6 +24,7 @@ namespace SoundType.App;
 public partial class MainWindow : Window
 {
     private const int ToggleHotkeyId = 0x534B;
+    private const string EnterDingPackId = "soundtype-enter-ding";
     private readonly SettingsService _settingsService = new();
     private readonly SoundPackLoader _packLoader = new();
     private readonly SoundPackArchiveService _archiveService = new();
@@ -47,6 +48,7 @@ public partial class MainWindow : Window
     private IReadOnlyList<SoundPackMetadata> _packs = [];
     private IReadOnlyDictionary<string, SoundPackMetadata> _packsById = new Dictionary<string, SoundPackMetadata>(StringComparer.OrdinalIgnoreCase);
     private HashSet<string> _releasePackIds = new(StringComparer.OrdinalIgnoreCase);
+    private SoundPackMetadata? _enterDingPack;
     private SoundPackMetadata? _activePack;
     private HwndSource? _hotkeySource;
     private string? _currentProcessName;
@@ -148,6 +150,11 @@ public partial class MainWindow : Window
             VolumeMultiplier = decision.VolumeMultiplier * profile.GetVolumeForGroup(decision.SoundGroup),
             ActiveProcessName = processName
         });
+
+        if (!e.IsRelease && _settings.EnterDingEnabled && e.Key.Code.Equals("Enter", StringComparison.OrdinalIgnoreCase))
+        {
+            TryPlayEnterDing(e.Key, processName, decision.VolumeMultiplier);
+        }
     }
 
     private SoundPackMetadata? ResolveDecisionPack(string? soundPackId)
@@ -178,7 +185,11 @@ public partial class MainWindow : Window
     private async Task LoadPacksAsync()
     {
         _waveformPeakCache.Clear();
-        _packs = _packLoader.DiscoverPacks(_packsRoot);
+        IReadOnlyList<SoundPackMetadata> discoveredPacks = _packLoader.DiscoverPacks(_packsRoot);
+        _enterDingPack = discoveredPacks.FirstOrDefault(pack =>
+            pack.Id.Equals(EnterDingPackId, StringComparison.OrdinalIgnoreCase));
+        TryLoadEnterDingPack();
+        _packs = discoveredPacks.Where(pack => !HasTag(pack, "hidden")).ToList();
         _packsById = _packs.ToDictionary(pack => pack.Id, StringComparer.OrdinalIgnoreCase);
         _releasePackIds = _packs
             .Where(HasAnyReleaseGroup)
@@ -342,6 +353,51 @@ public partial class MainWindow : Window
         }
     }
 
+    private bool TryLoadEnterDingPack()
+    {
+        if (_audio is null || _enterDingPack is null)
+        {
+            return false;
+        }
+
+        if (_audio.TryGetLoadedPack(EnterDingPackId, out _))
+        {
+            return true;
+        }
+
+        try
+        {
+            if (!_packLoader.Validate(_enterDingPack).IsValid)
+            {
+                return false;
+            }
+
+            _audio.LoadPack(_packLoader.Load(_enterDingPack), makeActive: false);
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or InvalidDataException)
+        {
+            return false;
+        }
+    }
+
+    private void TryPlayEnterDing(KeyIdentity key, string? processName, double volumeMultiplier)
+    {
+        if (!TryLoadEnterDingPack())
+        {
+            return;
+        }
+
+        _audio?.TryPlay(new PlaybackRequest
+        {
+            Key = key,
+            SoundGroup = "enter",
+            SoundPackId = EnterDingPackId,
+            VolumeMultiplier = Math.Clamp(volumeMultiplier * _settings.EnterDingVolume, 0.0, 1.0),
+            ActiveProcessName = processName
+        });
+    }
+
     private void PreloadRulePacksInBackground(string? activePackId)
     {
         HashSet<string> rulePackIds = _settings.AppRules
@@ -483,6 +539,7 @@ public partial class MainWindow : Window
         MasterVolumeSlider.Value = _settings.MasterVolume;
         PitchVariationSlider.Value = _settings.PitchVariation;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
+        EnterDingEnabledCheck.IsChecked = _settings.EnterDingEnabled;
         MinimizeToTrayCheck.IsChecked = _settings.MinimizeToTray;
         StartWithWindowsCheck.IsChecked = _settings.StartWithWindows;
         StartHiddenInTrayCheck.IsChecked = _settings.StartHiddenInTray;
@@ -1096,6 +1153,9 @@ public partial class MainWindow : Window
 
     private void PreviewNormal_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("normal");
     private void PreviewEnter_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("enter");
+
+    private void PreviewEnterDing_Click(object sender, RoutedEventArgs e) =>
+        TryPlayEnterDing(new KeyIdentity("Enter", "Enter", KeyCategory.Special), _currentProcessName, 1.0);
     private void PreviewSpace_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("space");
     private void PreviewBackspace_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("backspace");
     private void PreviewTab_Click(object sender, RoutedEventArgs e) => PreviewPackGroup("tab");
@@ -1697,6 +1757,7 @@ public partial class MainWindow : Window
     {
         if (_loading) return;
         _settings.IgnoreKeyRepeats = IgnoreRepeatsCheck.IsChecked == true;
+        _settings.EnterDingEnabled = EnterDingEnabledCheck.IsChecked == true;
         _settings.MinimizeToTray = MinimizeToTrayCheck.IsChecked == true;
         RefreshTrayStatus();
         _ = SaveSettingsAsync();

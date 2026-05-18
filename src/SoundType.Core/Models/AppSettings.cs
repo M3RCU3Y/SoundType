@@ -14,6 +14,8 @@ public sealed class AppSettings
     public string ActiveSoundPackId { get; set; } = DefaultSoundPackId;
     public string GlobalToggleHotkey { get; set; } = "Ctrl+Alt+K";
     public bool IgnoreKeyRepeats { get; set; } = true;
+    public bool EnterDingEnabled { get; set; }
+    public double EnterDingVolume { get; set; } = 0.55;
     public bool PauseInFullscreenApps { get; set; } = true;
     public HashSet<string> ExcludedKeys { get; set; } = DefaultExcludedKeys();
     public List<AppRule> AppRules { get; set; } = [];

@@ -2395,6 +2395,16 @@
                                             <CheckBox Grid.Column="2" x:Name="IgnoreRepeatsCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" VerticalAlignment="Center"/>
                                         </Grid>
                                         <Grid Margin="2,0,0,12">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="&#xE995;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Sweet Enter ding" Style="{StaticResource SettingsRowTitleStyle}"/>
+                                                <TextBlock Text="Add a clean soft bell when Enter is pressed" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Content="Test" Style="{StaticResource SettingsSmallButtonStyle}" Click="PreviewEnterDing_Click" VerticalAlignment="Center"/>
+                                            <CheckBox Grid.Column="4" x:Name="EnterDingEnabledCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Grid Margin="2,0,0,12">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE9D2;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
                                             <StackPanel Grid.Column="1">
