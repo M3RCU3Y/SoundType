@@ -164,23 +164,24 @@ public sealed class AudioEngine : IAsyncDisposable
             return false;
         }
 
+        bool bypassSoundShaping = request.BypassSoundShaping;
         EqSettings eq = _eq;
         PanSettings panSettings = _pan;
         double eqOutputTrim = _eqOutputTrim;
         double masterVolume = MasterVolume;
-        double pitchVariation = PitchVariation;
+        double pitchVariation = bypassSoundShaping ? 0.0 : PitchVariation;
 
         double pitchFactor = ResolvePitchFactor(pitchVariation, pack.Metadata.Defaults.PitchVariation);
         ISampleProvider sampleProvider = Math.Abs(pitchFactor - 1.0) > 0.001
             ? new PitchVariationSampleProvider(sample, pitchFactor)
             : new LoadedSoundSampleProvider(sample);
 
-        if (HasAudibleEq(eq))
+        if (!bypassSoundShaping && HasAudibleEq(eq))
         {
             sampleProvider = new MultiBandEqSampleProvider(sampleProvider, eq);
         }
 
-        double pan = ResolvePan(panSettings, request.Key);
+        double pan = bypassSoundShaping ? 0.0 : ResolvePan(panSettings, request.Key);
         if (Math.Abs(pan) > 0.001)
         {
             sampleProvider = new StereoPanSampleProvider(sampleProvider, pan);

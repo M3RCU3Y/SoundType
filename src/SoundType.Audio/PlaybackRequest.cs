@@ -9,4 +9,5 @@ public sealed class PlaybackRequest
     public string? SoundPackId { get; init; }
     public double VolumeMultiplier { get; init; } = 1.0;
     public string? ActiveProcessName { get; init; }
+    public bool BypassSoundShaping { get; init; }
 }

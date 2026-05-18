@@ -394,7 +394,8 @@ public partial class MainWindow : Window
             SoundGroup = "enter",
             SoundPackId = EnterDingPackId,
             VolumeMultiplier = Math.Clamp(volumeMultiplier * _settings.EnterDingVolume, 0.0, 1.0),
-            ActiveProcessName = processName
+            ActiveProcessName = processName,
+            BypassSoundShaping = true
         });
     }
 
@@ -860,9 +861,9 @@ public partial class MainWindow : Window
         foreach ((System.Windows.Controls.Button button, FrameworkElement page) in nav)
         {
             bool selected = ReferenceEquals(page, activePage);
-            button.Background = selected ? (MediaBrush)FindResource("AccentSoftBrush") : System.Windows.Media.Brushes.Transparent;
-            button.BorderBrush = selected ? (MediaBrush)FindResource("AccentBrush") : System.Windows.Media.Brushes.Transparent;
-            button.Foreground = (MediaBrush)FindResource(selected ? "AccentHoverBrush" : "MutedTextBrush");
+            button.Background = selected ? (MediaBrush)FindResource("PanelElevatedBrush") : System.Windows.Media.Brushes.Transparent;
+            button.BorderBrush = selected ? (MediaBrush)FindResource("ControlBorderBrush") : System.Windows.Media.Brushes.Transparent;
+            button.Foreground = (MediaBrush)FindResource(selected ? "TextBrush" : "MutedTextBrush");
         }
     }
 
