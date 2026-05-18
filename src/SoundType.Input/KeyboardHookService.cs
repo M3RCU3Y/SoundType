@@ -13,7 +13,7 @@ public sealed class KeyboardHookService : IDisposable
     private const int WmSyskeyup = 0x0105;
     private readonly LowLevelKeyboardProc _proc;
     private readonly IKeyboardHookPlatform _platform;
-    private readonly ConcurrentDictionary<int, DateTimeOffset> _lastKeyDown = new();
+    private readonly ConcurrentDictionary<int, byte> _pressedKeys = new();
     private IntPtr _hookId;
     private bool _disposed;
 
@@ -70,13 +70,11 @@ public sealed class KeyboardHookService : IDisposable
             bool isRepeat = false;
             if (isRelease)
             {
-                _lastKeyDown.TryRemove(hookData.VkCode, out _);
+                _pressedKeys.TryRemove(hookData.VkCode, out _);
             }
             else
             {
-                isRepeat = _lastKeyDown.TryGetValue(hookData.VkCode, out DateTimeOffset previous) &&
-                           now - previous < TimeSpan.FromMilliseconds(35);
-                _lastKeyDown[hookData.VkCode] = now;
+                isRepeat = !_pressedKeys.TryAdd(hookData.VkCode, 0);
             }
 
             KeyPressed?.Invoke(this, new KeyPressedEvent

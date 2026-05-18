@@ -1,3 +1,9 @@
-Source: Original SoundType synthesized short desk-bell press assets.
-License: Original SoundType asset.
-Processing: Generated as mono 44.1 kHz 16-bit WAV files with varied short damped bell tones, conservative peak level, and fade-in/fade-out edges to avoid clicks, crackle, clipping, repeated-tail buildup, or harsh ringing.
+Sources:
+- https://freesound.org/people/ramsamba/sounds/318687/ (Typewriter Bell.wav)
+- https://freesound.org/s/318686/ (Typewriter Carriage Return.wav)
+- https://freesound.org/people/knufds/sounds/345955/ (Typewriter bell & carriage reset)
+- https://freesound.org/people/MasterNavigator/sounds/444813/ (typewriter bell)
+- https://opengameart.org/content/point-bell
+- https://opengameart.org/content/bell-dingschimes
+License: Creative Commons 0 / public domain source recordings.
+Processing: Converted to mono 44.1 kHz 16-bit WAV, trimmed for short Enter overlays, high/low-pass filtered, lightly mixed with a typewriter carriage transient, normalized with limiter headroom, and fade-in/fade-out edges to avoid clicks, crackle, clipping, repeated-tail buildup, or harsh ringing.

@@ -83,3 +83,18 @@ Author: BMacZero
 License: CC0
 
 SoundType bundles the short typewriter tap from this set as `assets/packs/OpenGameArt-BMacTypewriter`. CC0 does not require attribution, but the source is recorded here for provenance.
+
+## SoundType Enter Ding Sources
+
+SoundType bundles processed short Enter ding overlays as `assets/packs/SoundType-EnterDing`.
+
+Sources:
+
+- https://freesound.org/people/ramsamba/sounds/318687/
+- https://freesound.org/s/318686/
+- https://freesound.org/people/knufds/sounds/345955/
+- https://freesound.org/people/MasterNavigator/sounds/444813/
+- https://opengameart.org/content/point-bell
+- https://opengameart.org/content/bell-dingschimes
+
+License: Creative Commons 0 / public domain on the source pages. The bundled WAV files are trimmed, filtered, mixed, and normalized derivatives for low-latency app playback.
