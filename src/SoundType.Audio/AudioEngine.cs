@@ -9,6 +9,8 @@ public sealed class AudioEngine : IAsyncDisposable
 {
     private const int DefaultMaxCachedPacks = 4;
     private const int DefaultMaxActiveVoices = 32;
+    private const int OutputDesiredLatencyMs = 45;
+    private const int OutputBufferCount = 3;
     private readonly Random _random = new();
     private readonly object _packLock = new();
     private readonly object _mixerLock = new();
@@ -31,10 +33,10 @@ public sealed class AudioEngine : IAsyncDisposable
         _mixer = new MixingSampleProvider(_playbackFormat) { ReadFully = true };
         _output = new WaveOutEvent
         {
-            DesiredLatency = 18,
-            NumberOfBuffers = 2
+            DesiredLatency = OutputDesiredLatencyMs,
+            NumberOfBuffers = OutputBufferCount
         };
-        _output.Init(_mixer);
+        _output.Init(new SoftLimiterSampleProvider(_mixer));
         _output.Play();
     }
 

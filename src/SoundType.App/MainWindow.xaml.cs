@@ -29,16 +29,14 @@ public partial class MainWindow : Window
     private static readonly IReadOnlyList<EnterDingSoundListItem> EnterDingSounds =
     [
         new("random", "Random"),
-        new("ding-01", "Desk Bell 1"),
-        new("ding-02", "Desk Bell 2"),
-        new("ding-03", "Desk Bell 3"),
-        new("ding-04", "Desk Bell 4"),
-        new("ding-05", "Desk Bell 5"),
-        new("ding-06", "Desk Bell 6"),
-        new("ding-07", "Desk Bell 7"),
-        new("ding-08", "Desk Bell 8"),
-        new("ding-09", "Desk Bell 9"),
-        new("ding-10", "Desk Bell 10")
+        new("ding-01", "Soft Counter Bell"),
+        new("ding-02", "Warm Desk Ding"),
+        new("ding-03", "Muted Service Bell"),
+        new("ding-04", "Tiny Hotel Bell"),
+        new("ding-05", "Round Button Ding"),
+        new("ding-06", "Low Brass Ding"),
+        new("ding-07", "Bright Tap Bell"),
+        new("ding-08", "Clean Ping Bell")
     ];
     private readonly SettingsService _settingsService = new();
     private readonly SoundPackLoader _packLoader = new();

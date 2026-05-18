@@ -54,6 +54,22 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public void SoftLimiterSampleProvider_ProtectsOutputBusFromSummedPeaks()
+    {
+        ArraySampleProvider source = new([-2.0f, -1.0f, -0.25f, 0.25f, 1.0f, 2.0f]);
+        SoftLimiterSampleProvider limiter = new(source, ceiling: 0.92f);
+        float[] buffer = new float[6];
+
+        int read = limiter.Read(buffer, 0, buffer.Length);
+
+        Assert.Equal(6, read);
+        Assert.All(buffer, sample => Assert.InRange(sample, -0.92f, 0.92f));
+        Assert.True(Math.Abs(buffer[0]) > Math.Abs(buffer[1]));
+        Assert.True(Math.Abs(buffer[1]) > Math.Abs(buffer[2]));
+        Assert.Equal(0.25f, buffer[3], precision: 5);
+    }
+
+    [Fact]
     public void ThreeBandEqSampleProvider_ProcessesSamplesWithoutChangingReadCount()
     {
         ArraySampleProvider source = new(CreateSineWave(512));
