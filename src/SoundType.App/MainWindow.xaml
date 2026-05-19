@@ -396,9 +396,25 @@
         </Style>
         <Style x:Key="SectionCardStyle" TargetType="Border" BasedOn="{StaticResource PanelStyle}">
             <Setter Property="Padding" Value="18"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="MouseEnter" Handler="AnimatedCard_MouseEnter"/>
+            <EventSetter Event="MouseLeave" Handler="AnimatedCard_MouseLeave"/>
         </Style>
         <Style x:Key="CompactPanelStyle" TargetType="Border" BasedOn="{StaticResource PanelStyle}">
             <Setter Property="Padding" Value="16"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="MouseEnter" Handler="AnimatedCard_MouseEnter"/>
+            <EventSetter Event="MouseLeave" Handler="AnimatedCard_MouseLeave"/>
         </Style>
 
         <Style x:Key="ChipBorderStyle" TargetType="Border">
@@ -504,6 +520,87 @@
             <Setter Property="Padding" Value="10,7"/>
         </Style>
 
+        <Style x:Key="SmoothScrollRepeatButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SmoothScrollThumbStyle" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="ThumbChrome"
+                                Width="7"
+                                Margin="2,4"
+                                Background="#56626C"
+                                CornerRadius="5"
+                                Opacity="0.62"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ThumbChrome" Property="Background" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="ThumbChrome" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="ThumbChrome" Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+                                <Setter TargetName="ThumbChrome" Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SmoothLibraryScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="MinWidth" Value="12"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="Root" Background="Transparent">
+                            <Border x:Name="TrackGlow"
+                                    Width="8"
+                                    HorizontalAlignment="Center"
+                                    Background="#141C23"
+                                    CornerRadius="6"
+                                    Opacity="0.28"/>
+                            <Track x:Name="PART_Track"
+                                   IsDirectionReversed="True"
+                                   Margin="0,3">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}"
+                                                  Style="{StaticResource SmoothScrollRepeatButtonStyle}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SmoothScrollThumbStyle}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"
+                                                  Style="{StaticResource SmoothScrollRepeatButtonStyle}"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TrackGlow" Property="Opacity" Value="0.62"/>
+                                <Setter TargetName="TrackGlow" Property="Background" Value="#1A252D"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="ListBox">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
@@ -525,6 +622,9 @@
                                           CanContentScroll="False"
                                           PanningMode="VerticalOnly"
                                           PanningDeceleration="0.004">
+                                <ScrollViewer.Resources>
+                                    <Style TargetType="ScrollBar" BasedOn="{StaticResource SmoothLibraryScrollBarStyle}"/>
+                                </ScrollViewer.Resources>
                                 <ItemsPresenter/>
                             </ScrollViewer>
                         </Border>
@@ -1413,6 +1513,7 @@
                              Grid.Row="2"
                              Grid.Column="0"
                              SelectionChanged="PacksList_SelectionChanged"
+                             PreviewMouseWheel="PacksList_PreviewMouseWheel"
                              HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -2920,11 +3021,10 @@
                                 <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Padding="18">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="42"/>
-                                            <RowDefinition Height="57"/>
-                                            <RowDefinition Height="57"/>
-                                            <RowDefinition Height="57"/>
-                                            <RowDefinition Height="57"/>
+                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
                                             <RowDefinition Height="1"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
@@ -2959,8 +3059,8 @@
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" Style="{StaticResource SettingsSwitchStyle}" IsChecked="False" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Rectangle Grid.Row="5" Fill="#2A343D"/>
-                                        <Grid Grid.Row="6" Margin="0,14,0,0">
+                                        <Rectangle Grid.Row="4" Fill="#2A343D"/>
+                                        <Grid Grid.Row="5" Margin="0,14,0,0">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="210"/><ColumnDefinition Width="*"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="Debounce repeated keys" Style="{StaticResource SettingsRowTitleStyle}"/>
@@ -2978,11 +3078,11 @@
                                 <Border Grid.Column="2" Style="{StaticResource SettingsCardStyle}" Padding="18">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="42"/>
-                                            <RowDefinition Height="58"/>
-                                            <RowDefinition Height="58"/>
-                                            <RowDefinition Height="58"/>
-                                            <RowDefinition Height="58"/>
+                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
                                             <RowDefinition Height="1"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
@@ -3124,11 +3224,11 @@
                                 <Border Grid.Column="2" Style="{StaticResource SettingsCardStyle}" Padding="18">
                                     <Grid>
                                         <Grid.RowDefinitions>
+                                            <RowDefinition Height="36"/>
                                             <RowDefinition Height="42"/>
-                                            <RowDefinition Height="52"/>
-                                            <RowDefinition Height="52"/>
-                                            <RowDefinition Height="52"/>
-                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="42"/>
+                                            <RowDefinition Height="42"/>
+                                            <RowDefinition Height="42"/>
                                             <RowDefinition Height="1"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>

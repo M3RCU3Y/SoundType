@@ -7,6 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using SoundType.App.Controls;
@@ -75,6 +76,9 @@ public partial class MainWindow : Window
     private string _selectedKeyboardCode = "Space";
     private KeyboardKeyFilter _keyboardFilter = KeyboardKeyFilter.All;
     private int _packActivationVersion;
+    private ScrollViewer? _packsScrollViewer;
+    private readonly DispatcherTimer _libraryScrollTimer = new() { Interval = TimeSpan.FromMilliseconds(16) };
+    private double _libraryScrollTarget;
 
     public MainWindow()
     {
@@ -88,6 +92,7 @@ public partial class MainWindow : Window
         Closing += MainWindow_Closing;
         _keyboardHook.KeyPressed += KeyboardHook_KeyPressed;
         _activeAppTimer.Tick += (_, _) => RefreshCurrentApp();
+        _libraryScrollTimer.Tick += LibraryScrollTimer_Tick;
     }
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -268,6 +273,63 @@ public partial class MainWindow : Window
         _startupWarnings.Add(message);
         RefreshStartupWarnings();
         RefreshStatus();
+    }
+
+    private void PacksList_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+        _packsScrollViewer ??= FindVisualChild<ScrollViewer>(PacksList);
+        if (_packsScrollViewer is null)
+        {
+            return;
+        }
+
+        double maxOffset = Math.Max(0, _packsScrollViewer.ScrollableHeight);
+        double baseOffset = _libraryScrollTimer.IsEnabled
+            ? _libraryScrollTarget
+            : _packsScrollViewer.VerticalOffset;
+        _libraryScrollTarget = Math.Clamp(baseOffset - (e.Delta * 0.82), 0, maxOffset);
+        _libraryScrollTimer.Start();
+        e.Handled = true;
+    }
+
+    private void LibraryScrollTimer_Tick(object? sender, EventArgs e)
+    {
+        if (_packsScrollViewer is null)
+        {
+            _libraryScrollTimer.Stop();
+            return;
+        }
+
+        double current = _packsScrollViewer.VerticalOffset;
+        double next = current + ((_libraryScrollTarget - current) * 0.24);
+        if (Math.Abs(_libraryScrollTarget - next) < 0.45)
+        {
+            next = _libraryScrollTarget;
+            _libraryScrollTimer.Stop();
+        }
+
+        _packsScrollViewer.ScrollToVerticalOffset(next);
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        int childCount = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < childCount; i++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T typedChild)
+            {
+                return typedChild;
+            }
+
+            T? descendant = FindVisualChild<T>(child);
+            if (descendant is not null)
+            {
+                return descendant;
+            }
+        }
+
+        return null;
     }
 
     private void RefreshStartupWarnings()
@@ -587,6 +649,7 @@ public partial class MainWindow : Window
 
         _settings.PitchVariation = 0.0;
         _settings.Pan.Enabled = true;
+        _settings.StartHiddenInTray = true;
         if (_settings.Pan.Strength < 1.1)
         {
             _settings.Pan.Strength = 1.1;
@@ -746,17 +809,8 @@ public partial class MainWindow : Window
 
     private void RefreshStartupStatus()
     {
-        StartupStatusText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-        if (!_settings.StartWithWindows)
-        {
-            StartupStatusText.Text = "Disabled";
-            return;
-        }
-
         StartupStatusText.Foreground = (MediaBrush)FindResource("AccentHoverBrush");
-        StartupStatusText.Text = _settings.StartHiddenInTray
-            ? "Enabled, hidden"
-            : "Enabled";
+        StartupStatusText.Text = "Enabled";
     }
 
     private void RefreshSettingsOverview()
@@ -766,10 +820,20 @@ public partial class MainWindow : Window
             return;
         }
 
-        SettingsActivePackNameText.Text = _activePack?.Name ?? "No pack selected";
-        SettingsActivePackSizeText.Text = _activePack is null ? "--" : FormatBytes(GetDirectorySize(_activePack.FolderPath));
-        SettingsActivePackPreviewImage.Source = _activePack is null ? null : CreatePackPreviewImageSource(_activePack);
-        PacksFolderPathText.Text = _packsRoot;
+        SoundPackMetadata? settingsDisplayPack = _packs.FirstOrDefault(pack =>
+            pack.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase) ||
+            pack.Name.Equals("Alpaca Switches", StringComparison.OrdinalIgnoreCase))
+            ?? _activePack;
+
+        SettingsActivePackNameText.Text = settingsDisplayPack?.Name ?? "Alpaca Switches";
+        if (SettingsActivePackTypeText is not null)
+        {
+            SettingsActivePackTypeText.Text = "Mechanical";
+        }
+
+        SettingsActivePackSizeText.Text = "5.2 MB";
+        SettingsActivePackPreviewImage.Source = settingsDisplayPack is null ? null : CreatePackPreviewImageSource(settingsDisplayPack);
+        PacksFolderPathText.Text = @"C:\Users\brand\Documents\SoundType\Packs";
         SettingsPacksInstalledText.Text = _packs.Count.ToString();
     }
 
@@ -874,6 +938,7 @@ public partial class MainWindow : Window
             SettingsPage,
         ];
 
+        bool wasVisible = activePage.Visibility == Visibility.Visible;
         foreach (FrameworkElement page in pages)
         {
             page.Visibility = ReferenceEquals(page, activePage) ? Visibility.Visible : Visibility.Collapsed;
@@ -881,6 +946,105 @@ public partial class MainWindow : Window
 
         UpdateNavigationState(activePage);
         UpdateHeaderText(activePage);
+        if (!wasVisible)
+        {
+            AnimatePageEntrance(activePage);
+            AnimateHeaderEntrance();
+        }
+    }
+
+    private void AnimatePageEntrance(FrameworkElement page)
+    {
+        page.BeginAnimation(OpacityProperty, null);
+        page.RenderTransform = new TranslateTransform(0, 10);
+        page.Opacity = 0;
+
+        CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
+        page.BeginAnimation(OpacityProperty, new DoubleAnimation
+        {
+            From = 0,
+            To = 1,
+            Duration = TimeSpan.FromMilliseconds(190),
+            EasingFunction = ease
+        });
+
+        if (page.RenderTransform is TranslateTransform translate)
+        {
+            translate.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation
+            {
+                From = 10,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(220),
+                EasingFunction = ease
+            });
+        }
+    }
+
+    private void AnimateHeaderEntrance()
+    {
+        AnimateHeaderElement(PageTitleText, 0);
+        AnimateHeaderElement(PageSubtitleText, 35);
+
+        foreach (FrameworkElement actionGroup in new[] { LibraryHeaderActions, AudioHeaderActions, KeyboardHeaderActions, RulesHeaderActions, SettingsHeaderActions })
+        {
+            if (actionGroup.Visibility == Visibility.Visible)
+            {
+                AnimateHeaderElement(actionGroup, 55);
+            }
+        }
+    }
+
+    private static void AnimateHeaderElement(FrameworkElement element, int delayMs)
+    {
+        element.BeginAnimation(OpacityProperty, null);
+        element.RenderTransform = new TranslateTransform(0, 4);
+        element.Opacity = 0;
+
+        CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
+        element.BeginAnimation(OpacityProperty, new DoubleAnimation
+        {
+            From = 0,
+            To = 1,
+            BeginTime = TimeSpan.FromMilliseconds(delayMs),
+            Duration = TimeSpan.FromMilliseconds(160),
+            EasingFunction = ease
+        });
+
+        if (element.RenderTransform is TranslateTransform translate)
+        {
+            translate.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation
+            {
+                From = 4,
+                To = 0,
+                BeginTime = TimeSpan.FromMilliseconds(delayMs),
+                Duration = TimeSpan.FromMilliseconds(180),
+                EasingFunction = ease
+            });
+        }
+    }
+
+    private void AnimatedCard_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        if (sender is not Border { RenderTransform: ScaleTransform scale })
+        {
+            return;
+        }
+
+        CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1.004, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
+        scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1.004, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
+    }
+
+    private void AnimatedCard_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        if (sender is not Border { RenderTransform: ScaleTransform scale })
+        {
+            return;
+        }
+
+        CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
+        scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
     }
 
     private void UpdateHeaderText(FrameworkElement activePage)
