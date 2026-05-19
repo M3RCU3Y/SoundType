@@ -2,11 +2,11 @@ namespace SoundType.Core.Models;
 
 public sealed class SoundGroupVolumeSettings
 {
-    public double Normal { get; set; } = 1.0;
-    public double Enter { get; set; } = 1.0;
-    public double Space { get; set; } = 1.0;
-    public double Backspace { get; set; } = 1.0;
-    public double Tab { get; set; } = 1.0;
+    public double Normal { get; set; } = 0.72;
+    public double Enter { get; set; } = 0.80;
+    public double Space { get; set; } = 0.65;
+    public double Backspace { get; set; } = 0.70;
+    public double Tab { get; set; } = 0.60;
 
     public double GetVolumeForGroup(string? group) =>
         NormalizeGroup(group) switch

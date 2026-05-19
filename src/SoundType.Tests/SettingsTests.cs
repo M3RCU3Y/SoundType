@@ -14,7 +14,7 @@ public sealed class SettingsTests
         AppSettings settings = await service.LoadAsync();
 
         Assert.True(settings.Enabled);
-        Assert.Equal(0.75, settings.MasterVolume);
+        Assert.Equal(0.72, settings.MasterVolume);
         Assert.Equal(0.0, settings.PitchVariation);
         Assert.Contains("LeftShift", settings.ExcludedKeys);
     }

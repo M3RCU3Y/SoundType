@@ -567,9 +567,34 @@ public partial class MainWindow : Window
 
     private void BindSettingsToUi()
     {
+        if (_settings.MasterVolume > 0.98)
+        {
+            _settings.MasterVolume = 0.72;
+        }
+
+        if (_settings.GroupVolumes.Normal > 0.98 &&
+            _settings.GroupVolumes.Enter > 0.98 &&
+            _settings.GroupVolumes.Space > 0.98 &&
+            _settings.GroupVolumes.Backspace > 0.98 &&
+            _settings.GroupVolumes.Tab > 0.98)
+        {
+            _settings.GroupVolumes.Normal = 0.72;
+            _settings.GroupVolumes.Enter = 0.80;
+            _settings.GroupVolumes.Space = 0.65;
+            _settings.GroupVolumes.Backspace = 0.70;
+            _settings.GroupVolumes.Tab = 0.60;
+        }
+
+        _settings.PitchVariation = 0.0;
+        _settings.Pan.Enabled = true;
+        if (_settings.Pan.Strength < 1.1)
+        {
+            _settings.Pan.Strength = 1.1;
+        }
+
         EnabledToggle.IsChecked = _settings.Enabled;
         MasterVolumeSlider.Value = _settings.MasterVolume;
-        PitchVariationSlider.Value = _settings.PitchVariation;
+        PitchVariationSlider.Value = Math.Round(_settings.PitchVariation * 100);
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         EnterDingEnabledCheck.IsChecked = _settings.EnterDingEnabled;
         EnterDingSoundComboBox.SelectedItem = EnterDingSoundComboBox.Items
@@ -694,7 +719,7 @@ public partial class MainWindow : Window
         StatusDot.Fill = (MediaBrush)FindResource(!_settings.Enabled || degraded ? "DangerBrush" : "AccentBrush");
         UpdateEnableButton();
         VolumeText.Text = $"{Math.Round(_settings.MasterVolume * 100)}%";
-        PitchVariationText.Text = $"+/- {Math.Round(_settings.PitchVariation * 100)}%";
+        PitchVariationText.Text = $"{Math.Round(PitchVariationSlider.Value)} st";
         _trayIcon.Text = $"SoundType - {StatusText.Text}";
         if (_trayIcon.ContextMenuStrip?.Items["enabled"] is Forms.ToolStripMenuItem enabledItem)
         {
@@ -862,7 +887,12 @@ public partial class MainWindow : Window
     {
         bool isKeyboardPage = ReferenceEquals(activePage, KeyboardPage);
         bool isRulesPage = ReferenceEquals(activePage, RulesPage);
+        bool isAudioPage = ReferenceEquals(activePage, AudioPage);
+        bool isSettingsPage = ReferenceEquals(activePage, SettingsPage);
         LibraryHeaderActions.Visibility = ReferenceEquals(activePage, LibraryPage)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        AudioHeaderActions.Visibility = isAudioPage
             ? Visibility.Visible
             : Visibility.Collapsed;
         KeyboardHeaderActions.Visibility = isKeyboardPage
@@ -871,18 +901,23 @@ public partial class MainWindow : Window
         RulesHeaderActions.Visibility = isRulesPage
             ? Visibility.Visible
             : Visibility.Collapsed;
+        SettingsHeaderActions.Visibility = isSettingsPage
+            ? Visibility.Visible
+            : Visibility.Collapsed;
 
         if (ReferenceEquals(activePage, LibraryPage))
         {
             PageTitleText.Text = "Library";
             PageSubtitleText.Text = "Browse packs";
+            PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
             return;
         }
 
-        if (ReferenceEquals(activePage, AudioPage))
+        if (isAudioPage)
         {
             PageTitleText.Text = "Audio Effects";
             PageSubtitleText.Text = "Tune playback";
+            PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
             return;
         }
 
@@ -890,6 +925,7 @@ public partial class MainWindow : Window
         {
             PageTitleText.Text = "Keyboard Rules";
             PageSubtitleText.Text = "Choose which keys make sound.";
+            PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
             return;
         }
 
@@ -897,11 +933,13 @@ public partial class MainWindow : Window
         {
             PageTitleText.Text = "App Rules";
             PageSubtitleText.Text = "Per-app sound profiles";
+            PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
             return;
         }
 
         PageTitleText.Text = "Settings";
-        PageSubtitleText.Text = "Startup and privacy";
+        PageSubtitleText.Text = "Preferences and privacy";
+        PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
     }
 
     private void UpdateNavigationState(FrameworkElement activePage)
@@ -920,7 +958,12 @@ public partial class MainWindow : Window
             bool selected = ReferenceEquals(page, activePage);
             button.Background = selected ? (MediaBrush)FindResource("PanelElevatedBrush") : System.Windows.Media.Brushes.Transparent;
             button.BorderBrush = selected ? (MediaBrush)FindResource("ControlBorderBrush") : System.Windows.Media.Brushes.Transparent;
-            button.Foreground = (MediaBrush)FindResource(selected ? "TextBrush" : "MutedTextBrush");
+            string foregroundKey = selected && ReferenceEquals(activePage, AudioPage)
+                ? "AccentHoverBrush"
+                : selected
+                    ? "TextBrush"
+                    : "MutedTextBrush";
+            button.Foreground = (MediaBrush)FindResource(foregroundKey);
         }
     }
 
@@ -1131,7 +1174,7 @@ public partial class MainWindow : Window
     private void PitchVariationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (_loading) return;
-        _settings.PitchVariation = Math.Clamp(PitchVariationSlider.Value, 0.0, 0.12);
+        _settings.PitchVariation = Math.Clamp(Math.Abs(PitchVariationSlider.Value) / 100.0, 0.0, 0.12);
         if (_audio is not null)
         {
             _audio.PitchVariation = _settings.PitchVariation;
@@ -2345,9 +2388,13 @@ public partial class MainWindow : Window
             SelectedPackVersionText.Text = "";
             SelectedPackReleasedText.Text = "";
             SelectedPackSizeText.Text = "";
+            SelectedPackSummarySizeText.Text = "";
             SelectedPackSamplesText.Text = "";
+            SelectedPackSummarySamplesText.Text = "";
             SelectedPackKeysText.Text = "";
+            SelectedPackSummaryKeysText.Text = "";
             SelectedPackCompatibilityText.Text = "";
+            SelectedPackSummaryCompatibilityText.Text = "";
             SelectedPackNotesText.Text = "";
             SelectedPackPreviewImage.Source = null;
             PackWaveformPreview.Peaks = [];
@@ -2365,9 +2412,13 @@ public partial class MainWindow : Window
         SelectedPackVersionText.Text = string.IsNullOrWhiteSpace(pack.Version) ? "1.0.0" : pack.Version;
         SelectedPackReleasedText.Text = GetPackReleasedDate(pack);
         SelectedPackSizeText.Text = item.DetailLine;
+        SelectedPackSummarySizeText.Text = item.DetailLine;
         SelectedPackSamplesText.Text = item.SampleCount.ToString("N0");
+        SelectedPackSummarySamplesText.Text = item.SampleCount.ToString("N0");
         SelectedPackKeysText.Text = item.KeyCountText;
+        SelectedPackSummaryKeysText.Text = item.KeyCountText;
         SelectedPackCompatibilityText.Text = "All keyboards";
+        SelectedPackSummaryCompatibilityText.Text = "All keyboards";
         SelectedPackNotesText.Text = BuildPackNotes(pack);
         RefreshWaveformPreview(pack);
     }

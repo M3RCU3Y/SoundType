@@ -1014,7 +1014,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="4,0,0,16" Height="122">
+                    <Grid Grid.Row="1" Margin="4,0,0,16" Height="116">
                         <TextBlock Text="GLOBAL OUTPUT"
                                    FontSize="12"
                                    FontWeight="SemiBold"
@@ -1029,33 +1029,36 @@
                                       VerticalAlignment="Top"
                                       Margin="0,28,0,0"
                                       Content="Listening"/>
-                        <Grid Width="66"
-                              Height="104"
+                        <Grid Width="62"
+                              Height="110"
                               HorizontalAlignment="Right"
                               VerticalAlignment="Top"
                               Margin="0,4,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="44"/>
+                                <ColumnDefinition Width="36"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                                <Rectangle Width="3" Height="76" Fill="#303840" Margin="1,0"/>
-                                <Rectangle Width="3" Height="96" Fill="#303840" Margin="1,0"/>
-                                <Rectangle Width="3" Height="62" Fill="#303840" Margin="1,0"/>
-                                <Rectangle Width="3" Height="80" Fill="#303840" Margin="1,0"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                                <Rectangle Width="3" Height="92" Fill="#303840" Margin="2,0"/>
+                                <Rectangle Width="3" Height="102" Fill="#303840" Margin="2,0"/>
+                                <Rectangle Width="3" Height="82" Fill="#303840" Margin="2,0"/>
+                                <Rectangle Width="3" Height="98" Fill="#303840" Margin="2,0"/>
+                                <Rectangle Width="3" Height="72" Fill="#303840" Margin="2,0"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                                <Rectangle Width="3" Height="46" Fill="{StaticResource AccentBrush}" Margin="1,0"/>
-                                <Rectangle Width="3" Height="62" Fill="{StaticResource AccentBrush}" Margin="1,0"/>
-                                <Rectangle Width="3" Height="38" Fill="{StaticResource AccentBrush}" Margin="1,0"/>
-                                <Rectangle Width="3" Height="52" Fill="{StaticResource AccentBrush}" Margin="1,0"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0,0,0">
+                                <Rectangle Width="3" Height="58" Fill="{StaticResource AccentBrush}" Margin="2,0"/>
+                                <Rectangle Width="3" Height="72" Fill="{StaticResource AccentBrush}" Margin="2,0"/>
+                                <Rectangle Width="3" Height="46" Fill="{StaticResource AccentBrush}" Margin="2,0"/>
+                                <Rectangle Width="3" Height="64" Fill="{StaticResource AccentBrush}" Margin="2,0"/>
+                                <Rectangle Width="3" Height="38" Fill="{StaticResource AccentBrush}" Margin="2,0"/>
                             </StackPanel>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="7,0,0,0">
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="6,0,0,0">
                                 <TextBlock Text="0" FontSize="10" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="-12" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0"/>
-                                <TextBlock Text="-24" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0"/>
-                                <TextBlock Text="-36" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0"/>
-                                <TextBlock Text="-48" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0"/>
+                                <TextBlock Text="-12" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
+                                <TextBlock Text="-24" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
+                                <TextBlock Text="-36" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
+                                <TextBlock Text="-48" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
+                                <TextBlock Text="-60" FontSize="10" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -1135,7 +1138,7 @@
                                         <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeLineJoin="Round" Fill="Transparent" Data="M4,4 L10,4 L10,10 L4,10 Z M14,4 L20,4 L20,10 L14,10 Z M4,14 L10,14 L10,20 L4,20 Z M14,14 L20,14 L20,20 L14,20 Z"/>
                                     </Canvas>
                                 </Viewbox>
-                                <TextBlock Text="App Rules" VerticalAlignment="Center"/>
+                                <TextBlock Text="Application Rules" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button x:Name="SettingsNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowSettings_Click">
@@ -1152,7 +1155,7 @@
                             Margin="0,16,0,0">
                         <StackPanel>
                             <DockPanel Margin="0,0,0,12">
-                                <TextBlock Text="STATUS &amp; HOTKEYS" FontSize="12" FontWeight="Bold" Foreground="{StaticResource MutedTextBrush}"/>
+                                <TextBlock Text="STATUS &amp; HOTKEY" FontSize="12" FontWeight="Bold" Foreground="{StaticResource MutedTextBrush}"/>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="10,0,0,0">
                                     <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="{StaticResource AccentBrush}" Margin="0,0,10,0"/>
                                     <TextBlock x:Name="StatusText" Text="Active" Foreground="{StaticResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
@@ -1161,17 +1164,17 @@
                             <Grid Margin="0,4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="104"/>
+                                    <ColumnDefinition Width="92"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Toggle Listening" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
+                                <TextBlock Text="Global enable / disable" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
                                 <Border Grid.Column="1" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="8,4">
-                                    <TextBlock Text="Ctrl + Alt + K" FontSize="13" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Ctrl+Alt+K" FontSize="13" HorizontalAlignment="Center"/>
                                 </Border>
                             </Grid>
                             <Grid Margin="0,4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="104"/>
+                                    <ColumnDefinition Width="92"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Preview (Normal)" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
                                 <Border Grid.Column="1" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="8,4">
@@ -1181,25 +1184,38 @@
                             <Grid Margin="0,4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="104"/>
+                                    <ColumnDefinition Width="92"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Next Pack" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
                                 <Border Grid.Column="1" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="8,4">
-                                    <TextBlock Text="Ctrl + Alt + →" FontSize="13" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Ctrl+Alt+→" FontSize="13" HorizontalAlignment="Center"/>
                                 </Border>
                             </Grid>
                             <Grid Margin="0,4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="104"/>
+                                    <ColumnDefinition Width="92"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Previous Pack" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
                                 <Border Grid.Column="1" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="8,4">
-                                    <TextBlock Text="Ctrl + Alt + ←" FontSize="13" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Ctrl+Alt+←" FontSize="13" HorizontalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="92"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Toggle output device" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
+                                <Border Grid.Column="1" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="8,4">
+                                    <TextBlock Text="Ctrl+Alt+D" FontSize="13" HorizontalAlignment="Center"/>
                                 </Border>
                             </Grid>
                             <Rectangle Height="1" Fill="#2C353D" Margin="0,14,0,12"/>
-                            <TextBlock Text="Local mode  -  Your sounds never leave this PC" FontSize="11" Foreground="{StaticResource AccentHoverBrush}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Local mode  •  Your sounds never leave this PC" FontSize="11" Foreground="{StaticResource AccentHoverBrush}"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -1213,9 +1229,9 @@
 
                 <Border Grid.Row="0" BorderBrush="#2D343B" BorderThickness="0,0,0,1" MouseLeftButtonDown="ShellDrag_MouseLeftButtonDown">
                     <Grid Margin="32,0,16,0">
-                        <StackPanel VerticalAlignment="Center" Margin="0,0,560,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,560,0">
                             <TextBlock x:Name="PageTitleText" Text="Library" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="PageSubtitleText" Text="Browse packs" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="0,8,0,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="PageSubtitleText" Text="Browse packs" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="28,6,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" shell:WindowChrome.IsHitTestVisibleInChrome="True">
                             <StackPanel x:Name="LibraryHeaderActions" Orientation="Horizontal">
@@ -1232,6 +1248,21 @@
                                     </StackPanel>
                                 </Button>
                                 <Button Content="..." Width="52" FontSize="18" Click="HeaderMore_Click"/>
+                            </StackPanel>
+                            <StackPanel x:Name="AudioHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
+                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ResetSettingsToDefaults_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <TextBlock Text="Reset"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Width="146" Style="{StaticResource KeyboardToolbarButtonStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <TextBlock Text="Save Preset"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Content="..." Style="{StaticResource KeyboardToolbarButtonStyle}" MinWidth="58" Width="58" FontSize="18" Click="HeaderMore_Click"/>
                             </StackPanel>
                             <StackPanel x:Name="KeyboardHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
                                 <Button Width="166" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="EnableAllKeys_Click">
@@ -1255,22 +1286,37 @@
                                         <TextBlock Text="Add Rule"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Width="176" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="DetectCurrentApp_Click">
+                                <Button Width="190" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="DetectCurrentApp_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
                                         <TextBlock Text="Detect Current App"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Width="100" Style="{StaticResource KeyboardToolbarButtonStyle}">
+                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
                                         <TextBlock Text="Import"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Width="100" Style="{StaticResource KeyboardToolbarButtonStyle}">
+                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="&#xE898;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
                                         <TextBlock Text="Export"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Content="..." Style="{StaticResource KeyboardToolbarButtonStyle}" MinWidth="58" Width="58" FontSize="18" Click="HeaderMore_Click"/>
+                            </StackPanel>
+                            <StackPanel x:Name="SettingsHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
+                                <Button Width="176" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ResetSettingsToDefaults_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <TextBlock Text="Reset to Defaults"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Width="104" Style="{StaticResource KeyboardSelectedToolbarButtonStyle}" Click="ApplySettings_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <TextBlock Text="Apply"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Content="..." Style="{StaticResource KeyboardToolbarButtonStyle}" MinWidth="58" Width="58" FontSize="18" Click="HeaderMore_Click"/>
@@ -1284,9 +1330,9 @@
 
                 <Grid x:Name="LibraryPage" Grid.Row="1" Margin="34,22,36,28">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.14*"/>
-                        <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="0.86*"/>
+                        <ColumnDefinition Width="590"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="44"/>
@@ -1356,7 +1402,7 @@
 
                     <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                         <Button x:Name="AllPacksCategoryButton" Content="All" Width="68" Margin="0,0,12,0" Click="AllPacksCategory_Click"/>
-                        <Button x:Name="MechanicalCategoryButton" Content="Mechanical" Width="118" Margin="0,0,12,0" Click="MechanicalCategory_Click"/>
+                        <Button x:Name="MechanicalCategoryButton" Content="Mechanical switches" Width="164" Margin="0,0,12,0" Click="MechanicalCategory_Click"/>
                         <Button x:Name="TypewriterCategoryButton" Content="Typewriters" Width="108" Margin="0,0,12,0" Click="TypewriterCategory_Click"/>
                         <Button x:Name="QuietCategoryButton" Content="Quiet" Width="78" Margin="0,0,12,0" Click="QuietCategory_Click"/>
                         <Button x:Name="DigitalCategoryButton" Content="Digital" Width="78" Click="DigitalCategory_Click"/>
@@ -1457,12 +1503,15 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <Border Grid.Row="2"
+                    <Border Grid.Row="1"
                             Grid.Column="2"
+                            Grid.RowSpan="2"
                             Style="{StaticResource SectionCardStyle}"
                             Padding="14">
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="1"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="1"/>
                                 <RowDefinition Height="Auto"/>
@@ -1474,26 +1523,26 @@
 
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="166"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="28"/>
                                 </Grid.ColumnDefinitions>
-                                <Border Width="100" Height="100" CornerRadius="6" Background="{StaticResource ThumbSwitchBrush}">
+                                <Border Width="152" Height="152" CornerRadius="6" Background="{StaticResource ThumbSwitchBrush}">
                                     <Grid>
-                                        <Border Width="50" Height="50" Background="#EFE7D8" BorderBrush="#BDAF99" BorderThickness="2" CornerRadius="7" RenderTransformOrigin="0.5,0.5">
+                                        <Border Width="76" Height="76" Background="#EFE7D8" BorderBrush="#BDAF99" BorderThickness="2" CornerRadius="8" RenderTransformOrigin="0.5,0.5">
                                             <Border.RenderTransform>
                                                 <RotateTransform Angle="45"/>
                                             </Border.RenderTransform>
                                         </Border>
-                                        <TextBlock Text="▲" FontSize="22" Foreground="#DB8F62" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-7,0,0"/>
+                                        <TextBlock Text="▲" FontSize="28" Foreground="#DB8F62" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"/>
                                         <Image x:Name="SelectedPackPreviewImage"
                                                Stretch="UniformToFill"
                                                RenderOptions.BitmapScalingMode="HighQuality"/>
                                     </Grid>
                                 </Border>
-                                <StackPanel Grid.Column="1" Margin="18,0,8,0">
-                                    <TextBlock x:Name="SelectedPackNameText" FontSize="21" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock x:Name="SelectedPackAuthorText" Text="SoundType Team" FontSize="13" Foreground="{StaticResource MutedTextBrush}" Margin="0,5,0,7"/>
+                                <StackPanel Grid.Column="1" Margin="18,0,8,0" VerticalAlignment="Center">
+                                    <TextBlock x:Name="SelectedPackNameText" FontSize="24" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="SelectedPackAuthorText" Text="SoundType Team" FontSize="14" Foreground="{StaticResource MutedTextBrush}" Margin="0,8,0,10"/>
                                     <StackPanel Orientation="Horizontal">
                                         <Border Style="{StaticResource ChipBorderStyle}">
                                             <TextBlock x:Name="SelectedPackTypeText" FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
@@ -1502,57 +1551,114 @@
                                             <TextBlock x:Name="SelectedPackTraitText" Text="Linear" FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="12" LineHeight="16" Margin="0,7,0,0"/>
+                                    <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="14" LineHeight="20" Margin="0,16,0,0"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="2" Text="☆" FontSize="24" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top"/>
                             </Grid>
 
                             <Rectangle Grid.Row="1" Fill="#2C353D"/>
 
-                            <StackPanel Grid.Row="2" Margin="0,8,0,8">
-                                <DockPanel Margin="0,0,0,5">
+                            <Grid Grid.Row="2" Margin="0,12,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Size" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="SelectedPackSummarySizeText" Text="5.2 MB" FontSize="14" Margin="0,7,0,0"/>
+                                </StackPanel>
+                                <Rectangle Grid.Column="1" Fill="#2C353D" Margin="10,0"/>
+                                <StackPanel Grid.Column="2" Margin="16,0,0,0">
+                                    <TextBlock Text="Samples" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="SelectedPackSummarySamplesText" Text="1,248" FontSize="14" Margin="0,7,0,0"/>
+                                </StackPanel>
+                                <Rectangle Grid.Column="3" Fill="#2C353D" Margin="10,0"/>
+                                <StackPanel Grid.Column="4" Margin="16,0,0,0">
+                                    <TextBlock Text="Keys" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="SelectedPackSummaryKeysText" Text="104 keys" FontSize="14" Margin="0,7,0,0"/>
+                                </StackPanel>
+                                <Rectangle Grid.Column="5" Fill="#2C353D" Margin="10,0"/>
+                                <StackPanel Grid.Column="6" Margin="16,0,0,0">
+                                    <TextBlock Text="Compatibility" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock x:Name="SelectedPackSummaryCompatibilityText" Text="All keyboards" FontSize="14" Margin="0,7,0,0"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Rectangle Grid.Row="3" Fill="#2C353D"/>
+
+                            <StackPanel Grid.Row="4" Margin="0,14,0,14">
+                                <DockPanel Margin="0,0,0,10" LastChildFill="False">
                                     <TextBlock Text="Waveform" FontSize="15" FontWeight="Bold"/>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                        <Button Width="38" Height="34" Padding="0" Margin="0,0,12,0" Click="PreviewNormal_Click">
+                                            <TextBlock Text="▷" FontSize="18"/>
+                                        </Button>
                                         <TextBlock Text="↗" FontSize="18" Foreground="{StaticResource TextBrush}" Margin="0,0,14,0"/>
                                         <TextBlock Text="⚙" FontSize="18" Foreground="{StaticResource TextBrush}"/>
                                     </StackPanel>
                                 </DockPanel>
                                 <Grid>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="82"/>
-                                        <RowDefinition Height="18"/>
+                                        <RowDefinition Height="138"/>
+                                        <RowDefinition Height="22"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="52"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0" Height="82">
-                                        <TextBlock Text="0 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top"/>
-                                        <TextBlock Text="-12 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top" Margin="0,17,0,0"/>
-                                        <TextBlock Text="-24 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                        <TextBlock Text="-36 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Bottom" Margin="0,0,0,17"/>
-                                        <TextBlock Text="-48 dB" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Bottom"/>
+                                    <Grid Grid.Column="0" Height="138">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="0 dB" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        <TextBlock Grid.Row="1" Text="-12 dB" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        <TextBlock Grid.Row="2" Text="-24 dB" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        <TextBlock Grid.Row="3" Text="-36 dB" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        <TextBlock Grid.Row="4" Text="-48 dB" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        <TextBlock Grid.Row="5" Text="-60 dB" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                                     </Grid>
                                     <controls:WaveformPreviewControl x:Name="PackWaveformPreview"
                                                                      Grid.Column="1"
-                                                                     Height="82"/>
+                                                                     Height="138"/>
                                     <Grid Grid.Row="1" Grid.Column="1" Margin="0,4,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
                                         <TextBlock Text="0 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Left"/>
-                                        <TextBlock Text="50 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Left" Margin="72,0,0,0"/>
-                                        <TextBlock Text="100 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" Margin="-108,0,0,0"/>
-                                        <TextBlock Text="150 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="200 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" Margin="0,0,82,0"/>
-                                        <TextBlock Text="250 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="1" Text="50 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="100 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="150 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="200 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="5" Text="250 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="6" Text="300 ms" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
                                     </Grid>
                                 </Grid>
                             </StackPanel>
 
-                            <Rectangle Grid.Row="3" Fill="#2C353D"/>
+                            <Rectangle Grid.Row="5" Fill="#2C353D"/>
 
-                            <StackPanel Grid.Row="4" Margin="0,8,0,8">
+                            <StackPanel Grid.Row="6" Margin="0,12,0,12">
                                 <TextBlock Text="Preview" FontWeight="Bold" FontSize="15" Margin="0,0,0,7"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="12"/>
                                         <ColumnDefinition Width="*"/>
@@ -1565,6 +1671,7 @@
                                     <Button Grid.Column="2" Content="▷ Enter" Height="34" Padding="8,0" FontSize="13" Click="PreviewEnter_Click"/>
                                     <Button Grid.Column="4" Content="▷ Space" Height="34" Padding="8,0" FontSize="13" Click="PreviewSpace_Click"/>
                                     <Button Grid.Column="6" Content="▷ Backspace" Height="34" Padding="8,0" FontSize="13" Click="PreviewBackspace_Click"/>
+                                    <Button Grid.Column="8" Content="▷ Tab" Height="34" Padding="8,0" FontSize="13" Click="PreviewTab_Click"/>
                                 </Grid>
                                 <Grid Margin="0,7,0,0">
                                     <Grid.ColumnDefinitions>
@@ -1580,9 +1687,9 @@
                                 </Grid>
                             </StackPanel>
 
-                            <Rectangle Grid.Row="5" Fill="#2C353D"/>
+                            <Rectangle Grid.Row="7" Fill="#2C353D"/>
 
-                            <Grid Grid.Row="6" Margin="0,8,0,0">
+                            <Grid Grid.Row="8" Margin="0,12,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1.08*"/>
                                     <ColumnDefinition Width="1"/>
@@ -1662,96 +1769,138 @@
                     </Border>
                 </Grid>
 
-                <Grid x:Name="AudioPage" Grid.Row="1" Visibility="Collapsed" Margin="20,18,22,20">
+                <Grid x:Name="AudioPage" Grid.Row="1" Visibility="Collapsed" Margin="20,20,20,34">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="470"/>
                         <RowDefinition Height="16"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.05*"/>
+                        <ColumnDefinition Width="386"/>
                         <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="1.25*"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="0.84*"/>
+                        <ColumnDefinition Width="310"/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Padding="16">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                                <TextBlock Text="~" FontSize="26" Margin="0,-3,12,0"/>
-                                <TextBlock Text="Pitch &amp; Character" FontSize="20" FontWeight="Bold"/>
-                            </StackPanel>
-                            <TextBlock Text="Pitch Shift" FontSize="15" FontWeight="SemiBold"/>
-                            <Grid Margin="0,8,0,4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="76"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider x:Name="PitchVariationSlider" Minimum="0" Maximum="0.12" TickFrequency="0.01" ValueChanged="PitchVariationSlider_ValueChanged"/>
-                                <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="14,0,0,0">
-                                    <TextBlock x:Name="PitchVariationText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
-                                </Border>
-                            </Grid>
-                            <Grid Margin="0,0,88,20">
-                                <TextBlock Text="-12"/>
-                                <TextBlock Text="0 st" HorizontalAlignment="Center"/>
-                                <TextBlock Text="+12" HorizontalAlignment="Right"/>
-                            </Grid>
-
-                            <TextBlock Text="Random Variation  ?" FontSize="15" FontWeight="SemiBold"/>
-                            <Grid Margin="0,8,0,20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="76"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider Minimum="0" Maximum="1" Value="0.06"/>
-                                <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="14,0,0,0">
-                                    <TextBlock Text="6%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
-                                </Border>
-                            </Grid>
-
-                            <TextBlock Text="Attack Softness  ?" FontSize="15" FontWeight="SemiBold"/>
-                            <Grid Margin="0,8,0,20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="76"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider Minimum="0" Maximum="1" Value="0.18"/>
-                                <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="14,0,0,0">
-                                    <TextBlock Text="18%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
-                                </Border>
-                            </Grid>
-
-                            <TextBlock Text="Sample preview (Alpaca Switches)" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,10"/>
-                            <controls:WaveformPreviewControl x:Name="AudioWaveformPreview" Height="82"/>
-                            <Grid Margin="0,6,0,10">
-                                <TextBlock Text="0 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="50 ms" HorizontalAlignment="Left" Margin="58,0,0,0" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="100 ms" HorizontalAlignment="Left" Margin="128,0,0,0" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="150 ms" HorizontalAlignment="Center" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="200 ms" HorizontalAlignment="Right" Margin="0,0,56,0" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="250 ms" HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
-                            </Grid>
-                            <Grid>
-                                <Button Content="▷  Preview" Width="104" HorizontalAlignment="Left" Click="PreviewNormal_Click"/>
-                                <TextBlock Text="Length" HorizontalAlignment="Right" Margin="0,7,72,0" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="248 ms" HorizontalAlignment="Right" Margin="0,7,0,0"/>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}" Padding="16">
+                    <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Padding="16,14">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="46"/>
+                                <RowDefinition Height="86"/>
+                                <RowDefinition Height="64"/>
+                                <RowDefinition Height="64"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
-                                <RowDefinition Height="1"/>
-                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="38"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                                <TextBlock Text="EQ" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="0,3,12,0"/>
-                                <TextBlock Text="Equalizer" FontSize="20" FontWeight="Bold"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <TextBlock Text="~" FontSize="30" Margin="4,-7,13,0"/>
+                                <TextBlock Text="Pitch &amp; Character" FontSize="20" FontWeight="Bold" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1">
+                                <TextBlock Text="Pitch Shift" FontSize="15" FontWeight="SemiBold"/>
+                                <Grid Margin="0,8,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="78"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="PitchVariationSlider" Minimum="-12" Maximum="12" ValueChanged="PitchVariationSlider_ValueChanged"/>
+                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="13,0,0,0">
+                                        <TextBlock x:Name="PitchVariationText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+                                    </Border>
+                                </Grid>
+                                <Grid Margin="0,0,88,0">
+                                    <TextBlock Text="-12" Foreground="{StaticResource TextBrush}" FontSize="13"/>
+                                    <TextBlock Text="0 st" HorizontalAlignment="Center" Foreground="{StaticResource TextBrush}" FontSize="13"/>
+                                    <TextBlock Text="+12" HorizontalAlignment="Right" Foreground="{StaticResource TextBrush}" FontSize="13"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Random Variation" FontSize="15" FontWeight="SemiBold"/>
+                                    <TextBlock Text="?" Width="16" Height="16" TextAlignment="Center" FontSize="11" Margin="8,1,0,0" Foreground="{StaticResource MutedTextBrush}"/>
+                                </StackPanel>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="78"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Minimum="0" Maximum="1" Value="0.06"/>
+                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="13,0,0,0">
+                                        <TextBlock Text="6%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="3">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Attack Softness" FontSize="15" FontWeight="SemiBold"/>
+                                    <TextBlock Text="?" Width="16" Height="16" TextAlignment="Center" FontSize="11" Margin="8,1,0,0" Foreground="{StaticResource MutedTextBrush}"/>
+                                </StackPanel>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="78"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Minimum="0" Maximum="1" Value="0.18"/>
+                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="13,0,0,0">
+                                        <TextBlock Text="18%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="4" Text="Sample preview (Alpaca Switches)" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,6,0,10"/>
+                            <controls:WaveformPreviewControl x:Name="AudioWaveformPreview" Grid.Row="5" MinHeight="75" Margin="0,0,0,0"/>
+                            <Grid Grid.Row="6" Margin="0,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="0 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
+                                <TextBlock Grid.Column="1" Text="50 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="100 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="150 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Text="200 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="5" Text="250 ms" FontSize="12" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Grid.Row="7">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="72"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Width="104" HorizontalAlignment="Left" Click="PreviewNormal_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/>
+                                        <TextBlock Text="Preview"/>
+                                    </StackPanel>
+                                </Button>
+                                <TextBlock Grid.Column="1" Text="Length" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,18,0"/>
+                                <TextBlock Grid.Column="2" Text="248 ms" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource SectionCardStyle}" Padding="15,14">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="43"/>
+                                <RowDefinition Height="44"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="1"/>
+                                <RowDefinition Height="54"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE9E9;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="{StaticResource TextBrush}" Margin="6,3,13,0"/>
+                                <TextBlock Text="Equalizer" FontSize="20" FontWeight="Bold" Margin="0,1,0,0"/>
                                 <TextBlock x:Name="EqPresetText" Visibility="Collapsed"/>
                                 <CheckBox x:Name="EqEnabledCheck"
                                           Visibility="Collapsed"
@@ -1760,7 +1909,7 @@
                                           Checked="EqChanged"
                                           Unchecked="EqChanged"/>
                             </StackPanel>
-                            <WrapPanel Grid.Row="1" Margin="0,0,0,12">
+                            <WrapPanel Grid.Row="1" Margin="0,0,0,9">
                                 <Button Content="Flat" Style="{StaticResource PrimaryNavButtonStyle}" Height="32" Width="62" Click="PresetFlat_Click" Margin="0,0,8,0"/>
                                 <Button Content="Warm" Height="32" Width="68" Click="PresetWarm_Click" Margin="0,0,8,0"/>
                                 <Button Content="Thock" Height="32" Width="68" Click="PresetThock_Click" Margin="0,0,8,0"/>
@@ -1768,22 +1917,35 @@
                                 <Button Content="Soft Night" Height="32" Width="92" Click="PresetSoftNight_Click" Margin="0,0,8,0"/>
                                 <Button Content="..." Height="32" Width="34"/>
                             </WrapPanel>
-                            <Grid Grid.Row="2">
+                            <Grid Grid.Row="2" Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="56"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Grid>
+                                <Grid Margin="0,4,0,22">
                                     <TextBlock Text="+12 dB" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
                                     <TextBlock Text="+6 dB" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,55,0,0"/>
                                     <TextBlock Text="0 dB" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="10,111,0,0"/>
                                     <TextBlock Text="-6 dB" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="8,166,0,0"/>
                                     <TextBlock Text="-12 dB" Foreground="{StaticResource MutedTextBrush}" FontSize="13" VerticalAlignment="Bottom"/>
                                 </Grid>
-                                <UniformGrid x:Name="EqBandsPanel" Grid.Column="1" Columns="10" Height="252" VerticalAlignment="Bottom"/>
+                                <Grid Grid.Column="1" Margin="0,3,0,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="26"/>
+                                    </Grid.RowDefinitions>
+                                    <UniformGrid>
+                                        <Rectangle Fill="#1F2931" Height="1" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                        <Rectangle Fill="#1F2931" Height="1" VerticalAlignment="Top" Margin="0,57,0,0"/>
+                                        <Rectangle Fill="#1F2931" Height="1" VerticalAlignment="Top" Margin="0,112,0,0"/>
+                                        <Rectangle Fill="#1F2931" Height="1" VerticalAlignment="Top" Margin="0,167,0,0"/>
+                                        <Rectangle Fill="#1F2931" Height="1" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                                    </UniformGrid>
+                                    <UniformGrid x:Name="EqBandsPanel" Grid.RowSpan="2" Columns="10" Height="240" VerticalAlignment="Bottom"/>
+                                </Grid>
                             </Grid>
                             <Rectangle Grid.Row="3" Fill="#2C353D"/>
-                            <Grid Grid.Row="4" Margin="0,14,0,0">
+                            <Grid Grid.Row="4" Margin="0,13,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="62"/>
                                     <ColumnDefinition Width="*"/>
@@ -1798,74 +1960,133 @@
                         </Grid>
                     </Border>
 
-                    <Border Grid.Column="4" Style="{StaticResource SectionCardStyle}" Padding="16">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                                <TextBlock Text="◎" FontSize="22" Margin="0,-1,12,0"/>
-                                <TextBlock Text="Spatial Mix" FontSize="20" FontWeight="Bold"/>
-                            </StackPanel>
-                            <Rectangle Height="1" Fill="#263039" Margin="172,0,0,14"/>
-                            <DockPanel Margin="0,0,0,8">
-                                <TextBlock Text="Pan" FontSize="15" FontWeight="SemiBold"/>
-                                <CheckBox x:Name="PanEnabledCheck" Style="{StaticResource ToggleSwitchCheckBoxStyle}" DockPanel.Dock="Right" Content="Enabled" Checked="PanChanged" Unchecked="PanChanged"/>
-                            </DockPanel>
-                            <Grid Margin="0,4,0,24">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="58"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider Minimum="-1" Maximum="1" Value="0"/>
-                                <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="12,0,0,0">
-                                    <TextBlock Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </Grid>
-                            <Grid Margin="4,-22,74,22">
-                                <TextBlock Text="L" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="R" HorizontalAlignment="Right" Foreground="{StaticResource MutedTextBrush}"/>
-                            </Grid>
-                            <TextBlock Text="Mode" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                            <ComboBox x:Name="PanModeComboBox" SelectionChanged="PanChanged" Margin="58,-34,0,24"/>
-                            <TextBlock Text="Stereo Width" FontSize="15" FontWeight="SemiBold"/>
-                            <Grid Margin="0,8,0,26">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="80"/>
-                                </Grid.ColumnDefinitions>
-                                <Slider x:Name="PanStrengthSlider" Minimum="0" Maximum="1" TickFrequency="0.05" ValueChanged="PanChanged"/>
-                                <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="12,0,0,0">
-                                    <TextBlock x:Name="PanStatusText" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </Grid>
-                            <Rectangle Height="1" Fill="#2C353D" Margin="0,0,0,18"/>
-                            <TextBlock Text="Output Meter" FontWeight="SemiBold" Margin="0,0,0,10"/>
-                            <TextBlock Text="L" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,4"/>
-                            <StackPanel Orientation="Horizontal" Margin="26,-20,0,10">
-                                <Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="#29333C" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="#29333C" Margin="1,0"/><TextBlock Text="dB" Margin="10,5,0,0"/>
-                            </StackPanel>
-                            <TextBlock Text="R" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,4"/>
-                            <StackPanel Orientation="Horizontal" Margin="26,-20,0,4">
-                                <Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="#29333C" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="#29333C" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="#29333C" Margin="1,0"/><Rectangle Width="3" Height="28" Fill="#29333C" Margin="1,0"/><TextBlock Text="dB" Margin="10,5,0,0"/>
-                            </StackPanel>
-                            <Grid Margin="26,0,20,0">
-                                <TextBlock Text="-48" FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
-                                <TextBlock Text="-36" FontSize="11" Foreground="{StaticResource MutedTextBrush}" Margin="54,0,0,0"/>
-                                <TextBlock Text="-24" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
-                                <TextBlock Text="-12" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource SectionCardStyle}" Padding="16">
+                    <Border Grid.Column="4" Style="{StaticResource SectionCardStyle}" Padding="13,14">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="44"/>
+                                <RowDefinition Height="48"/>
+                                <RowDefinition Height="58"/>
+                                <RowDefinition Height="54"/>
+                                <RowDefinition Height="72"/>
+                                <RowDefinition Height="59"/>
+                                <RowDefinition Height="1"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="◎" FontSize="22" Margin="2,-1,12,0"/>
+                                    <TextBlock Text="Spatial Mix" FontSize="20" FontWeight="Bold"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#263039" Margin="170,29,0,0"/>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="23"/>
+                                    <RowDefinition Height="35"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel LastChildFill="False">
+                                    <TextBlock Text="Pan" FontSize="15" FontWeight="SemiBold"/>
+                                    <CheckBox x:Name="PanEnabledCheck" Style="{StaticResource ToggleSwitchCheckBoxStyle}" DockPanel.Dock="Right" Content="Enabled" Checked="PanChanged" Unchecked="PanChanged"/>
+                                </DockPanel>
+                                <Grid Grid.Row="1" Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="58"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Minimum="-1" Maximum="1" Value="0"/>
+                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="12,0,0,0">
+                                        <TextBlock Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+
+                            <Grid Grid.Row="2" Margin="4,0,71,0">
+                                <TextBlock Text="L" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,0"/>
+                                <TextBlock Text="R" HorizontalAlignment="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                            </Grid>
+
+                            <Grid Grid.Row="3" Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="58"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Mode" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Top" Margin="0,7,0,0"/>
+                                <ComboBox x:Name="PanModeComboBox" Grid.Column="1" SelectionChanged="PanChanged" Height="34" VerticalAlignment="Top"/>
+                            </Grid>
+
+                            <Grid Grid.Row="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="22"/>
+                                    <RowDefinition Height="37"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Stereo Width" FontSize="15" FontWeight="SemiBold"/>
+                                <Grid Grid.Row="1" Margin="0,7,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="PanStrengthSlider" Minimum="0" Maximum="1.5" TickFrequency="0.05" ValueChanged="PanChanged"/>
+                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="12,0,0,0">
+                                        <TextBlock x:Name="PanStatusText" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+
+                            <Rectangle Grid.Row="5" Fill="#2C353D"/>
+
+                            <StackPanel Grid.Row="6" Margin="0,17,0,0">
+                                <TextBlock Text="Output Meter" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="24"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="L" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                    <UniformGrid Grid.Column="1" Columns="48" Height="29" Margin="6,0,6,0">
+                                        <Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/>
+                                    </UniformGrid>
+                                    <TextBlock Grid.Column="2" Text="dB" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="24"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="R" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                    <UniformGrid Grid.Column="1" Columns="48" Height="29" Margin="6,0,6,0">
+                                        <Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/>
+                                    </UniformGrid>
+                                    <TextBlock Grid.Column="2" Text="dB" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Grid Margin="26,0,30,0">
+                                    <TextBlock Text="-48" FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
+                                    <TextBlock Text="-36" FontSize="11" Foreground="{StaticResource MutedTextBrush}" Margin="54,0,0,0"/>
+                                    <TextBlock Text="-24" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="-12" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource SectionCardStyle}" Padding="20,16,20,14">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="48"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="EQ" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,12,0"/>
+                                <TextBlock Text="&#xE9E9;" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,1,13,0"/>
                                 <TextBlock Text="Mixer" FontSize="20" FontWeight="Bold"/>
                             </StackPanel>
-                            <Button Content="Link volumes" Width="136" HorizontalAlignment="Right"/>
+                            <Button Width="136" HorizontalAlignment="Right" Height="38">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/>
+                                    <TextBlock Text="Link volumes"/>
+                                </StackPanel>
+                            </Button>
 
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
@@ -1883,48 +2104,84 @@
                                     <ColumnDefinition Width="18"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Border Style="{StaticResource CompactPanelStyle}" Padding="12">
-                                    <StackPanel>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Normal keys"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="NormalVolumeText"/></Border></DockPanel>
-                                        <Slider x:Name="NormalVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" Margin="0,18,0,18"/>
-                                        <Button Content="▷  Test" Click="PreviewNormal_Click"/>
-                                    </StackPanel>
+                                <Border Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="38"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Normal keys" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="NormalVolumeText"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <Slider Grid.Row="1" x:Name="NormalVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Button Grid.Row="2" Click="PreviewNormal_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                    </Grid>
                                 </Border>
-                                <Border Grid.Column="2" Style="{StaticResource CompactPanelStyle}" Padding="12">
-                                    <StackPanel>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Enter ding"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="EnterVolumeText"/></Border></DockPanel>
-                                        <Slider x:Name="EnterVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" Margin="0,18,0,18"/>
-                                        <Button Content="▷  Test" Click="PreviewEnter_Click"/>
-                                    </StackPanel>
+                                <Border Grid.Column="2" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="38"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Enter ding" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="EnterVolumeText"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <Slider Grid.Row="1" x:Name="EnterVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Button Grid.Row="2" Click="PreviewEnter_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                    </Grid>
                                 </Border>
-                                <Border Grid.Column="4" Style="{StaticResource CompactPanelStyle}" Padding="12">
-                                    <StackPanel>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Space"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="SpaceVolumeText"/></Border></DockPanel>
-                                        <Slider x:Name="SpaceVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" Margin="0,18,0,18"/>
-                                        <Button Content="▷  Test" Click="PreviewSpace_Click"/>
-                                    </StackPanel>
+                                <Border Grid.Column="4" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="38"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Space" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="SpaceVolumeText"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <Slider Grid.Row="1" x:Name="SpaceVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Button Grid.Row="2" Click="PreviewSpace_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                    </Grid>
                                 </Border>
-                                <Border Grid.Column="6" Style="{StaticResource CompactPanelStyle}" Padding="12">
-                                    <StackPanel>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Backspace"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="BackspaceVolumeText"/></Border></DockPanel>
-                                        <Slider x:Name="BackspaceVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" Margin="0,18,0,18"/>
-                                        <Button Content="▷  Test" Click="PreviewBackspace_Click"/>
-                                    </StackPanel>
+                                <Border Grid.Column="6" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="38"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Backspace" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="BackspaceVolumeText"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <Slider Grid.Row="1" x:Name="BackspaceVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Button Grid.Row="2" Click="PreviewBackspace_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                    </Grid>
                                 </Border>
-                                <Border Grid.Column="8" Style="{StaticResource CompactPanelStyle}" Padding="12">
-                                    <StackPanel>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Tab"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="TabVolumeText"/></Border></DockPanel>
-                                        <Slider x:Name="TabVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" Margin="0,18,0,18"/>
-                                        <Button Content="▷  Test" Click="PreviewTab_Click"/>
-                                    </StackPanel>
+                                <Border Grid.Column="8" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="38"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Tab" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="TabVolumeText"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <Slider Grid.Row="1" x:Name="TabVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Button Grid.Row="2" Click="PreviewTab_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                    </Grid>
                                 </Border>
                                 <Rectangle Grid.Column="10" Fill="#2C353D" Margin="0,20"/>
-                                <Border Grid.Column="12" Style="{StaticResource CompactPanelStyle}" Padding="12">
-                                    <StackPanel>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Master"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock Text="72%"/></Border></DockPanel>
-                                        <Slider Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1" Value="0.72" HorizontalAlignment="Center" Margin="0,18,0,18"/>
-                                        <Button Content="Solo"/>
-                                    </StackPanel>
+                                <Border Grid.Column="12" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="38"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Master" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock Text="72%"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <Slider Grid.Row="1" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1" Value="0.72" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Button Grid.Row="2" Content="Solo"/>
+                                    </Grid>
                                 </Border>
                             </Grid>
                         </Grid>
@@ -2480,7 +2737,7 @@
                                 <StackPanel Grid.Column="2">
                                     <Border Style="{StaticResource SectionCardStyle}" Padding="18">
                                         <StackPanel>
-                                            <DockPanel Margin="0,0,0,20">
+                                            <DockPanel Margin="0,0,0,20" LastChildFill="False">
                                                 <TextBlock Text="Rule editor" FontSize="18" FontWeight="SemiBold"/>
                                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                                     <TextBlock x:Name="RuleEditorIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="22" Margin="0,0,8,0"/>
@@ -2613,39 +2870,28 @@
                     </ScrollViewer>
                 </Grid>
 
-                <Grid x:Name="SettingsPage" Grid.Row="1" Visibility="Collapsed" Margin="24,20,28,24">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel>
-                            <DockPanel Margin="0,0,0,18">
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="Settings" FontSize="30" FontWeight="SemiBold"/>
-                                    <TextBlock Text="Preferences and privacy" Foreground="{StaticResource MutedTextBrush}" FontSize="15" Margin="24,8,0,0"/>
-                                </StackPanel>
-                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                    <Button Style="{StaticResource SettingsHeaderButtonStyle}" Click="ResetSettingsToDefaults_Click">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72C;" FontSize="16" Margin="0,0,8,0"/>
-                                            <TextBlock Text="Reset to Defaults"/>
-                                        </StackPanel>
-                                    </Button>
-                                    <Button Style="{StaticResource SettingsPrimaryButtonStyle}" Click="ApplySettings_Click">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE73E;" FontSize="15" Margin="0,0,8,0"/>
-                                            <TextBlock Text="Apply"/>
-                                        </StackPanel>
-                                    </Button>
-                                    <Button Style="{StaticResource SettingsHeaderButtonStyle}" Width="54" Padding="0">
-                                        <TextBlock Text="..." FontSize="20" Margin="0,-6,0,0"/>
-                                    </Button>
-                                </StackPanel>
-                            </DockPanel>
+                <Grid x:Name="SettingsPage" Grid.Row="1" Visibility="Collapsed" Margin="26,18,26,24">
+                    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60"/>
+                                <RowDefinition Height="16"/>
+                                <RowDefinition Height="324"/>
+                                <RowDefinition Height="16"/>
+                                <RowDefinition Height="288"/>
+                                <RowDefinition Height="14"/>
+                                <RowDefinition Height="146"/>
+                            </Grid.RowDefinitions>
 
-                            <Rectangle Height="1" Fill="#27313A" Margin="0,0,0,16"/>
+                            <Grid Visibility="Collapsed">
+                                <ComboBox x:Name="EnterDingSoundComboBox" SelectionChanged="EnterDingSoundComboBox_SelectionChanged"/>
+                                <CheckBox x:Name="EnterDingEnabledCheck" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
+                            </Grid>
 
-                            <Border Style="{StaticResource SettingsCardStyle}" Padding="20,12" Margin="0,0,0,14">
+                            <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}" Padding="18,8">
                                 <DockPanel LastChildFill="False">
                                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="Active pack:" Foreground="{StaticResource MutedTextBrush}" FontSize="14" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Active pack:" Foreground="{StaticResource MutedTextBrush}" FontSize="15" VerticalAlignment="Center"/>
                                         <Border Width="46" Height="46" CornerRadius="8" Background="#182029" BorderBrush="#2C3944" BorderThickness="1" Margin="18,0,14,0">
                                             <Grid ClipToBounds="True">
                                                 <TextBlock Text="K" Foreground="{StaticResource AccentHoverBrush}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -2654,250 +2900,339 @@
                                                        RenderOptions.BitmapScalingMode="HighQuality"/>
                                             </Grid>
                                         </Border>
-                                        <TextBlock x:Name="SettingsActivePackNameText" Text="Alpaca Switches" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="SettingsActivePackNameText" Text="Alpaca Switches" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                                         <Border CornerRadius="5" Padding="9,4" Background="#12372E" BorderBrush="#1F6D52" BorderThickness="1" Margin="14,0,12,0">
-                                            <TextBlock Text="Mechanical" Foreground="{StaticResource AccentHoverBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="SettingsActivePackTypeText" Text="Mechanical" Foreground="{StaticResource AccentHoverBrush}" FontSize="12" FontWeight="SemiBold"/>
                                         </Border>
                                         <TextBlock x:Name="SettingsActivePackSizeText" Text="5.2 MB" Foreground="{StaticResource MutedTextBrush}" FontSize="14" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button DockPanel.Dock="Right" Content="Change Pack" Style="{StaticResource SettingsSmallButtonStyle}" Click="ShowLibrary_Click"/>
+                                    <Button DockPanel.Dock="Right" Content="Change Pack" Width="128" Height="40" Click="ShowLibrary_Click"/>
                                 </DockPanel>
                             </Border>
 
-                            <Grid Margin="0,0,0,14">
+                            <Grid Grid.Row="2">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Margin="0,0,8,0">
-                                    <StackPanel>
+                                <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Padding="18">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="42"/>
+                                            <RowDefinition Height="57"/>
+                                            <RowDefinition Height="57"/>
+                                            <RowDefinition Height="57"/>
+                                            <RowDefinition Height="57"/>
+                                            <RowDefinition Height="1"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE9D2;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <TextBlock Text="&#xE9D2;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
                                             <TextBlock Text="Playback Behavior" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
-                                        <Grid Margin="2,0,0,12">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="1" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE823;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Ignore held-key repeats" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Play sound once when a key is held down" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="IgnoreRepeatsCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Grid Margin="2,0,0,12">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="128"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="&#xE995;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
-                                                <TextBlock Text="Sweet Enter ding" Style="{StaticResource SettingsRowTitleStyle}"/>
-                                                <TextBlock Text="Add a clean soft bell when Enter is pressed" Style="{StaticResource SettingsRowDescriptionStyle}"/>
-                                            </StackPanel>
-                                            <ComboBox Grid.Column="2" x:Name="EnterDingSoundComboBox" SelectionChanged="EnterDingSoundComboBox_SelectionChanged" VerticalAlignment="Center"/>
-                                            <Button Grid.Column="4" Content="Test" Style="{StaticResource SettingsSmallButtonStyle}" Click="PreviewEnterDing_Click" VerticalAlignment="Center"/>
-                                            <CheckBox Grid.Column="6" x:Name="EnterDingEnabledCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" VerticalAlignment="Center"/>
-                                        </Grid>
-                                        <Grid Margin="2,0,0,12">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="2" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE9D2;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Smooth pitch variation" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Add subtle pitch variation for realism" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" Style="{StaticResource SettingsSwitchStyle}" IsChecked="True" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Grid Margin="2,0,0,16">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="3" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xEC4A;" Style="{StaticResource SettingsIconTextStyle}" Foreground="{StaticResource MutedTextBrush}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Low latency mode" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Reduce buffering for best responsiveness" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" Style="{StaticResource SettingsSwitchStyle}" IsChecked="False" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Rectangle Height="1" Fill="#2A343D" Margin="0,0,0,14"/>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="*"/><ColumnDefinition Width="86"/></Grid.ColumnDefinitions>
+                                        <Rectangle Grid.Row="5" Fill="#2A343D"/>
+                                        <Grid Grid.Row="6" Margin="0,14,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="210"/><ColumnDefinition Width="*"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="Debounce repeated keys" Style="{StaticResource SettingsRowTitleStyle}"/>
-                                                <TextBlock Text="Filter very fast repeats" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                                <TextBlock Text="Filter very fast repeats" Style="{StaticResource SettingsRowDescriptionStyle}" Margin="0,5,0,0"/>
                                             </StackPanel>
-                                            <Slider Grid.Column="1" Minimum="0" Maximum="50" Value="20" VerticalAlignment="Center" Margin="8,0,14,0"/>
+                                            <Slider Grid.Column="1" Minimum="0" Maximum="50" Value="20" VerticalAlignment="Center" Margin="8,0,16,0"/>
                                             <StackPanel Grid.Column="2">
-                                                <TextBlock Text="20 ms" HorizontalAlignment="Center" FontSize="14"/>
-                                                <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="56" Margin="0,8,0,0"><TextBlock Text="20" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                <TextBlock Text="20 ms" HorizontalAlignment="Left" FontSize="14"/>
+                                                <Border Style="{StaticResource HotkeyChipStyle}" Width="60" Margin="0,7,0,0"><TextBlock Text="20" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
                                             </StackPanel>
                                         </Grid>
-                                    </StackPanel>
+                                    </Grid>
                                 </Border>
 
-                                <Border Grid.Column="1" Style="{StaticResource SettingsCardStyle}" Margin="8,0,0,0">
-                                    <StackPanel>
+                                <Border Grid.Column="2" Style="{StaticResource SettingsCardStyle}" Padding="18">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="42"/>
+                                            <RowDefinition Height="58"/>
+                                            <RowDefinition Height="58"/>
+                                            <RowDefinition Height="58"/>
+                                            <RowDefinition Height="58"/>
+                                            <RowDefinition Height="1"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE7F4;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <TextBlock Text="&#xE7F4;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
                                             <TextBlock Text="Tray &amp; Startup" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
-                                        <Grid Margin="2,0,0,12">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="1" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE8A7;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Minimize to tray" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Keep SoundType running in the system tray" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="MinimizeToTrayCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Grid Margin="2,0,0,12">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="2" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE8BB;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Hide to tray on close" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock x:Name="TrayStatusText" Text="Don't exit when the window is closed" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" Style="{StaticResource SettingsSwitchStyle}" IsChecked="{Binding IsChecked, ElementName=MinimizeToTrayCheck}" IsHitTestVisible="False" Focusable="False" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Grid Margin="2,0,0,12">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="3" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE945;" Style="{StaticResource SettingsIconTextStyle}" Foreground="{StaticResource MutedTextBrush}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Start with Windows" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Launch SoundType when Windows starts" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="StartWithWindowsCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Grid Margin="2,0,0,16">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="4" Margin="2,0,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="&#xE9F5;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
-                                            <StackPanel Grid.Column="1">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Start hidden in tray" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Don't show the window on startup" Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="StartHiddenInTrayCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Rectangle Height="1" Fill="#2A343D" Margin="0,0,0,12"/>
-                                        <StackPanel Orientation="Horizontal">
+                                        <Rectangle Grid.Row="5" Fill="#2A343D"/>
+                                        <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Center">
                                             <TextBlock Text="Windows startup status:" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource AccentHoverBrush}" FontSize="13" Margin="16,1,6,0"/>
+                                            <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource AccentHoverBrush}" FontSize="13" Margin="16,1,7,0"/>
                                             <TextBlock x:Name="StartupStatusText" Text="Enabled" Foreground="{StaticResource AccentHoverBrush}" FontSize="13"/>
                                         </StackPanel>
-                                    </StackPanel>
+                                    </Grid>
                                 </Border>
                             </Grid>
 
-                            <Grid Margin="0,0,0,14">
+                            <Grid Grid.Row="4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Margin="0,0,8,0">
-                                    <StackPanel>
+                                <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Padding="18">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="42"/>
+                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="8"/>
+                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="8"/>
+                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="8"/>
+                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="1"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE765;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <TextBlock Text="&#xE765;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
                                             <TextBlock Text="Hotkeys" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
-                                        <Border CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0" Height="38" Margin="0,0,0,8">
-                                            <DockPanel LastChildFill="False">
+                                        <Border Grid.Row="1" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="210"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
                                                 <TextBlock Text="Toggle Listening" VerticalAlignment="Center"/>
-                                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                                    <Border Style="{StaticResource HotkeyChipStyle}"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,4"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,4"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
                                                     <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="36"><TextBlock Text="L" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
                                                 </StackPanel>
-                                            </DockPanel>
+                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
+                                            </Grid>
                                         </Border>
-                                        <Border CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0" Height="38" Margin="0,0,0,8">
-                                            <DockPanel LastChildFill="False">
+                                        <Border Grid.Row="3" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
                                                 <TextBlock Text="Preview (Normal)" VerticalAlignment="Center"/>
-                                                <Border DockPanel.Dock="Right" Style="{StaticResource HotkeyChipStyle}" MinWidth="62"><TextBlock Text="Space" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                            </DockPanel>
+                                                <Border Grid.Column="1" Style="{StaticResource HotkeyChipStyle}" Width="62" HorizontalAlignment="Right"><TextBlock Text="Space" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
+                                            </Grid>
                                         </Border>
-                                        <Border CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0" Height="38" Margin="0,0,0,8">
-                                            <DockPanel LastChildFill="False">
+                                        <Border Grid.Row="5" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
                                                 <TextBlock Text="Next Pack" VerticalAlignment="Center"/>
-                                                <TextBlock DockPanel.Dock="Right" Text="Ctrl  +  Alt  +  Right" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
-                                            </DockPanel>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="64"><TextBlock Text="Right" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                </StackPanel>
+                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
+                                            </Grid>
                                         </Border>
-                                        <Border CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0" Height="38">
-                                            <DockPanel LastChildFill="False">
+                                        <Border Grid.Row="7" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
                                                 <TextBlock Text="Previous Pack" VerticalAlignment="Center"/>
-                                                <TextBlock DockPanel.Dock="Right" Text="Ctrl  +  Alt  +  Left" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"/>
-                                            </DockPanel>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
+                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="58"><TextBlock Text="Left" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                </StackPanel>
+                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
+                                            </Grid>
                                         </Border>
-                                        <Rectangle Height="1" Fill="#2A343D" Margin="0,12,0,10"/>
-                                        <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left">
+                                        <Rectangle Grid.Row="8" Fill="#2A343D" Margin="0,12,0,0"/>
+                                        <Button Grid.Row="9" Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="226">
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
                                                 <TextBlock Text="Restore Hotkeys to Defaults"/>
                                             </StackPanel>
                                         </Button>
-                                    </StackPanel>
+                                    </Grid>
                                 </Border>
 
-                                <Border Grid.Column="1" Style="{StaticResource SettingsCardStyle}" Margin="8,0,0,0">
-                                    <StackPanel>
+                                <Border Grid.Column="2" Style="{StaticResource SettingsCardStyle}" Padding="18">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="42"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="52"/>
+                                            <RowDefinition Height="1"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xEA18;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <TextBlock Text="&#xEA18;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
                                             <TextBlock Text="Privacy" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
-                                        <TextBlock Text="Local mode active" Style="{StaticResource SettingsRowTitleStyle}" Margin="34,0,0,0"/>
-                                        <TextBlock Text="All processing happens on this PC" Style="{StaticResource SettingsRowDescriptionStyle}" Margin="34,3,0,10"/>
-                                        <TextBlock Text="No words recorded" Style="{StaticResource SettingsRowTitleStyle}" Margin="34,0,0,0"/>
-                                        <TextBlock Text="Only key events are used to trigger sounds" Style="{StaticResource SettingsRowDescriptionStyle}" Margin="34,3,0,10"/>
-                                        <TextBlock Text="No key history stored" Style="{StaticResource SettingsRowTitleStyle}" Margin="34,0,0,0"/>
-                                        <TextBlock Text="Your keystrokes are never logged or saved" Style="{StaticResource SettingsRowDescriptionStyle}" Margin="34,3,0,10"/>
-                                        <TextBlock Text="Audio files stay on this PC" Style="{StaticResource SettingsRowTitleStyle}" Margin="34,0,0,0"/>
-                                        <TextBlock Text="Packs you add are never uploaded" Style="{StaticResource SettingsRowDescriptionStyle}" Margin="34,3,0,14"/>
-                                        <Rectangle Height="1" Fill="#2A343D" Margin="0,0,0,14"/>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/><ColumnDefinition Width="94"/></Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE72E;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Local mode active" Style="{StaticResource SettingsRowTitleStyle}"/>
+                                                <TextBlock Text="All processing happens on this PC" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE72E;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="No words recorded" Style="{StaticResource SettingsRowTitleStyle}"/>
+                                                <TextBlock Text="Only key events are used to trigger sounds" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="3">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE72E;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="No key history stored" Style="{StaticResource SettingsRowTitleStyle}"/>
+                                                <TextBlock Text="Your keystrokes are never logged or saved" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="4">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE72E;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Audio files stay on this PC" Style="{StaticResource SettingsRowTitleStyle}"/>
+                                                <TextBlock Text="Packs you add are never uploaded" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Rectangle Grid.Row="5" Fill="#2A343D"/>
+                                        <Grid Grid.Row="6" Margin="0,14,0,0">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="116"/><ColumnDefinition Width="*"/><ColumnDefinition Width="104"/></Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="Local processing" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            <Rectangle Grid.Column="1" Height="4" Fill="{StaticResource AccentHoverBrush}" RadiusX="2" RadiusY="2" VerticalAlignment="Center"/>
+                                            <Rectangle Grid.Column="1" Height="4" Fill="{StaticResource AccentHoverBrush}" RadiusX="2" RadiusY="2" VerticalAlignment="Center" Margin="0,0,12,0"/>
                                             <TextBlock Grid.Column="2" Text="100% Local" HorizontalAlignment="Right" FontSize="13"/>
                                         </Grid>
-                                    </StackPanel>
+                                    </Grid>
                                 </Border>
                             </Grid>
 
-                            <Border Style="{StaticResource SettingsCardStyle}">
+                            <Border Grid.Row="6" Style="{StaticResource SettingsCardStyle}" Padding="18,14">
                                 <Grid>
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1"/><ColumnDefinition Width="0.9*"/></Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.05*"/>
+                                        <ColumnDefinition Width="1"/>
+                                        <ColumnDefinition Width="0.95*"/>
+                                    </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE8B7;" Style="{StaticResource SettingsIconTextStyle}"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                                            <TextBlock Text="&#xE7C3;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
                                             <TextBlock Text="Storage" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
                                         <TextBlock Text="Packs folder location" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,8"/>
                                         <Grid>
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Height="40" CornerRadius="6" Background="#121922" BorderBrush="#2A3540" BorderThickness="1" Padding="12,0" Margin="0,0,10,0">
-                                                <TextBlock x:Name="PacksFolderPathText" Text="C:\Users\brand\Documents\SoundType\Packs" VerticalAlignment="Center"/>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="44"/><ColumnDefinition Width="152"/></Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Height="40" CornerRadius="6" Background="#121922" BorderBrush="#2A3540" BorderThickness="1" Padding="12,0">
+                                                <TextBlock x:Name="PacksFolderPathText" Text="C:\Users\brand\Documents\SoundType\Packs" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
                                             </Border>
-                                            <Button Grid.Column="1" Style="{StaticResource SettingsSmallButtonStyle}" Click="OpenPackFolder_Click">
+                                            <Button Grid.Column="1" Width="44" Height="40" Padding="0" Margin="0,0,10,0" Content="..."/>
+                                            <Button Grid.Column="2" Width="144" Height="40" Click="OpenPackFolder_Click">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,10,0"/>
                                                     <TextBlock Text="Open Folder"/>
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
                                     </StackPanel>
-                                    <Rectangle Grid.Column="1" Fill="#2A343D" Margin="18,24,18,0"/>
+                                    <Rectangle Grid.Column="1" Fill="#2A343D" Margin="18,30,18,0"/>
                                     <Grid Grid.Column="2" Margin="34,34,0,0">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="Waveform cache" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
                                             <TextBlock Text="84 MB" FontWeight="SemiBold" Margin="0,3,0,7"/>
-                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" Click="ClearWaveformCache_Click" Content="Clear Waveform Cache"/>
+                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" Click="ClearWaveformCache_Click">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="Clear Waveform Cache"/>
+                                                </StackPanel>
+                                            </Button>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1">
                                             <TextBlock Text="Packs installed" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
                                             <TextBlock x:Name="SettingsPacksInstalledText" Text="22" FontWeight="SemiBold" Margin="0,3,0,7"/>
-                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" Click="ShowLibrary_Click" Content="Manage Packs"/>
+                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" Click="ShowLibrary_Click">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="Manage Packs"/>
+                                                </StackPanel>
+                                            </Button>
                                         </StackPanel>
                                     </Grid>
                                 </Grid>
                             </Border>
-                        </StackPanel>
+                        </Grid>
                     </ScrollViewer>
                 </Grid>
             </Grid>
