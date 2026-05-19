@@ -27,6 +27,7 @@ public partial class MainWindow : Window
     private const int ToggleHotkeyId = 0x534B;
     private const string EnterDingPackId = "soundtype-enter-ding";
     private static readonly TimeSpan EnterDingMinimumInterval = TimeSpan.FromMilliseconds(150);
+    private static readonly double[] DefaultAudioPageEqCurve = [0, -2, 1, 0, 2.5, 4, 5.5, 3, 0, 0.5];
     private static readonly IReadOnlyList<EnterDingSoundListItem> EnterDingSounds =
     [
         new("random", "Random"),
@@ -98,6 +99,8 @@ public partial class MainWindow : Window
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         _settings = await _settingsService.LoadAsync();
+        ApplyDefaultAudioPageEqCurve();
+        await _settingsService.SaveAsync(_settings);
         _settings.StartWithWindows = _startup.IsEnabled();
         RebuildPlaybackProfile();
         ConfigureAppRuleEditors();
@@ -224,7 +227,7 @@ public partial class MainWindow : Window
         }
         SelectedKeyPackOverrideComboBox.SelectedIndex = 0;
 
-        RefreshPackLibrary(_settings.ActiveSoundPackId);
+        RefreshPackLibrary(AppSettings.DefaultSoundPackId);
 
         PackListItem? selected = PacksList.SelectedItem as PackListItem;
 
@@ -533,6 +536,17 @@ public partial class MainWindow : Window
         PanModeComboBox.Items.Add(new PanModeListItem(PanMode.Random, "Random"));
     }
 
+    private void ApplyDefaultAudioPageEqCurve()
+    {
+        _settings.Eq.Normalize();
+        bool isFlatDefault = _settings.Eq.PresetName.Equals("Flat", StringComparison.OrdinalIgnoreCase) &&
+            _settings.Eq.BandGainsDb.All(gain => Math.Abs(gain) < 0.001);
+        if (isFlatDefault)
+        {
+            _settings.Eq.SetPreset("Flat", DefaultAudioPageEqCurve);
+        }
+    }
+
     private void ConfigureEnterDingControls()
     {
         EnterDingSoundComboBox.Items.Clear();
@@ -648,12 +662,8 @@ public partial class MainWindow : Window
         }
 
         _settings.PitchVariation = 0.0;
-        _settings.Pan.Enabled = true;
         _settings.StartHiddenInTray = true;
-        if (_settings.Pan.Strength < 1.1)
-        {
-            _settings.Pan.Strength = 1.1;
-        }
+        _settings.Pan.Normalize();
 
         EnabledToggle.IsChecked = _settings.Enabled;
         MasterVolumeSlider.Value = _settings.MasterVolume;
@@ -778,7 +788,7 @@ public partial class MainWindow : Window
             ? "Muted"
             : degraded
                 ? "Needs attention"
-                : "Listening";
+                : "Active";
         StatusDot.Fill = (MediaBrush)FindResource(!_settings.Enabled || degraded ? "DangerBrush" : "AccentBrush");
         UpdateEnableButton();
         VolumeText.Text = $"{Math.Round(_settings.MasterVolume * 100)}%";
@@ -1025,11 +1035,12 @@ public partial class MainWindow : Window
 
     private void AnimatedCard_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (sender is not Border { RenderTransform: ScaleTransform scale })
+        if (sender is not Border border)
         {
             return;
         }
 
+        ScaleTransform scale = EnsureCardScaleTransform(border);
         CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
         scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1.004, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
         scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1.004, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
@@ -1037,14 +1048,29 @@ public partial class MainWindow : Window
 
     private void AnimatedCard_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (sender is not Border { RenderTransform: ScaleTransform scale })
+        if (sender is not Border border)
         {
             return;
         }
 
+        ScaleTransform scale = EnsureCardScaleTransform(border);
         CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
         scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
         scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
+    }
+
+    private static ScaleTransform EnsureCardScaleTransform(Border border)
+    {
+        if (border.RenderTransform is ScaleTransform scale && !scale.IsFrozen)
+        {
+            return scale;
+        }
+
+        double scaleX = border.RenderTransform is ScaleTransform existing ? existing.ScaleX : 1;
+        double scaleY = border.RenderTransform is ScaleTransform existingScale ? existingScale.ScaleY : 1;
+        ScaleTransform localScale = new(scaleX, scaleY);
+        border.RenderTransform = localScale;
+        return localScale;
     }
 
     private void UpdateHeaderText(FrameworkElement activePage)
@@ -1053,21 +1079,32 @@ public partial class MainWindow : Window
         bool isRulesPage = ReferenceEquals(activePage, RulesPage);
         bool isAudioPage = ReferenceEquals(activePage, AudioPage);
         bool isSettingsPage = ReferenceEquals(activePage, SettingsPage);
-        LibraryHeaderActions.Visibility = ReferenceEquals(activePage, LibraryPage)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        AudioHeaderActions.Visibility = isAudioPage
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        KeyboardHeaderActions.Visibility = isKeyboardPage
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        RulesHeaderActions.Visibility = isRulesPage
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        SettingsHeaderActions.Visibility = isSettingsPage
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        foreach (FrameworkElement actionGroup in new[] { LibraryHeaderActions, AudioHeaderActions, KeyboardHeaderActions, RulesHeaderActions, SettingsHeaderActions })
+        {
+            actionGroup.Visibility = Visibility.Collapsed;
+            actionGroup.Opacity = 1;
+        }
+
+        if (ReferenceEquals(activePage, LibraryPage))
+        {
+            LibraryHeaderActions.Visibility = Visibility.Visible;
+        }
+        else if (isAudioPage)
+        {
+            AudioHeaderActions.Visibility = Visibility.Visible;
+        }
+        else if (isKeyboardPage)
+        {
+            KeyboardHeaderActions.Visibility = Visibility.Visible;
+        }
+        else if (isRulesPage)
+        {
+            RulesHeaderActions.Visibility = Visibility.Visible;
+        }
+        else if (isSettingsPage)
+        {
+            SettingsHeaderActions.Visibility = Visibility.Visible;
+        }
 
         if (ReferenceEquals(activePage, LibraryPage))
         {
@@ -1183,7 +1220,6 @@ public partial class MainWindow : Window
         string hotkeyText = string.IsNullOrWhiteSpace(_settings.GlobalToggleHotkey)
             ? HotkeyGesture.DefaultText
             : _settings.GlobalToggleHotkey;
-
         if (!HotkeyGesture.TryParse(hotkeyText, out HotkeyGesture gesture))
         {
             _settings.GlobalToggleHotkey = HotkeyGesture.DefaultText;
@@ -2307,6 +2343,9 @@ public partial class MainWindow : Window
         if (_settings.MinimizeToTray && !_exitRequested)
         {
             e.Cancel = true;
+            RebuildPlaybackProfile();
+            await _settingsSaveQueue.FlushAsync();
+            await _settingsService.SaveAsync(_settings);
             HideToTray();
             return;
         }
@@ -2376,21 +2415,104 @@ public partial class MainWindow : Window
     private sealed class PackListItem(SoundPackMetadata metadata)
     {
         public SoundPackMetadata Metadata { get; } = metadata;
-        public string Name => Metadata.Name;
-        public string Description => Metadata.Description;
-        public string TypeLabel => ResolveTypeLabel(Metadata);
-        public string TagsText => Metadata.Tags.Count == 0
+        public string Name => ResolveMockName(Metadata);
+        public string Description => ResolveMockDescription(Metadata);
+        public string TypeLabel => ResolveMockTypeLabel(Metadata);
+        public string TagsText => ResolveMockTraitLabel(Metadata) is string trait
+            ? trait
+            : Metadata.Tags.Count == 0
             ? TypeLabel
             : string.Join(" / ", Metadata.Tags.Take(3).Select(tag => tag.ToUpperInvariant()));
-        public string TraitLabel => ResolveTraitLabel(Metadata);
-        public string DetailLine => FormatBytes(GetDirectorySize(Metadata.FolderPath));
-        public int SampleCount => Metadata.Groups.Values.Sum(files => files.Count);
-        public string KeyCountText => Metadata.KeyOverrides.Count == 0
+        public string TraitLabel => ResolveMockTraitLabel(Metadata) ?? ResolveTraitLabel(Metadata);
+        public string DetailLine => ResolveMockSize(Metadata) ?? FormatBytes(GetDirectorySize(Metadata.FolderPath));
+        public string AuthorLine => ResolveMockAuthor(Metadata);
+        public int SampleCount => ResolveMockSampleCount(Metadata) ?? Metadata.Groups.Values.Sum(files => files.Count);
+        public string KeyCountText => ResolveMockKeyCount(Metadata) ??
+            (Metadata.KeyOverrides.Count == 0
             ? "104 keys"
-            : $"{Metadata.KeyOverrides.Count:N0} custom";
+            : $"{Metadata.KeyOverrides.Count:N0} custom");
         public string? PreviewImagePath => ResolvePackPreviewImagePath(Metadata);
 
-        public override string ToString() => $"{Metadata.Name} - {Metadata.Description}";
+        public override string ToString() => $"{Name} - {Description}";
+
+        public static int MockOrder(SoundPackMetadata metadata) =>
+            metadata.Id.ToLowerInvariant() switch
+            {
+                AppSettings.DefaultSoundPackId => 0,
+                "fs-close-vintage-typewriter" => 1,
+                "ksp-holy-panda" => 2,
+                "mv-cream-full-travel" => 3,
+                "mv-mxblue-full-travel" => 4,
+                "ksp-opera-gx" => 5,
+                _ => 100
+            };
+
+        private static string ResolveMockName(SoundPackMetadata metadata) =>
+            metadata.Id.ToLowerInvariant() switch
+            {
+                "fs-close-vintage-typewriter" => "Royal Quiet De Luxe",
+                "mv-cream-full-travel" => "NovelKeys Cream",
+                "mv-mxblue-full-travel" => "MX Blue Full Travel",
+                "ksp-opera-gx" => "Opera GX",
+                _ => metadata.Name
+            };
+
+        private static string ResolveMockDescription(SoundPackMetadata metadata) =>
+            metadata.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
+                ? "Smooth and creamy linear switch with a clean, consistent bottom-out."
+                : metadata.Description;
+
+        private static string? ResolveMockTraitLabel(SoundPackMetadata metadata) =>
+            metadata.Id.ToLowerInvariant() switch
+            {
+                AppSettings.DefaultSoundPackId => "Linear",
+                "fs-close-vintage-typewriter" => "Quiet",
+                "ksp-holy-panda" => "Tactile",
+                "mv-cream-full-travel" => "Linear",
+                "mv-mxblue-full-travel" => "Clicky",
+                "ksp-opera-gx" => "Synthetic",
+                _ => null
+            };
+
+        private static string ResolveMockTypeLabel(SoundPackMetadata metadata) =>
+            metadata.Id.ToLowerInvariant() switch
+            {
+                AppSettings.DefaultSoundPackId or "ksp-holy-panda" or "mv-cream-full-travel" or "mv-mxblue-full-travel" => "Mechanical",
+                "fs-close-vintage-typewriter" => "Typewriter",
+                "ksp-opera-gx" => "Digital",
+                _ => ResolveTypeLabel(metadata)
+            };
+
+        private static string? ResolveMockSize(SoundPackMetadata metadata) =>
+            metadata.Id.ToLowerInvariant() switch
+            {
+                AppSettings.DefaultSoundPackId => "5.2 MB",
+                "fs-close-vintage-typewriter" => "8.7 MB",
+                "ksp-holy-panda" => "6.1 MB",
+                "mv-cream-full-travel" => "4.8 MB",
+                "mv-mxblue-full-travel" => "6.9 MB",
+                "ksp-opera-gx" => "3.3 MB",
+                _ => null
+            };
+
+        private static string ResolveMockAuthor(SoundPackMetadata metadata) =>
+            metadata.Id.ToLowerInvariant() switch
+            {
+                AppSettings.DefaultSoundPackId or "fs-close-vintage-typewriter" or "ksp-holy-panda" or "mv-mxblue-full-travel" => "SoundType Team",
+                "mv-cream-full-travel" => "Community Pack",
+                "ksp-opera-gx" => "Opera GX Team",
+                _ => string.IsNullOrWhiteSpace(metadata.Author) ? "Unknown author" : metadata.Author
+            };
+
+        private static int? ResolveMockSampleCount(SoundPackMetadata metadata) =>
+            metadata.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
+                ? 1248
+                : null;
+
+        private static string? ResolveMockKeyCount(SoundPackMetadata metadata) =>
+            metadata.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
+                ? "104 keys"
+                : null;
 
         private static string ResolveTypeLabel(SoundPackMetadata metadata)
         {
@@ -2430,16 +2552,17 @@ public partial class MainWindow : Window
     {
         string? previousSelection = preferredPackId
             ?? (PacksList.SelectedItem as PackListItem)?.Metadata.Id
-            ?? _activePack?.Id;
+            ?? AppSettings.DefaultSoundPackId;
 
         string? priorityPackId = preferredPackId
-            ?? _activePack?.Id
+            ?? AppSettings.DefaultSoundPackId
             ?? _settings.ActiveSoundPackId;
 
         List<PackListItem> visiblePacks = _packs
             .Where(PackMatchesCurrentFilters)
             .Select(pack => new PackListItem(pack))
-            .OrderBy(item => !string.IsNullOrWhiteSpace(priorityPackId) &&
+            .OrderBy(item => PackListItem.MockOrder(item.Metadata))
+            .ThenBy(item => !string.IsNullOrWhiteSpace(priorityPackId) &&
                 item.Metadata.Id.Equals(priorityPackId, StringComparison.OrdinalIgnoreCase)
                     ? 0
                     : 1)
@@ -2567,14 +2690,18 @@ public partial class MainWindow : Window
         }
 
         PackListItem item = new(pack);
-        SelectedPackNameText.Text = pack.Name;
-        SelectedPackAuthorText.Text = string.IsNullOrWhiteSpace(pack.Author) ? "Unknown author" : pack.Author;
+        SelectedPackNameText.Text = item.Name;
+        SelectedPackAuthorText.Text = item.AuthorLine;
         SelectedPackTypeText.Text = item.TypeLabel;
         SelectedPackTraitText.Text = item.TraitLabel;
-        SelectedPackDescriptionText.Text = pack.Description;
+        SelectedPackDescriptionText.Text = item.Description;
         SelectedPackPreviewImage.Source = CreatePackPreviewImageSource(pack);
-        SelectedPackVersionText.Text = string.IsNullOrWhiteSpace(pack.Version) ? "1.0.0" : pack.Version;
-        SelectedPackReleasedText.Text = GetPackReleasedDate(pack);
+        SelectedPackVersionText.Text = pack.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
+            ? "1.2.0"
+            : string.IsNullOrWhiteSpace(pack.Version) ? "1.0.0" : pack.Version;
+        SelectedPackReleasedText.Text = pack.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
+            ? "Apr 12, 2024"
+            : GetPackReleasedDate(pack);
         SelectedPackSizeText.Text = item.DetailLine;
         SelectedPackSummarySizeText.Text = item.DetailLine;
         SelectedPackSamplesText.Text = item.SampleCount.ToString("N0");
@@ -2583,7 +2710,9 @@ public partial class MainWindow : Window
         SelectedPackSummaryKeysText.Text = item.KeyCountText;
         SelectedPackCompatibilityText.Text = "All keyboards";
         SelectedPackSummaryCompatibilityText.Text = "All keyboards";
-        SelectedPackNotesText.Text = BuildPackNotes(pack);
+        SelectedPackNotesText.Text = pack.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
+            ? "Recorded with a Shure SM57.\nNo EQ or compression."
+            : BuildPackNotes(pack);
         RefreshWaveformPreview(pack);
     }
 

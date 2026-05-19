@@ -39,6 +39,27 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("ResizeMode=\"CanResize\"", xaml);
     }
 
+    [Fact]
+    public void MainWindow_DoesNotForceEnablePanningOnStartup()
+    {
+        string root = FindRepositoryRoot();
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.DoesNotContain("_settings.Pan.Enabled = true", code);
+        Assert.DoesNotContain("_settings.Pan.Strength = 1.1", code);
+    }
+
+    [Fact]
+    public void MainWindow_FlushesSettingsWhenClosingToTray()
+    {
+        string root = FindRepositoryRoot();
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("await _settingsSaveQueue.FlushAsync();", code);
+        Assert.Contains("await _settingsService.SaveAsync(_settings);", code);
+        Assert.Contains("HideToTray();", code);
+    }
+
     private static string FindRepositoryRoot()
     {
         DirectoryInfo? current = new(AppContext.BaseDirectory);

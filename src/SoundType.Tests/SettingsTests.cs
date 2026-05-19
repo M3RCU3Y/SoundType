@@ -16,6 +16,8 @@ public sealed class SettingsTests
         Assert.True(settings.Enabled);
         Assert.Equal(0.72, settings.MasterVolume);
         Assert.Equal(0.0, settings.PitchVariation);
+        Assert.False(settings.Pan.Enabled);
+        Assert.Equal(0.0, settings.Pan.Strength);
         Assert.Contains("LeftShift", settings.ExcludedKeys);
     }
 
@@ -132,5 +134,66 @@ public sealed class SettingsTests
         AppSettings settings = await service.LoadAsync();
 
         Assert.Equal(0.12, settings.PitchVariation);
+    }
+
+    [Fact]
+    public async Task LoadAsync_ResetsLegacyDefaultPanning()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "pan": {
+                "enabled": true,
+                "mode": 0,
+                "strength": 1.1
+              }
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.False(settings.Pan.Enabled);
+        Assert.Equal(0.0, settings.Pan.Strength);
+        Assert.Equal(PanMode.KeyPosition, settings.Pan.Mode);
+    }
+
+    [Fact]
+    public async Task SaveAndLoadAsync_PersistsDisabledCenteredPanning()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string path = Path.Combine(root, "settings.json");
+        SettingsService service = new(path);
+        AppSettings original = new()
+        {
+            Pan = new PanSettings { Enabled = false, Mode = PanMode.KeyPosition, Strength = 0.0 }
+        };
+
+        await service.SaveAsync(original);
+        AppSettings restored = await service.LoadAsync();
+
+        Assert.False(restored.Pan.Enabled);
+        Assert.Equal(PanMode.KeyPosition, restored.Pan.Mode);
+        Assert.Equal(0.0, restored.Pan.Strength);
+    }
+
+    [Fact]
+    public async Task SaveAsync_PreservesDeliberatePanning()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string path = Path.Combine(root, "settings.json");
+        SettingsService service = new(path);
+        AppSettings original = new()
+        {
+            Pan = new PanSettings { Enabled = true, Mode = PanMode.KeyPosition, Strength = 1.1 }
+        };
+
+        await service.SaveAsync(original);
+
+        string json = await File.ReadAllTextAsync(path);
+        Assert.Contains("\"Enabled\": true", json);
+        Assert.Contains("\"Strength\": 1.1", json);
     }
 }

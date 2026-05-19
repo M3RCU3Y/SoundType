@@ -1,5 +1,6 @@
 using SoundType.Audio;
 using SoundType.Core.Models;
+using NAudio.Wave;
 
 namespace SoundType.Tests;
 
@@ -189,6 +190,37 @@ public sealed class SoundPackTests
             Assert.True(
                 loaded.Samples.Values.SelectMany(samples => samples).All(sample => sample.DecodedSamples.Length > 0),
                 $"{pack.Id} has at least one sample that failed to decode.");
+        }
+    }
+
+    [Fact]
+    public void Load_CentersStereoSamplesBeforePlayback()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "stereo-pack",
+              "name": "Stereo Pack",
+              "groups": {
+                "normal": [ "normal/key.wav" ]
+              }
+            }
+            """);
+        string normalDir = Path.Combine(root, "normal");
+        Directory.CreateDirectory(normalDir);
+        string samplePath = Path.Combine(normalDir, "key.wav");
+        using (WaveFileWriter writer = new(samplePath, WaveFormat.CreateIeeeFloatWaveFormat(44100, 2)))
+        {
+            writer.WriteSamples([0.8f, 0.2f, -0.4f, 0.2f, 0.6f, -0.2f], 0, 6);
+        }
+
+        SoundPackLoader loader = new();
+        LoadedSoundPack pack = loader.Load(loader.TryLoadMetadata(root)!);
+
+        float[] decoded = pack.Samples["normal"][0].DecodedSamples;
+        Assert.NotEmpty(decoded);
+        for (int i = 0; i + 1 < decoded.Length; i += 2)
+        {
+            Assert.Equal(decoded[i], decoded[i + 1], precision: 6);
         }
     }
 

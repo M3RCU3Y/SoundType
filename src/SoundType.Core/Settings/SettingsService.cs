@@ -36,7 +36,7 @@ public sealed class SettingsService
                 _jsonOptions,
                 cancellationToken);
 
-            return Normalize(settings);
+            return Normalize(settings, resetLegacyDefaultPanning: true);
         }
         catch (JsonException)
         {
@@ -66,7 +66,7 @@ public sealed class SettingsService
                              bufferSize: 4096,
                              FileOptions.Asynchronous | FileOptions.WriteThrough))
             {
-                await JsonSerializer.SerializeAsync(stream, Normalize(settings), _jsonOptions, cancellationToken);
+                await JsonSerializer.SerializeAsync(stream, Normalize(settings, resetLegacyDefaultPanning: false), _jsonOptions, cancellationToken);
                 await stream.FlushAsync(cancellationToken);
             }
 
@@ -82,7 +82,7 @@ public sealed class SettingsService
         }
     }
 
-    private static AppSettings Normalize(AppSettings? settings)
+    private static AppSettings Normalize(AppSettings? settings, bool resetLegacyDefaultPanning)
     {
         settings ??= new AppSettings();
         settings.MasterVolume = Math.Clamp(settings.MasterVolume, 0.0, 1.0);
@@ -101,7 +101,14 @@ public sealed class SettingsService
         settings.Eq ??= new EqSettings();
         settings.Eq.Normalize();
         settings.Pan ??= new PanSettings();
-        settings.Pan.Normalize();
+        if (resetLegacyDefaultPanning)
+        {
+            settings.Pan.NormalizeLegacyDefault();
+        }
+        else
+        {
+            settings.Pan.Normalize();
+        }
         return settings;
     }
 }

@@ -165,7 +165,9 @@ public sealed class SoundPackLoader
                 }
             }
 
-            return AudioSampleTrimmer.TrimSilence(samples.ToArray(), PlaybackWaveFormat.Channels);
+            float[] trimmed = AudioSampleTrimmer.TrimSilence(samples.ToArray(), PlaybackWaveFormat.Channels);
+            CenterStereoSamples(trimmed);
+            return trimmed;
         }
         catch (Exception ex) when (ex is InvalidDataException or EndOfStreamException or IOException)
         {
@@ -181,6 +183,16 @@ public sealed class SoundPackLoader
             2 => provider,
             _ => throw new InvalidOperationException("SoundType supports mono or stereo samples.")
         };
+    }
+
+    private static void CenterStereoSamples(float[] samples)
+    {
+        for (int i = 0; i + 1 < samples.Length; i += PlaybackWaveFormat.Channels)
+        {
+            float centered = (samples[i] + samples[i + 1]) * 0.5f;
+            samples[i] = centered;
+            samples[i + 1] = centered;
+        }
     }
 
     private static bool TryGetSampleFormat(string relativePath, out SoundSampleFormat format) =>
