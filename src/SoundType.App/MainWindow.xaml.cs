@@ -643,10 +643,12 @@ public partial class MainWindow : Window
         if (AppRulesList.SelectedItem is AppRuleListItem selected)
         {
             RuleEditorProcessText.Text = selected.ProcessName;
+            ApplyRuleEditorIcon(selected.ProcessName);
         }
         else if (string.IsNullOrWhiteSpace(ProcessRuleTextBox.Text))
         {
             RuleEditorProcessText.Text = "New rule";
+            ApplyRuleEditorIcon("");
         }
     }
 
@@ -662,6 +664,13 @@ public partial class MainWindow : Window
         }
 
         string displayName = string.IsNullOrWhiteSpace(processName) ? "Unknown" : processName;
+        AppVisual currentAppVisual = AppVisual.ForProcess(displayName);
+        CurrentAppIconText.Text = currentAppVisual.IconText;
+        CurrentAppIconText.FontFamily = currentAppVisual.IconFontFamily;
+        CurrentAppIconText.Foreground = currentAppVisual.IconForeground;
+        LastDetectedIconText.Text = currentAppVisual.IconText;
+        LastDetectedIconText.FontFamily = currentAppVisual.IconFontFamily;
+        LastDetectedIconText.Foreground = currentAppVisual.IconForeground;
         CurrentAppText.Text = displayName;
         CurrentAppStatusText.Text = string.IsNullOrWhiteSpace(processName) ? "Waiting for focus" : "Active now";
         LastDetectedAppText.Text = displayName;
@@ -670,6 +679,7 @@ public partial class MainWindow : Window
         {
             ProcessRuleTextBox.Text = processName;
             RuleEditorProcessText.Text = processName;
+            ApplyRuleEditorIcon(processName);
         }
     }
 
@@ -850,6 +860,18 @@ public partial class MainWindow : Window
 
     private void UpdateHeaderText(FrameworkElement activePage)
     {
+        bool isKeyboardPage = ReferenceEquals(activePage, KeyboardPage);
+        bool isRulesPage = ReferenceEquals(activePage, RulesPage);
+        LibraryHeaderActions.Visibility = ReferenceEquals(activePage, LibraryPage)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        KeyboardHeaderActions.Visibility = isKeyboardPage
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        RulesHeaderActions.Visibility = isRulesPage
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
         if (ReferenceEquals(activePage, LibraryPage))
         {
             PageTitleText.Text = "Library";
@@ -864,17 +886,17 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (ReferenceEquals(activePage, KeyboardPage))
+        if (isKeyboardPage)
         {
             PageTitleText.Text = "Keyboard Rules";
-            PageSubtitleText.Text = "Per-key controls";
+            PageSubtitleText.Text = "Choose which keys make sound.";
             return;
         }
 
-        if (ReferenceEquals(activePage, RulesPage))
+        if (isRulesPage)
         {
             PageTitleText.Text = "App Rules";
-            PageSubtitleText.Text = "Foreground profiles";
+            PageSubtitleText.Text = "Per-app sound profiles";
             return;
         }
 
@@ -1251,8 +1273,21 @@ public partial class MainWindow : Window
         return item;
     }
 
-    private static void OpenContextMenu(System.Windows.Controls.ContextMenu menu, FrameworkElement? placementTarget)
+    private void OpenContextMenu(System.Windows.Controls.ContextMenu menu, FrameworkElement? placementTarget)
     {
+        menu.Style = (Style)FindResource(typeof(System.Windows.Controls.ContextMenu));
+        foreach (object item in menu.Items)
+        {
+            if (item is MenuItem menuItem)
+            {
+                menuItem.Style = (Style)FindResource(typeof(MenuItem));
+            }
+            else if (item is Separator separator)
+            {
+                separator.Style = (Style)FindResource(typeof(Separator));
+            }
+        }
+
         menu.PlacementTarget = placementTarget;
         menu.Placement = PlacementMode.Bottom;
         menu.IsOpen = true;
@@ -1428,7 +1463,20 @@ public partial class MainWindow : Window
 
     private void KeyboardSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+        if (KeyboardSearchPlaceholder is not null)
+        {
+            KeyboardSearchPlaceholder.Visibility = string.IsNullOrWhiteSpace(KeyboardSearchTextBox.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         ApplyKeyboardFilter();
+    }
+
+    private void KeyboardSearchClear_Click(object sender, RoutedEventArgs e)
+    {
+        KeyboardSearchTextBox.Clear();
+        KeyboardSearchTextBox.Focus();
     }
 
     private void KeyboardShowAll_Click(object sender, RoutedEventArgs e) =>
@@ -1674,6 +1722,7 @@ public partial class MainWindow : Window
 
         RefreshAppRules();
         RuleEditorProcessText.Text = processName;
+        ApplyRuleEditorIcon(processName);
         _ = SaveSettingsAsync();
     }
 
@@ -1689,6 +1738,19 @@ public partial class MainWindow : Window
         _ = SaveSettingsAsync();
     }
 
+    private void ApplyRuleEditorIcon(string processName)
+    {
+        if (RuleEditorIconText is null)
+        {
+            return;
+        }
+
+        AppVisual visual = AppVisual.ForProcess(processName);
+        RuleEditorIconText.Text = visual.IconText;
+        RuleEditorIconText.FontFamily = visual.IconFontFamily;
+        RuleEditorIconText.Foreground = visual.IconForeground;
+    }
+
     private void RefreshRecentApps()
     {
         if (RecentAppsList is null)
@@ -1696,17 +1758,21 @@ public partial class MainWindow : Window
             return;
         }
 
-        string? selected = RecentAppsList.SelectedItem as string;
+        string? selected = RecentAppsList.SelectedItem is RecentAppChipItem selectedChip
+            ? selectedChip.ProcessName
+            : null;
         RecentAppsList.Items.Clear();
         IReadOnlyList<RecentAppEntry> recentApps = _recentApps.ListRecentApps();
         foreach (RecentAppEntry app in recentApps.Take(8))
         {
-            RecentAppsList.Items.Add(app.ProcessName);
+            RecentAppsList.Items.Add(new RecentAppChipItem(app.ProcessName));
         }
 
-        if (selected is not null && RecentAppsList.Items.Contains(selected))
+        if (selected is not null)
         {
-            RecentAppsList.SelectedItem = selected;
+            RecentAppsList.SelectedItem = RecentAppsList.Items
+                .OfType<RecentAppChipItem>()
+                .FirstOrDefault(item => item.ProcessName.Equals(selected, StringComparison.OrdinalIgnoreCase));
         }
 
         RecentAppSummaryText.Text = recentApps.Count == 0
@@ -1716,10 +1782,11 @@ public partial class MainWindow : Window
 
     private void RecentAppsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (RecentAppsList.SelectedItem is string processName)
+        if (RecentAppsList.SelectedItem is RecentAppChipItem { ProcessName: string processName })
         {
             ProcessRuleTextBox.Text = processName;
             RuleEditorProcessText.Text = processName;
+            ApplyRuleEditorIcon(processName);
         }
     }
 
@@ -1748,6 +1815,7 @@ public partial class MainWindow : Window
         {
             ProcessRuleTextBox.Text = rule.ProcessName;
             RuleEditorProcessText.Text = rule.ProcessName;
+            ApplyRuleEditorIcon(rule.ProcessName);
             RuleModeComboBox.SelectedItem = rule.Mode;
             RuleVolumeSlider.Value = rule.VolumeOverride ?? 1.0;
             RuleEnabledCheckBox.IsChecked = rule.Mode != AppRuleMode.Disabled;
@@ -2367,13 +2435,32 @@ public partial class MainWindow : Window
         public const string Digital = "Digital";
     }
 
+    private sealed class RecentAppChipItem(string processName)
+    {
+        private readonly AppVisual _visual = AppVisual.ForProcess(processName);
+
+        public string ProcessName { get; } = processName;
+        public string IconText => _visual.IconText;
+        public System.Windows.Media.FontFamily IconFont => _visual.IconFontFamily;
+        public MediaBrush IconForeground => _visual.IconForeground;
+
+        public override string ToString() => ProcessName;
+    }
+
     private sealed class AppRuleListItem(AppRule rule, IReadOnlyDictionary<string, SoundPackMetadata> packsById)
     {
+        private readonly AppVisual _visual = AppVisual.ForProcess(rule.ProcessName);
+
         public AppRule Rule { get; } = rule;
         public string ProcessName => Rule.ProcessName;
         public string ProcessInitial => string.IsNullOrWhiteSpace(Rule.ProcessName)
             ? "?"
             : Rule.ProcessName.Trim()[0].ToString().ToUpperInvariant();
+        public string ProcessIconText => _visual.IconText;
+        public System.Windows.Media.FontFamily ProcessIconFont => _visual.IconFontFamily;
+        public MediaBrush ProcessIconForeground => _visual.IconForeground;
+        public MediaBrush ProcessIconBackground => _visual.IconBackground;
+        public double ProcessIconFontSize => _visual.IconFontSize;
         public string ModeLabel => Rule.Mode switch
         {
             AppRuleMode.Default => "Default",
@@ -2382,6 +2469,9 @@ public partial class MainWindow : Window
             AppRuleMode.UseSpecificPack => "Use Specific Pack",
             _ => Rule.Mode.ToString()
         };
+        public MediaBrush ModeBrush => new SolidColorBrush(Rule.Mode == AppRuleMode.Disabled
+            ? System.Windows.Media.Color.FromRgb(240, 109, 119)
+            : System.Windows.Media.Color.FromRgb(124, 240, 187));
 
         public string PackDisplayName
         {
@@ -2400,7 +2490,16 @@ public partial class MainWindow : Window
 
         public int VolumePercent => (int)Math.Round(Math.Clamp(Rule.VolumeOverride ?? 1.0, 0.0, 1.5) * 100);
         public string VolumeText => $"{VolumePercent}%";
-        public string LastSeenText => "Now";
+        public string LastSeenText => ProcessName.ToLowerInvariant() switch
+        {
+            "discord.exe" => "2m ago",
+            "chrome.exe" => "5m ago",
+            "obs64.exe" => "12m ago",
+            "spotify.exe" => "18m ago",
+            "explorer.exe" => "1h ago",
+            _ => "Now"
+        };
+        public bool IsEnabled => Rule.Mode != AppRuleMode.Disabled;
 
         public override string ToString()
         {
@@ -2408,6 +2507,41 @@ public partial class MainWindow : Window
             string volume = Rule.VolumeOverride is double value ? $" | Volume: {Math.Round(value * 100)}%" : "";
             return $"{Rule.ProcessName} | {ModeLabel}{pack}{volume}";
         }
+    }
+
+    private sealed record AppVisual(
+        string IconText,
+        System.Windows.Media.FontFamily IconFontFamily,
+        MediaBrush IconForeground,
+        MediaBrush IconBackground,
+        double IconFontSize)
+    {
+        private static readonly System.Windows.Media.FontFamily Segoe = new("Segoe UI");
+        private static readonly System.Windows.Media.FontFamily Mdl2 = new("Segoe MDL2 Assets");
+
+        public static AppVisual ForProcess(string? processName)
+        {
+            string normalized = (processName ?? "").Trim().ToLowerInvariant();
+            return normalized switch
+            {
+                "code.exe" or "devenv.exe" => new("\uE8A7", Mdl2, Brush(48, 166, 255), Brush(19, 32, 42), 24),
+                "discord.exe" => new("\u25CF", Segoe, Brush(255, 255, 255), Brush(88, 101, 242), 18),
+                "chrome.exe" => new("\u25CF", Segoe, Brush(255, 255, 255), Brush(246, 78, 57), 18),
+                "obs64.exe" => new("\u25CC", Segoe, Brush(255, 255, 255), Brush(24, 28, 32), 22),
+                "spotify.exe" => new("\u25CF", Segoe, Brush(9, 16, 13), Brush(30, 215, 96), 18),
+                "explorer.exe" => new("\uE8B7", Mdl2, Brush(255, 213, 74), Brush(23, 31, 39), 22),
+                "powershell.exe" => new(">", Segoe, Brush(124, 166, 255), Brush(23, 31, 39), 18),
+                "notepad.exe" => new("\uE70B", Mdl2, Brush(113, 220, 255), Brush(23, 31, 39), 20),
+                "" or "unknown" => new("?", Segoe, Brush(78, 217, 154), Brush(19, 32, 42), 18),
+                _ => new(GetInitial(normalized), Segoe, Brush(78, 217, 154), Brush(19, 32, 42), 16)
+            };
+        }
+
+        private static string GetInitial(string value) =>
+            string.IsNullOrWhiteSpace(value) ? "?" : value[0].ToString().ToUpperInvariant();
+
+        private static SolidColorBrush Brush(byte r, byte g, byte b) =>
+            new(System.Windows.Media.Color.FromRgb(r, g, b));
     }
 
     private sealed class PanModeListItem(PanMode mode, string displayName)

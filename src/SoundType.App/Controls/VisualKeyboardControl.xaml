@@ -4,15 +4,15 @@
     <UserControl.Resources>
         <SolidColorBrush x:Key="KeyboardSurfaceBrush" Color="#10161D"/>
         <SolidColorBrush x:Key="KeyboardKeyBrush" Color="#18232A"/>
-        <SolidColorBrush x:Key="KeyboardKeyBorderBrush" Color="#2F3A43"/>
-        <SolidColorBrush x:Key="KeyboardKeyExcludedBrush" Color="#351A1C"/>
+        <SolidColorBrush x:Key="KeyboardKeyBorderBrush" Color="#39B77F"/>
+        <SolidColorBrush x:Key="KeyboardKeyExcludedBrush" Color="#331B1F"/>
         <SolidColorBrush x:Key="KeyboardKeyExcludedBorderBrush" Color="#EF6464"/>
-        <SolidColorBrush x:Key="KeyboardKeyExcludedTextBrush" Color="#FCA5A5"/>
+        <SolidColorBrush x:Key="KeyboardKeyExcludedTextBrush" Color="#FFFFFF"/>
         <Style x:Key="KeyboardKeyButton" TargetType="Button">
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="MinWidth" Value="39"/>
-            <Setter Property="Padding" Value="4,0"/>
-            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Height" Value="54"/>
+            <Setter Property="MinWidth" Value="33"/>
+            <Setter Property="Padding" Value="3,0"/>
+            <Setter Property="Margin" Value="0"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#F5F7FA"/>
@@ -48,15 +48,15 @@
     </UserControl.Resources>
 
     <Grid>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Disabled"
                       CanContentScroll="False">
             <Border Background="{StaticResource KeyboardSurfaceBrush}"
                     BorderBrush="#27323A"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Padding="12">
-                <Grid x:Name="KeyboardGrid"/>
+                    Padding="12,16,12,30">
+                <Canvas x:Name="KeyboardCanvas"/>
             </Border>
         </ScrollViewer>
     </Grid>

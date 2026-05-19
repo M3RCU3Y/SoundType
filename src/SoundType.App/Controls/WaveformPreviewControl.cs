@@ -24,25 +24,42 @@ public sealed class WaveformPreviewControl : FrameworkElement
     {
         base.OnRender(drawingContext);
         Rect bounds = new(0, 0, ActualWidth, ActualHeight);
-        drawingContext.DrawRoundedRectangle(new SolidColorBrush(MediaColor.FromRgb(16, 24, 39)), null, bounds, 14, 14);
+        SolidColorBrush panelBrush = new(MediaColor.FromRgb(12, 19, 25));
+        MediaPen gridPen = new(new SolidColorBrush(MediaColor.FromArgb(82, 44, 53, 62)), 1);
+        drawingContext.DrawRoundedRectangle(panelBrush, null, bounds, 8, 8);
+
+        if (ActualWidth > 0 && ActualHeight > 0)
+        {
+            for (int i = 1; i < 4; i++)
+            {
+                double y = ActualHeight * i / 4.0;
+                drawingContext.DrawLine(gridPen, new WindowsPoint(0, y), new WindowsPoint(ActualWidth, y));
+            }
+
+            for (int i = 1; i < 6; i++)
+            {
+                double x = ActualWidth * i / 6.0;
+                drawingContext.DrawLine(gridPen, new WindowsPoint(x, 0), new WindowsPoint(x, ActualHeight));
+            }
+        }
 
         if (Peaks.Count == 0 || ActualWidth <= 0 || ActualHeight <= 0)
         {
             return;
         }
 
-        MediaPen railPen = new(new SolidColorBrush(MediaColor.FromRgb(44, 54, 80)), 1);
+        MediaPen railPen = new(new SolidColorBrush(MediaColor.FromRgb(35, 46, 55)), 1);
         double center = ActualHeight / 2.0;
         drawingContext.DrawLine(railPen, new WindowsPoint(12, center), new WindowsPoint(Math.Max(12, ActualWidth - 12), center));
 
         double step = Math.Max(2.0, (ActualWidth - 24) / Peaks.Count);
-        double barWidth = Math.Max(1.5, Math.Min(5.0, step * 0.54));
-        MediaPen peakPen = new(new SolidColorBrush(MediaColor.FromRgb(16, 185, 129)), barWidth)
+        double barWidth = Math.Max(1.25, Math.Min(4.0, step * 0.5));
+        MediaPen peakPen = new(new SolidColorBrush(MediaColor.FromRgb(63, 215, 150)), barWidth)
         {
             StartLineCap = PenLineCap.Round,
             EndLineCap = PenLineCap.Round
         };
-        MediaPen ghostPen = new(new SolidColorBrush(MediaColor.FromArgb(70, 94, 234, 212)), Math.Max(1.0, barWidth * 0.55))
+        MediaPen ghostPen = new(new SolidColorBrush(MediaColor.FromArgb(62, 94, 234, 212)), Math.Max(1.0, barWidth * 0.55))
         {
             StartLineCap = PenLineCap.Round,
             EndLineCap = PenLineCap.Round
