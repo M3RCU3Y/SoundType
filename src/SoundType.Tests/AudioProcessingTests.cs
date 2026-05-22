@@ -392,8 +392,6 @@ public sealed class AudioProcessingTests
 
     private sealed class FakeAudioOutputDevice : IAudioOutputDevice
     {
-        public event EventHandler<StoppedEventArgs>? PlaybackStopped;
-
         public PlaybackState PlaybackState { get; private set; } = PlaybackState.Stopped;
 
         public void Init(ISampleProvider provider)
@@ -402,11 +400,7 @@ public sealed class AudioProcessingTests
 
         public void Play() => PlaybackState = PlaybackState.Playing;
 
-        public void Stop()
-        {
-            PlaybackState = PlaybackState.Stopped;
-            PlaybackStopped?.Invoke(this, new StoppedEventArgs());
-        }
+        public void Stop() => PlaybackState = PlaybackState.Stopped;
 
         public void MarkStopped() => PlaybackState = PlaybackState.Stopped;
 
