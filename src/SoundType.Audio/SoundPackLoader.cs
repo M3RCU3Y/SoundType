@@ -7,6 +7,11 @@ namespace SoundType.Audio;
 
 public sealed class SoundPackLoader
 {
+    private const double TargetPackMedianPeak = 0.68;
+    private const double MinimumNormalizationGain = 0.35;
+    private const double MaximumNormalizationGain = 4.0;
+    private const double LoudSamplePeakWarning = 0.98;
+    private const double QuietSamplePeakWarning = 0.08;
     private static readonly WaveFormat PlaybackWaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private static readonly IReadOnlyDictionary<string, SoundSampleFormat> SupportedSampleFormats =
         new Dictionary<string, SoundSampleFormat>(StringComparer.OrdinalIgnoreCase)
@@ -62,7 +67,7 @@ public sealed class SoundPackLoader
         }
     }
 
-    public SoundPackValidationResult Validate(SoundPackMetadata? metadata)
+    public SoundPackValidationResult Validate(SoundPackMetadata? metadata, bool analyzeAudioQuality = false)
     {
         SoundPackValidationResult result = new();
         if (metadata is null)
@@ -100,6 +105,12 @@ public sealed class SoundPackLoader
                 if (!File.Exists(absolutePath))
                 {
                     result.Errors.Add($"{group}: {relativePath} was not found.");
+                    continue;
+                }
+
+                if (analyzeAudioQuality)
+                {
+                    AddAudioQualityWarnings(result, group, relativePath, absolutePath);
                 }
             }
         }
@@ -123,7 +134,93 @@ public sealed class SoundPackLoader
                 .ToList();
         }
 
+        NormalizePackSamples(samples.Values.SelectMany(groupSamples => groupSamples));
         return new LoadedSoundPack(metadata, samples);
+    }
+
+    private static void AddAudioQualityWarnings(
+        SoundPackValidationResult result,
+        string group,
+        string relativePath,
+        string absolutePath)
+    {
+        try
+        {
+            SoundSampleFormat format = GetSampleFormat(relativePath);
+            byte[] data = File.ReadAllBytes(absolutePath);
+            float[] decoded = DecodeToPlaybackFormat(format, data);
+            if (decoded.Length == 0)
+            {
+                result.Warnings.Add($"{group}: {relativePath} could not be decoded for loudness analysis.");
+                return;
+            }
+
+            double peak = FindPeak(decoded);
+            if (peak >= LoudSamplePeakWarning)
+            {
+                result.Warnings.Add($"{group}: {relativePath} is very loud and may clip before SoundType normalizes it.");
+            }
+            else if (peak <= QuietSamplePeakWarning)
+            {
+                result.Warnings.Add($"{group}: {relativePath} is very quiet and may sound inconsistent with other packs.");
+            }
+        }
+        catch (Exception ex) when (ex is FormatException or InvalidDataException or EndOfStreamException or IOException or InvalidOperationException)
+        {
+            result.Warnings.Add($"{group}: {relativePath} could not be decoded for loudness analysis.");
+        }
+    }
+
+    private static void NormalizePackSamples(IEnumerable<LoadedSoundSample> samples)
+    {
+        List<LoadedSoundSample> decodedSamples = samples
+            .Where(sample => sample.DecodedSamples.Length > 0)
+            .ToList();
+        if (decodedSamples.Count == 0)
+        {
+            return;
+        }
+
+        List<double> peaks = decodedSamples
+            .Select(sample => FindPeak(sample.DecodedSamples))
+            .Where(peak => peak > 0.0001)
+            .Order()
+            .ToList();
+        if (peaks.Count == 0)
+        {
+            return;
+        }
+
+        double medianPeak = peaks[peaks.Count / 2];
+        double gain = Math.Clamp(TargetPackMedianPeak / medianPeak, MinimumNormalizationGain, MaximumNormalizationGain);
+        if (Math.Abs(gain - 1.0) < 0.001)
+        {
+            return;
+        }
+
+        foreach (LoadedSoundSample sample in decodedSamples)
+        {
+            ApplyGain(sample.DecodedSamples, gain);
+        }
+    }
+
+    private static double FindPeak(float[] samples)
+    {
+        double peak = 0;
+        foreach (float sample in samples)
+        {
+            peak = Math.Max(peak, Math.Abs(sample));
+        }
+
+        return peak;
+    }
+
+    private static void ApplyGain(float[] samples, double gain)
+    {
+        for (int i = 0; i < samples.Length; i++)
+        {
+            samples[i] = (float)Math.Clamp(samples[i] * gain, -1.0, 1.0);
+        }
     }
 
     private static LoadedSoundSample LoadSample(string folderPath, string relativePath)
@@ -169,7 +266,7 @@ public sealed class SoundPackLoader
             CenterStereoSamples(trimmed);
             return trimmed;
         }
-        catch (Exception ex) when (ex is InvalidDataException or EndOfStreamException or IOException)
+        catch (Exception ex) when (ex is FormatException or InvalidDataException or EndOfStreamException or IOException)
         {
             return [];
         }

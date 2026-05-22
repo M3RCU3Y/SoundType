@@ -1553,7 +1553,7 @@ public partial class MainWindow : Window
             SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: false);
             await ReloadPacksAndSelectAsync(metadata.Id);
             PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-            PackValidationText.Text = $"Imported {metadata.Name}.";
+            PackValidationText.Text = BuildImportResultMessage("Imported", metadata);
         }
         catch (IOException ex) when (ex.Message.Contains("already exists", StringComparison.OrdinalIgnoreCase))
         {
@@ -1574,7 +1574,7 @@ public partial class MainWindow : Window
                 SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: true);
                 await ReloadPacksAndSelectAsync(metadata.Id);
                 PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-                PackValidationText.Text = $"Replaced {metadata.Name}.";
+                PackValidationText.Text = BuildImportResultMessage("Replaced", metadata);
             }
             catch (Exception retryException)
             {
@@ -1621,6 +1621,14 @@ public partial class MainWindow : Window
 
     private SoundPackMetadata TryImportPack(string archivePath, bool overwrite) =>
         _archiveService.ImportPack(archivePath, _packsRoot, overwrite);
+
+    private string BuildImportResultMessage(string action, SoundPackMetadata metadata)
+    {
+        SoundPackValidationResult validation = _packLoader.Validate(metadata, analyzeAudioQuality: true);
+        return validation.Warnings.Count == 0
+            ? $"{action} {metadata.Name}."
+            : $"{action} {metadata.Name}. Warning: {validation.Warnings[0]}";
+    }
 
     private async Task ReloadPacksAndSelectAsync(string packId)
     {
