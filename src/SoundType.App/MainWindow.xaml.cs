@@ -2216,8 +2216,17 @@ public partial class MainWindow : Window
             _settings.Eq.SetBandGainDb(i, _eqBandSliders[i].Value);
         }
 
-        _settings.Eq.Enabled = EqEnabledCheck.IsChecked == true;
         _settings.Eq.PresetName = "Custom";
+        _loading = true;
+        try
+        {
+            EqEnabledCheck.IsChecked = _settings.Eq.Enabled;
+        }
+        finally
+        {
+            _loading = false;
+        }
+
         if (_audio is not null)
         {
             _audio.Eq = _settings.Eq;

@@ -64,6 +64,7 @@ public sealed class EqSettings
         BassGainDb = AverageBands(0, 2);
         MidGainDb = AverageBands(2, 4);
         TrebleGainDb = AverageBands(6, 4);
+        Enabled = BandGainsDb.Any(gain => Math.Abs(gain) > 0.001);
     }
 
     public void SetPreset(string name, IReadOnlyList<double> gainsDb)

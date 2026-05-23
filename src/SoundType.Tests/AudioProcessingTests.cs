@@ -257,6 +257,24 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public void MultiBandEqSampleProvider_ChangesSamplesWhenEqIsEnabled()
+    {
+        float[] input = CreateSineWave(512);
+        ArraySampleProvider source = new(input);
+        EqSettings settings = new();
+        settings.SetPreset("Crisp", [-2, -1, 0, 0, 1, 2, 4, 5, 4, 3]);
+        MultiBandEqSampleProvider eq = new(source, settings);
+        float[] output = new float[input.Length];
+
+        int read = eq.Read(output, 0, output.Length);
+
+        Assert.Equal(input.Length, read);
+        Assert.Contains(
+            output.Zip(input, (processed, original) => Math.Abs(processed - original)),
+            delta => delta > 0.0001f);
+    }
+
+    [Fact]
     public void StereoPanSampleProvider_PansTowardRightChannel()
     {
         ArraySampleProvider source = new([1f, 1f], channels: 2);

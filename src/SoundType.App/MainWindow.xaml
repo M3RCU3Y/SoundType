@@ -445,6 +445,15 @@
             <Setter Property="Background" Value="#141B21"/>
             <Setter Property="BorderBrush" Value="#2D3741"/>
         </Style>
+        <Style x:Key="AudioPreviewButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Width" Value="104"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#111920"/>
+            <Setter Property="BorderBrush" Value="#303A44"/>
+        </Style>
 
         <Style x:Key="ChipBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="11"/>
@@ -1989,10 +1998,18 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="72"/>
                                 </Grid.ColumnDefinitions>
-                                <Button Width="104" HorizontalAlignment="Left" Click="PreviewNormal_Click">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/>
-                                        <TextBlock Text="Preview"/>
+                                <Button HorizontalAlignment="Left"
+                                        Style="{StaticResource AudioPreviewButtonStyle}"
+                                        Click="PreviewNormal_Click">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Viewbox Width="14" Height="14" Margin="0,0,9,0">
+                                            <Path Data="M5,3 L13,8 L5,13 Z"
+                                                  Fill="Transparent"
+                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  StrokeThickness="1.6"
+                                                  StrokeLineJoin="Round"/>
+                                        </Viewbox>
+                                        <TextBlock Text="Preview" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
                                 <TextBlock Grid.Column="1" Text="Length" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,18,0"/>
@@ -2005,7 +2022,7 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="43"/>
-                                <RowDefinition Height="44"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="1"/>
                                 <RowDefinition Height="54"/>
@@ -2021,13 +2038,12 @@
                                           Checked="EqChanged"
                                           Unchecked="EqChanged"/>
                             </StackPanel>
-                            <WrapPanel Grid.Row="1" Margin="0,0,0,9">
-                                <Button Content="Flat" Style="{StaticResource PrimaryNavButtonStyle}" Height="32" Width="62" Click="PresetFlat_Click" Margin="0,0,8,0"/>
-                                <Button Content="Warm" Height="32" Width="68" Click="PresetWarm_Click" Margin="0,0,8,0"/>
-                                <Button Content="Thock" Height="32" Width="68" Click="PresetThock_Click" Margin="0,0,8,0"/>
-                                <Button Content="Crisp" Height="32" Width="68" Click="PresetCrisp_Click" Margin="0,0,8,0"/>
-                                <Button Content="Soft Night" Height="32" Width="92" Click="PresetSoftNight_Click" Margin="0,0,8,0"/>
-                                <Button Content="..." Height="32" Width="34"/>
+                            <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+                                <Button Content="Flat" Style="{StaticResource PrimaryNavButtonStyle}" Height="32" Width="60" Click="PresetFlat_Click" Margin="0,0,6,0"/>
+                                <Button Content="Warm" Height="32" Width="64" Click="PresetWarm_Click" Margin="0,0,6,0"/>
+                                <Button Content="Thock" Height="32" Width="64" Click="PresetThock_Click" Margin="0,0,6,0"/>
+                                <Button Content="Crisp" Height="32" Width="64" Click="PresetCrisp_Click" Margin="0,0,6,0"/>
+                                <Button Content="Soft Night" Height="32" Width="86" Click="PresetSoftNight_Click"/>
                             </WrapPanel>
                             <Grid Grid.Row="2" Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>

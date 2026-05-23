@@ -196,4 +196,27 @@ public sealed class SettingsTests
         Assert.Contains("\"Enabled\": true", json);
         Assert.Contains("\"Strength\": 1.1", json);
     }
+
+    [Fact]
+    public void EqSetBandGainDb_EnablesEqWhenAnyBandIsAudible()
+    {
+        EqSettings settings = new();
+
+        settings.SetBandGainDb(4, 3.5);
+
+        Assert.True(settings.Enabled);
+        Assert.Equal(3.5, settings.GetBandGainDb(4));
+    }
+
+    [Fact]
+    public void EqSetBandGainDb_DisablesEqWhenAllBandsAreFlat()
+    {
+        EqSettings settings = new();
+
+        settings.SetBandGainDb(4, 3.5);
+        settings.SetBandGainDb(4, 0.0);
+
+        Assert.False(settings.Enabled);
+        Assert.All(settings.BandGainsDb, gain => Assert.Equal(0.0, gain));
+    }
 }
