@@ -52,6 +52,26 @@ public sealed class KeyboardHookServiceTests
             });
     }
 
+    [Fact]
+    public void Stop_ClearsPressedKeysSoRestartDoesNotMarkFreshKeydownAsRepeat()
+    {
+        FakeKeyboardHookPlatform platform = new();
+        using KeyboardHookService service = new(platform);
+        List<KeyPressedEvent> events = [];
+        service.KeyPressed += (_, e) => events.Add(e);
+
+        service.Start();
+        platform.Send(WmKeydown, AKey);
+        service.Stop();
+        service.Start();
+        platform.Send(WmKeydown, AKey);
+
+        Assert.Collection(
+            events,
+            first => Assert.False(first.IsRepeat),
+            afterRestart => Assert.False(afterRestart.IsRepeat));
+    }
+
     private sealed class FakeKeyboardHookPlatform : IKeyboardHookPlatform
     {
         private KeyboardHookService.LowLevelKeyboardProc? _callback;

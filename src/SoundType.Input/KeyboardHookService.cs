@@ -53,11 +53,13 @@ public sealed class KeyboardHookService : IDisposable
     {
         if (_hookId == IntPtr.Zero)
         {
+            _pressedKeys.Clear();
             return;
         }
 
         _ = _platform.Unhook(_hookId);
         _hookId = IntPtr.Zero;
+        _pressedKeys.Clear();
     }
 
     private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
