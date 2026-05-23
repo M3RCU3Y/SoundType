@@ -209,6 +209,38 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_TryPlay_AppliesEqToNormalPlaybackOutput()
+    {
+        LoadedSoundPack pack = CreateLoadedPack("eq-routing", CreateSineWave(1024));
+        FakeAudioOutputDeviceFactory flatFactory = new();
+        AudioEngine flatEngine = new(flatFactory) { MasterVolume = 1.0 };
+        flatEngine.LoadPack(pack);
+        FakeAudioOutputDeviceFactory eqFactory = new();
+        AudioEngine eqEngine = new(eqFactory) { MasterVolume = 1.0 };
+        EqSettings eq = new();
+        eq.SetPreset("Crisp", [-2, -1, 0, 0, 1, 2, 4, 5, 4, 3]);
+        eqEngine.Eq = eq;
+        eqEngine.LoadPack(pack);
+
+        PlaybackRequest request = new()
+        {
+            Key = new KeyIdentity("A", "A", KeyCategory.Character),
+            SoundGroup = "normal"
+        };
+
+        Assert.True(flatEngine.TryPlay(request));
+        Assert.True(eqEngine.TryPlay(request));
+        float[] flatOutput = ReadOutput(flatFactory.CreatedDevices.Single().Provider, 1024);
+        float[] eqOutput = ReadOutput(eqFactory.CreatedDevices.Single().Provider, 1024);
+
+        Assert.Contains(
+            eqOutput.Zip(flatOutput, (processed, flat) => Math.Abs(processed - flat)),
+            delta => delta > 0.0001f);
+        await flatEngine.DisposeAsync();
+        await eqEngine.DisposeAsync();
+    }
+
+    [Fact]
     public async Task AudioEngine_TryPlay_ThrottlesRepeatedOverlaySounds()
     {
         AudioEngine engine = new();
@@ -378,14 +410,27 @@ public sealed class AudioProcessingTests
         return samples;
     }
 
+    private static float[] ReadOutput(ISampleProvider provider, int count)
+    {
+        float[] buffer = new float[count];
+        int read = provider.Read(buffer, 0, buffer.Length);
+        Assert.Equal(count, read);
+        return buffer;
+    }
+
     private static LoadedSoundPack CreateLoadedPack(string id, IReadOnlyList<string>? tags = null)
+    {
+        return CreateLoadedPack(id, [0.1f, -0.1f], tags);
+    }
+
+    private static LoadedSoundPack CreateLoadedPack(string id, float[] decodedSamples, IReadOnlyList<string>? tags = null)
     {
         WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
         LoadedSoundSample sample = new(
             "normal/key.wav",
             SoundSampleFormat.Wav,
             [],
-            [0.1f, -0.1f],
+            decodedSamples,
             format);
 
         return new LoadedSoundPack(
@@ -411,9 +456,11 @@ public sealed class AudioProcessingTests
     private sealed class FakeAudioOutputDevice : IAudioOutputDevice
     {
         public PlaybackState PlaybackState { get; private set; } = PlaybackState.Stopped;
+        public ISampleProvider Provider { get; private set; } = new ArraySampleProvider([], channels: 2);
 
         public void Init(ISampleProvider provider)
         {
+            Provider = provider;
         }
 
         public void Play() => PlaybackState = PlaybackState.Playing;
