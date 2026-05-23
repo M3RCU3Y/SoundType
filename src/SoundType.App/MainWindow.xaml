@@ -1901,7 +1901,7 @@
                         <ColumnDefinition Width="16"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="310"/>
+                        <ColumnDefinition Width="286"/>
                     </Grid.ColumnDefinitions>
                     <Border Grid.Column="0" Style="{StaticResource SectionCardStyle}" Padding="16,14">
                         <Grid>
@@ -2088,74 +2088,74 @@
                         </Grid>
                     </Border>
 
-                    <Border Grid.Column="4" Style="{StaticResource SectionCardStyle}" Padding="13,14">
+                    <Border Grid.Column="4" Style="{StaticResource SectionCardStyle}" Padding="11,13" Height="414" VerticalAlignment="Top">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="48"/>
+                                <RowDefinition Height="45"/>
+                                <RowDefinition Height="55"/>
+                                <RowDefinition Height="28"/>
                                 <RowDefinition Height="58"/>
-                                <RowDefinition Height="54"/>
-                                <RowDefinition Height="72"/>
-                                <RowDefinition Height="59"/>
+                                <RowDefinition Height="58"/>
                                 <RowDefinition Height="1"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <Grid>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="◎" FontSize="22" Margin="2,-1,12,0"/>
-                                    <TextBlock Text="Spatial Mix" FontSize="20" FontWeight="Bold"/>
+                                    <TextBlock Text="◎" FontSize="21" Foreground="{StaticResource MutedTextBrush}" Margin="3,-2,10,0"/>
+                                    <TextBlock Text="Spatial Mix" FontSize="18" FontWeight="Bold" Margin="0,1,0,0"/>
                                 </StackPanel>
-                                <Rectangle Height="1" Fill="#263039" Margin="170,29,0,0"/>
+                                <Rectangle Height="1" Fill="#263039" Margin="174,34,3,0"/>
                             </Grid>
 
                             <Grid Grid.Row="1">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="23"/>
-                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="22"/>
+                                    <RowDefinition Height="33"/>
                                 </Grid.RowDefinitions>
                                 <DockPanel LastChildFill="False">
-                                    <TextBlock Text="Pan" FontSize="15" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Pan" FontSize="14" FontWeight="SemiBold"/>
                                     <CheckBox x:Name="PanEnabledCheck" Style="{StaticResource ToggleSwitchCheckBoxStyle}" DockPanel.Dock="Right" Content="Enabled" Checked="PanChanged" Unchecked="PanChanged"/>
                                 </DockPanel>
-                                <Grid Grid.Row="1" Margin="0,6,0,0">
+                                <Grid Grid.Row="1" Margin="0,4,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="58"/>
+                                        <ColumnDefinition Width="55"/>
                                     </Grid.ColumnDefinitions>
                                     <Slider Minimum="-1" Maximum="1" Value="0"/>
-                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="12,0,0,0">
+                                    <Border Grid.Column="1" Height="30" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="11,0,0,0">
                                         <TextBlock Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </Grid>
                             </Grid>
 
-                            <Grid Grid.Row="2" Margin="4,0,71,0">
+                            <Grid Grid.Row="2" Margin="3,0,66,0">
                                 <TextBlock Text="L" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,0"/>
                                 <TextBlock Text="R" HorizontalAlignment="Right" Foreground="{StaticResource MutedTextBrush}"/>
                             </Grid>
 
                             <Grid Grid.Row="3" Margin="0,0,0,0">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="58"/>
+                                    <ColumnDefinition Width="53"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Mode" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Top" Margin="0,7,0,0"/>
-                                <ComboBox x:Name="PanModeComboBox" Grid.Column="1" SelectionChanged="PanChanged" Height="34" VerticalAlignment="Top"/>
+                                <TextBlock Text="Mode" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Top" Margin="0,8,0,0"/>
+                                <ComboBox x:Name="PanModeComboBox" Grid.Column="1" SelectionChanged="PanChanged" Height="31" VerticalAlignment="Top"/>
                             </Grid>
 
                             <Grid Grid.Row="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="22"/>
-                                    <RowDefinition Height="37"/>
+                                    <RowDefinition Height="36"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="Stereo Width" FontSize="15" FontWeight="SemiBold"/>
-                                <Grid Grid.Row="1" Margin="0,7,0,0">
+                                <TextBlock Text="Stereo Width" FontSize="14" FontWeight="SemiBold"/>
+                                <Grid Grid.Row="1" Margin="0,5,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="74"/>
                                     </Grid.ColumnDefinitions>
                                     <Slider x:Name="PanStrengthSlider" Minimum="0" Maximum="1.5" TickFrequency="0.05" ValueChanged="PanChanged"/>
-                                    <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="12,0,0,0">
+                                    <Border Grid.Column="1" Height="30" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="11,0,0,0">
                                         <TextBlock x:Name="PanStatusText" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </Grid>
@@ -2163,37 +2163,38 @@
 
                             <Rectangle Grid.Row="5" Fill="#2C353D"/>
 
-                            <StackPanel Grid.Row="6" Margin="0,17,0,0">
-                                <TextBlock Text="Output Meter" FontWeight="SemiBold" Margin="0,0,0,12"/>
-                                <Grid Margin="0,0,0,6">
+                            <StackPanel Grid.Row="6" Margin="0,14,0,0">
+                                <TextBlock Text="Output Meter" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,9"/>
+                                <Grid Margin="0,0,0,5">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="18"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="24"/>
+                                        <ColumnDefinition Width="22"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="L" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                    <UniformGrid Grid.Column="1" Columns="48" Height="29" Margin="6,0,6,0">
+                                    <UniformGrid Grid.Column="1" Columns="48" Height="18" Margin="4,0,5,0">
                                         <Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/>
                                     </UniformGrid>
                                     <TextBlock Grid.Column="2" Text="dB" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                 </Grid>
-                                <Grid Margin="0,0,0,4">
+                                <Grid Margin="0,0,0,6">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="18"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="24"/>
+                                        <ColumnDefinition Width="22"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="R" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                    <UniformGrid Grid.Column="1" Columns="48" Height="29" Margin="6,0,6,0">
+                                    <UniformGrid Grid.Column="1" Columns="48" Height="18" Margin="4,0,5,0">
                                         <Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="{StaticResource AccentBrush}" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/><Rectangle Fill="#29333C" Margin="1,0"/>
                                     </UniformGrid>
                                     <TextBlock Grid.Column="2" Text="dB" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                 </Grid>
-                                <Grid Margin="26,0,30,0">
+                                <Grid Margin="23,0,24,0">
                                     <TextBlock Text="-48" FontSize="11" Foreground="{StaticResource MutedTextBrush}"/>
                                     <TextBlock Text="-36" FontSize="11" Foreground="{StaticResource MutedTextBrush}" Margin="54,0,0,0"/>
                                     <TextBlock Text="-24" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="-12" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="-12" FontSize="11" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,26,0" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="0" FontSize="11" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
                                 </Grid>
                             </StackPanel>
                         </Grid>
