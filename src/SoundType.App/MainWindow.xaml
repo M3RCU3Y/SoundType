@@ -422,6 +422,29 @@
             <EventSetter Event="MouseEnter" Handler="AnimatedCard_MouseEnter"/>
             <EventSetter Event="MouseLeave" Handler="AnimatedCard_MouseLeave"/>
         </Style>
+        <Style x:Key="MixerChannelCardStyle" TargetType="Border" BasedOn="{StaticResource PanelStyle}">
+            <Setter Property="Width" Value="158"/>
+            <Setter Property="Height" Value="256"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#121920" Offset="0"/>
+                        <GradientStop Color="#0F151A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#303943"/>
+            <Setter Property="CornerRadius" Value="6"/>
+        </Style>
+        <Style x:Key="MixerControlButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#141B21"/>
+            <Setter Property="BorderBrush" Value="#2D3741"/>
+        </Style>
 
         <Style x:Key="ChipBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="11"/>
@@ -746,14 +769,14 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border Width="5" Background="{TemplateBinding Background}" CornerRadius="3"/>
+                        <Border Width="4" Background="{TemplateBinding Background}" CornerRadius="2"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <Style x:Key="MixerVerticalThumbStyle" TargetType="Thumb">
-            <Setter Property="Width" Value="18"/>
-            <Setter Property="Height" Value="18"/>
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Height" Value="16"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
@@ -768,8 +791,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
-                        <Grid Width="38" Height="150">
-                            <Border Width="5" HorizontalAlignment="Center" Background="#30373E" CornerRadius="3"/>
+                        <Grid Width="34" Height="128">
+                            <Border Width="4" HorizontalAlignment="Center" Background="#31383E" CornerRadius="2"/>
                             <Track x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource MixerVerticalRepeatButtonStyle}" Background="{StaticResource AccentBrush}"/>
@@ -2160,116 +2183,116 @@
                         </Grid>
                     </Border>
 
-                    <Border Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource SectionCardStyle}" Padding="20,16,20,14">
+                    <Border Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource StaticSectionCardStyle}" Padding="10,10,10,10" Height="332" VerticalAlignment="Top">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="48"/>
+                                <RowDefinition Height="40"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE9E9;" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,1,13,0"/>
-                                <TextBlock Text="Mixer" FontSize="20" FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Margin="6,2,0,0">
+                                <TextBlock Text="&#xE9E9;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource MutedTextBrush}" FontSize="18" Margin="0,1,12,0"/>
+                                <TextBlock Text="Mixer" FontSize="18" Foreground="#D7DEE4" FontWeight="SemiBold"/>
                             </StackPanel>
-                            <Button Width="136" HorizontalAlignment="Right" Height="38">
+                            <Button Width="122" HorizontalAlignment="Right" Height="34" Style="{StaticResource MixerControlButtonStyle}" Margin="0,2,8,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/>
+                                    <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,0,8,0"/>
                                     <TextBlock Text="Link volumes"/>
                                 </StackPanel>
                             </Button>
 
-                            <Grid Grid.Row="1">
+                            <Grid Grid.Row="1" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="158"/>
                                     <ColumnDefinition Width="14"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="158"/>
                                     <ColumnDefinition Width="14"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="158"/>
                                     <ColumnDefinition Width="14"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="158"/>
                                     <ColumnDefinition Width="14"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="158"/>
                                     <ColumnDefinition Width="18"/>
                                     <ColumnDefinition Width="1"/>
                                     <ColumnDefinition Width="18"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="158"/>
                                 </Grid.ColumnDefinitions>
-                                <Border Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                <Border Style="{StaticResource MixerChannelCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="*"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="34"/>
                                         </Grid.RowDefinitions>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Normal keys" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="NormalVolumeText"/></Border></DockPanel>
-                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Normal keys" FontSize="14" Foreground="#D7DEE4" VerticalAlignment="Center"/><Border DockPanel.Dock="Right" Background="#111820" BorderBrush="#303943" BorderThickness="1" CornerRadius="5" Padding="10,5"><TextBlock x:Name="NormalVolumeText" Foreground="#DDE4EA" FontSize="12"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="48" Height="34" HorizontalAlignment="Right" Margin="0,39,6,0" Style="{StaticResource MixerControlButtonStyle}" Padding="0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
                                         <Slider Grid.Row="1" x:Name="NormalVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <Button Grid.Row="2" Click="PreviewNormal_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                        <Button Grid.Row="2" Click="PreviewNormal_Click" Style="{StaticResource MixerControlButtonStyle}"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
                                     </Grid>
                                 </Border>
-                                <Border Grid.Column="2" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                <Border Grid.Column="2" Style="{StaticResource MixerChannelCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="*"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="34"/>
                                         </Grid.RowDefinitions>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Enter ding" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="EnterVolumeText"/></Border></DockPanel>
-                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Enter ding" FontSize="14" Foreground="#D7DEE4" VerticalAlignment="Center"/><Border DockPanel.Dock="Right" Background="#111820" BorderBrush="#303943" BorderThickness="1" CornerRadius="5" Padding="10,5"><TextBlock x:Name="EnterVolumeText" Foreground="#DDE4EA" FontSize="12"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="48" Height="34" HorizontalAlignment="Right" Margin="0,39,6,0" Style="{StaticResource MixerControlButtonStyle}" Padding="0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
                                         <Slider Grid.Row="1" x:Name="EnterVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <Button Grid.Row="2" Click="PreviewEnter_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                        <Button Grid.Row="2" Click="PreviewEnter_Click" Style="{StaticResource MixerControlButtonStyle}"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
                                     </Grid>
                                 </Border>
-                                <Border Grid.Column="4" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                <Border Grid.Column="4" Style="{StaticResource MixerChannelCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="*"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="34"/>
                                         </Grid.RowDefinitions>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Space" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="SpaceVolumeText"/></Border></DockPanel>
-                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Space" FontSize="14" Foreground="#D7DEE4" VerticalAlignment="Center"/><Border DockPanel.Dock="Right" Background="#111820" BorderBrush="#303943" BorderThickness="1" CornerRadius="5" Padding="10,5"><TextBlock x:Name="SpaceVolumeText" Foreground="#DDE4EA" FontSize="12"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="48" Height="34" HorizontalAlignment="Right" Margin="0,39,6,0" Style="{StaticResource MixerControlButtonStyle}" Padding="0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
                                         <Slider Grid.Row="1" x:Name="SpaceVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <Button Grid.Row="2" Click="PreviewSpace_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                        <Button Grid.Row="2" Click="PreviewSpace_Click" Style="{StaticResource MixerControlButtonStyle}"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
                                     </Grid>
                                 </Border>
-                                <Border Grid.Column="6" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                <Border Grid.Column="6" Style="{StaticResource MixerChannelCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="*"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="34"/>
                                         </Grid.RowDefinitions>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Backspace" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="BackspaceVolumeText"/></Border></DockPanel>
-                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Backspace" FontSize="14" Foreground="#D7DEE4" VerticalAlignment="Center"/><Border DockPanel.Dock="Right" Background="#111820" BorderBrush="#303943" BorderThickness="1" CornerRadius="5" Padding="10,5"><TextBlock x:Name="BackspaceVolumeText" Foreground="#DDE4EA" FontSize="12"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="48" Height="34" HorizontalAlignment="Right" Margin="0,39,6,0" Style="{StaticResource MixerControlButtonStyle}" Padding="0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
                                         <Slider Grid.Row="1" x:Name="BackspaceVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <Button Grid.Row="2" Click="PreviewBackspace_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                        <Button Grid.Row="2" Click="PreviewBackspace_Click" Style="{StaticResource MixerControlButtonStyle}"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
                                     </Grid>
                                 </Border>
-                                <Border Grid.Column="8" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                <Border Grid.Column="8" Style="{StaticResource MixerChannelCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="*"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="34"/>
                                         </Grid.RowDefinitions>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Tab" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock x:Name="TabVolumeText"/></Border></DockPanel>
-                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Tab" FontSize="14" Foreground="#D7DEE4" VerticalAlignment="Center"/><Border DockPanel.Dock="Right" Background="#111820" BorderBrush="#303943" BorderThickness="1" CornerRadius="5" Padding="10,5"><TextBlock x:Name="TabVolumeText" Foreground="#DDE4EA" FontSize="12"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="48" Height="34" HorizontalAlignment="Right" Margin="0,39,6,0" Style="{StaticResource MixerControlButtonStyle}" Padding="0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
                                         <Slider Grid.Row="1" x:Name="TabVolumeSlider" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1.5" ValueChanged="GroupVolumeSliderChanged" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <Button Grid.Row="2" Click="PreviewTab_Click"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
+                                        <Button Grid.Row="2" Click="PreviewTab_Click" Style="{StaticResource MixerControlButtonStyle}"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,9,0"/><TextBlock Text="Test"/></StackPanel></Button>
                                     </Grid>
                                 </Border>
-                                <Rectangle Grid.Column="10" Fill="#2C353D" Margin="0,20"/>
-                                <Border Grid.Column="12" Style="{StaticResource CompactPanelStyle}" Padding="14">
+                                <Rectangle Grid.Column="10" Fill="#2A333B" Margin="0,0,0,18"/>
+                                <Border Grid.Column="12" Style="{StaticResource MixerChannelCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="78"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="*"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="34"/>
                                         </Grid.RowDefinitions>
-                                        <DockPanel LastChildFill="False"><TextBlock Text="Master" FontSize="15"/><Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6"><TextBlock Text="72%"/></Border></DockPanel>
-                                        <Button Grid.Row="0" Width="56" Height="38" HorizontalAlignment="Right" Margin="0,34,0,0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                                        <DockPanel LastChildFill="False"><TextBlock Text="Master" FontSize="14" Foreground="#D7DEE4" VerticalAlignment="Center"/><Border DockPanel.Dock="Right" Background="#111820" BorderBrush="#303943" BorderThickness="1" CornerRadius="5" Padding="10,5"><TextBlock Text="72%" Foreground="#DDE4EA" FontSize="12"/></Border></DockPanel>
+                                        <Button Grid.Row="0" Width="48" Height="34" HorizontalAlignment="Right" Margin="0,39,6,0" Style="{StaticResource MixerControlButtonStyle}" Padding="0"><TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
                                         <Slider Grid.Row="1" Style="{StaticResource MixerVerticalSliderStyle}" Minimum="0" Maximum="1" Value="0.72" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        <Button Grid.Row="2" Content="Solo"/>
+                                        <Button Grid.Row="2" Content="Solo" Style="{StaticResource MixerControlButtonStyle}"/>
                                     </Grid>
                                 </Border>
                             </Grid>
