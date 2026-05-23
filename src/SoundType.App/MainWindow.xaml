@@ -905,6 +905,16 @@
             <Setter Property="Background" Value="#11171D"/>
             <Setter Property="BorderBrush" Value="#2E3943"/>
         </Style>
+        <Style x:Key="AudioHeaderActionButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardToolbarButtonStyle}">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Margin" Value="0,0,16,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#D4D9DD"/>
+            <Setter Property="Background" Value="#11171D"/>
+            <Setter Property="BorderBrush" Value="#2B3540"/>
+        </Style>
 
         <Style x:Key="KeyboardSearchClearButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="24"/>
@@ -1354,19 +1364,19 @@
                                 <Button Content="..." Width="52" FontSize="18" Click="HeaderMore_Click"/>
                             </StackPanel>
                             <StackPanel x:Name="AudioHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
-                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ResetSettingsToDefaults_Click">
+                                <Button Width="96" Style="{StaticResource AudioHeaderActionButtonStyle}" Click="ResetSettingsToDefaults_Click">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,8,0"/>
                                         <TextBlock Text="Reset"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Width="146" Style="{StaticResource KeyboardToolbarButtonStyle}">
+                                <Button Width="130" Style="{StaticResource AudioHeaderActionButtonStyle}">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,8,0"/>
                                         <TextBlock Text="Save Preset"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Content="..." Style="{StaticResource KeyboardToolbarButtonStyle}" MinWidth="58" Width="58" FontSize="18" Click="HeaderMore_Click"/>
+                                <Button Content="..." Style="{StaticResource AudioHeaderActionButtonStyle}" MinWidth="44" Width="44" FontSize="16" Padding="0" Click="HeaderMore_Click"/>
                             </StackPanel>
                             <StackPanel x:Name="KeyboardHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
                                 <Button Width="166" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="EnableAllKeys_Click">
