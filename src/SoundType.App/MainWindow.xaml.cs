@@ -1214,7 +1214,7 @@ public partial class MainWindow : Window
         {
             _settings.GlobalToggleHotkey = HotkeyGesture.DefaultText;
             gesture = HotkeyGesture.Default;
-            AddStartupWarning("Invalid global hotkey. Using Ctrl+Alt+K.");
+            AddStartupWarning("Invalid global hotkey. Using Ctrl+Alt+L.");
             _ = SaveSettingsAsync();
         }
 

@@ -15,10 +15,10 @@ public enum HotkeyModifiers : uint
 
 public readonly record struct HotkeyGesture(HotkeyModifiers Modifiers, int VirtualKey)
 {
-    public const string DefaultText = "Ctrl+Alt+K";
+    public const string DefaultText = "Ctrl+Alt+L";
 
     public static HotkeyGesture Default { get; } =
-        new(HotkeyModifiers.Control | HotkeyModifiers.Alt, 0x4B);
+        new(HotkeyModifiers.Control | HotkeyModifiers.Alt, 0x4C);
 
     public static bool TryParse(string? value, out HotkeyGesture gesture)
     {

@@ -5,13 +5,15 @@ namespace SoundType.Tests;
 public sealed class HotkeyGestureTests
 {
     [Fact]
-    public void TryParse_CtrlAltK_ReturnsGesture()
+    public void TryParse_CtrlAltL_ReturnsGesture()
     {
-        bool parsed = HotkeyGesture.TryParse("Ctrl+Alt+K", out HotkeyGesture gesture);
+        bool parsed = HotkeyGesture.TryParse("Ctrl+Alt+L", out HotkeyGesture gesture);
 
         Assert.True(parsed);
         Assert.Equal(HotkeyModifiers.Control | HotkeyModifiers.Alt, gesture.Modifiers);
-        Assert.Equal(0x4B, gesture.VirtualKey);
+        Assert.Equal(0x4C, gesture.VirtualKey);
+        Assert.Equal("Ctrl+Alt+L", HotkeyGesture.DefaultText);
+        Assert.Equal(0x4C, HotkeyGesture.Default.VirtualKey);
     }
 
     [Theory]
