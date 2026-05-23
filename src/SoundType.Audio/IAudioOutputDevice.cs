@@ -4,8 +4,6 @@ namespace SoundType.Audio;
 
 public interface IAudioOutputDevice : IDisposable
 {
-    event EventHandler<StoppedEventArgs>? PlaybackStopped;
-
     PlaybackState PlaybackState { get; }
 
     void Init(ISampleProvider provider);
@@ -27,17 +25,13 @@ public sealed class WaveOutAudioOutputDeviceFactory : IAudioOutputDeviceFactory
 
 public sealed class WaveOutAudioOutputDevice : IAudioOutputDevice
 {
+    private const int OutputDesiredLatencyMs = 45;
+    private const int OutputBufferCount = 3;
     private readonly WaveOutEvent output = new()
     {
-        DesiredLatency = AudioEngine.OutputDesiredLatencyMs,
-        NumberOfBuffers = AudioEngine.OutputBufferCount
+        DesiredLatency = OutputDesiredLatencyMs,
+        NumberOfBuffers = OutputBufferCount
     };
-
-    public event EventHandler<StoppedEventArgs>? PlaybackStopped
-    {
-        add => output.PlaybackStopped += value;
-        remove => output.PlaybackStopped -= value;
-    }
 
     public PlaybackState PlaybackState => output.PlaybackState;
 

@@ -225,6 +225,59 @@ public sealed class SoundPackTests
     }
 
     [Fact]
+    public void Load_NormalizesPackMedianPeakBeforePlayback()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "quiet-pack",
+              "name": "Quiet Pack",
+              "groups": {
+                "normal": [ "normal/key.wav" ]
+              }
+            }
+            """);
+        string normalDir = Path.Combine(root, "normal");
+        Directory.CreateDirectory(normalDir);
+        using (WaveFileWriter writer = new(Path.Combine(normalDir, "key.wav"), WaveFormat.CreateIeeeFloatWaveFormat(44100, 2)))
+        {
+            writer.WriteSamples([0.1f, 0.1f, 0.08f, 0.08f], 0, 4);
+        }
+
+        SoundPackLoader loader = new();
+        LoadedSoundPack pack = loader.Load(loader.TryLoadMetadata(root)!);
+
+        float peak = pack.Samples["normal"][0].DecodedSamples.Select(Math.Abs).Max();
+        Assert.True(peak > 0.25f);
+        Assert.True(peak <= 1.0f);
+    }
+
+    [Fact]
+    public void Validate_WithAudioAnalysis_WarnsForVeryLoudSamples()
+    {
+        string root = CreatePackRoot("""
+            {
+              "id": "loud-pack",
+              "name": "Loud Pack",
+              "groups": {
+                "normal": [ "normal/key.wav" ]
+              }
+            }
+            """);
+        string normalDir = Path.Combine(root, "normal");
+        Directory.CreateDirectory(normalDir);
+        using (WaveFileWriter writer = new(Path.Combine(normalDir, "key.wav"), WaveFormat.CreateIeeeFloatWaveFormat(44100, 2)))
+        {
+            writer.WriteSamples([1.0f, 1.0f, 0.95f, 0.95f], 0, 4);
+        }
+
+        SoundPackLoader loader = new();
+        SoundPackValidationResult validation = loader.Validate(loader.TryLoadMetadata(root), analyzeAudioQuality: true);
+
+        Assert.True(validation.IsValid);
+        Assert.Contains(validation.Warnings, warning => warning.Contains("loud", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public void BuiltInSwitchPacks_HavePreviewPngArtwork()
     {
         string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");

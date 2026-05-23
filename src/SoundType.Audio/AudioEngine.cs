@@ -9,8 +9,6 @@ public sealed class AudioEngine : IAsyncDisposable
 {
     private const int DefaultMaxCachedPacks = 4;
     private const int DefaultMaxActiveVoices = 32;
-    public const int OutputDesiredLatencyMs = 45;
-    public const int OutputBufferCount = 3;
     private readonly Random _random = new();
     private readonly object _packLock = new();
     private readonly object _mixerLock = new();
@@ -467,8 +465,10 @@ public sealed class AudioEngine : IAsyncDisposable
 
             try
             {
-                _output.Dispose();
-                _output = CreateAndStartOutput();
+                IAudioOutputDevice stoppedOutput = _output;
+                IAudioOutputDevice replacementOutput = CreateAndStartOutput();
+                _output = replacementOutput;
+                stoppedOutput.Dispose();
                 return _output.PlaybackState == PlaybackState.Playing;
             }
             catch
