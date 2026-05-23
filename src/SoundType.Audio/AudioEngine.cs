@@ -9,11 +9,11 @@ public sealed class AudioEngine : IAsyncDisposable
 {
     private const int DefaultMaxCachedPacks = 4;
     private const int DefaultMaxActiveVoices = 32;
-    private const int OutputDesiredLatencyMs = 45;
-    private const int OutputBufferCount = 3;
     private readonly Random _random = new();
     private readonly object _packLock = new();
     private readonly object _mixerLock = new();
+    private readonly object _outputLock = new();
+    private readonly IAudioOutputDeviceFactory _outputFactory;
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, long> _throttleLastPlayedTicks = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
@@ -21,7 +21,8 @@ public sealed class AudioEngine : IAsyncDisposable
     private readonly VoiceLimiter _voiceLimiter = new(DefaultMaxActiveVoices);
     private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private readonly MixingSampleProvider _mixer;
-    private readonly WaveOutEvent _output;
+    private readonly ISampleProvider _outputSource;
+    private IAudioOutputDevice _output;
     private EqSettings _eq = CreateEqSnapshot(new EqSettings());
     private PanSettings _pan = CreatePanSnapshot(new PanSettings());
     private double _eqOutputTrim = 1.0;
@@ -29,15 +30,16 @@ public sealed class AudioEngine : IAsyncDisposable
     private bool _disposed;
 
     public AudioEngine()
+        : this(new WaveOutAudioOutputDeviceFactory())
     {
+    }
+
+    public AudioEngine(IAudioOutputDeviceFactory outputFactory)
+    {
+        _outputFactory = outputFactory;
         _mixer = new MixingSampleProvider(_playbackFormat) { ReadFully = true };
-        _output = new WaveOutEvent
-        {
-            DesiredLatency = OutputDesiredLatencyMs,
-            NumberOfBuffers = OutputBufferCount
-        };
-        _output.Init(new SoftLimiterSampleProvider(_mixer));
-        _output.Play();
+        _outputSource = new SoftLimiterSampleProvider(_mixer);
+        _output = CreateAndStartOutput();
     }
 
     public double MasterVolume { get; set; } = 0.75;
@@ -147,6 +149,11 @@ public sealed class AudioEngine : IAsyncDisposable
 
     private bool PlayNow(PlaybackRequest request)
     {
+        if (!EnsureOutputRunning())
+        {
+            return false;
+        }
+
         if (IsThrottled(request))
         {
             return false;
@@ -389,7 +396,9 @@ public sealed class AudioEngine : IAsyncDisposable
         {
             string? activePackId = _activePack?.Metadata.Id;
             string? oldestPackId = _packLastUsedTicks
-                .Where(entry => !entry.Key.Equals(activePackId, StringComparison.OrdinalIgnoreCase))
+                .Where(entry =>
+                    !entry.Key.Equals(activePackId, StringComparison.OrdinalIgnoreCase) &&
+                    !IsSystemPack(entry.Key))
                 .OrderBy(entry => entry.Value)
                 .Select(entry => entry.Key)
                 .FirstOrDefault();
@@ -404,6 +413,10 @@ public sealed class AudioEngine : IAsyncDisposable
             RemoveRoundRobinEntries(oldestPackId);
         }
     }
+
+    private bool IsSystemPack(string soundPackId) =>
+        _packs.TryGetValue(soundPackId, out LoadedSoundPack? pack) &&
+        pack.Metadata.Tags.Any(tag => tag.Equals("system", StringComparison.OrdinalIgnoreCase));
 
     private void RemoveRoundRobinEntries(string soundPackId)
     {
@@ -421,10 +434,47 @@ public sealed class AudioEngine : IAsyncDisposable
     {
         _disposed = true;
         await Task.Yield();
-        lock (_mixerLock)
+        lock (_outputLock)
         {
             _output.Stop();
             _output.Dispose();
+        }
+    }
+
+    private IAudioOutputDevice CreateAndStartOutput()
+    {
+        IAudioOutputDevice output = _outputFactory.Create();
+        output.Init(_outputSource);
+        output.Play();
+        return output;
+    }
+
+    private bool EnsureOutputRunning()
+    {
+        lock (_outputLock)
+        {
+            if (_disposed)
+            {
+                return false;
+            }
+
+            if (_output.PlaybackState == PlaybackState.Playing)
+            {
+                return true;
+            }
+
+            try
+            {
+                IAudioOutputDevice stoppedOutput = _output;
+                IAudioOutputDevice replacementOutput = CreateAndStartOutput();
+                _output = replacementOutput;
+                stoppedOutput.Dispose();
+                return _output.PlaybackState == PlaybackState.Playing;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

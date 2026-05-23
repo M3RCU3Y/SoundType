@@ -31,6 +31,11 @@ public static class PackValidatorCommand
             }
 
             output.WriteLine($"Valid sound pack: {metadata.Name} ({metadata.Id})");
+            foreach (string warning in validation.Warnings)
+            {
+                output.WriteLine($"Warning: {warning}");
+            }
+
             return 0;
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or InvalidOperationException or UnauthorizedAccessException)
@@ -44,7 +49,7 @@ public static class PackValidatorCommand
     private static ValidationOutcome ValidateFolder(string folderPath, SoundPackLoader loader)
     {
         SoundPackMetadata? metadata = loader.TryLoadMetadata(folderPath);
-        return new ValidationOutcome(metadata, loader.Validate(metadata));
+        return new ValidationOutcome(metadata, loader.Validate(metadata, analyzeAudioQuality: true));
     }
 
     private static ValidationOutcome ValidateArchive(string archivePath, SoundPackLoader loader, string? tempRoot)
@@ -71,7 +76,7 @@ public static class PackValidatorCommand
         {
             SoundPackArchiveService archiveService = new(loader);
             SoundPackMetadata metadata = archiveService.ImportPack(archivePath, importRoot, overwrite: false);
-            return new ValidationOutcome(metadata, loader.Validate(metadata));
+            return new ValidationOutcome(metadata, loader.Validate(metadata, analyzeAudioQuality: true));
         }
         finally
         {

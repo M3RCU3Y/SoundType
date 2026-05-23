@@ -75,6 +75,8 @@ powershell -ExecutionPolicy Bypass -File .\tools\publish-portable.ps1
 The portable build is written to `artifacts\SoundType-win-x64-Release-portable.zip`.
 It is self-contained for Windows x64, so end users do not need to install the .NET runtime separately. A matching SHA-256 checksum is written beside the zip.
 
+For local no-extraction testing after publishing, run `artifacts\publish\SoundType\SoundType.exe` directly.
+
 Release assets should include only:
 
 - `SoundType-win-x64-Release-portable.zip`
@@ -126,6 +128,7 @@ See [docs/SOUND_PACK_FORMAT.md](docs/SOUND_PACK_FORMAT.md) for the pack contract
 
 ## Development Docs
 
+- [Repository guide](docs/REPO_GUIDE.md)
 - [Development guide](docs/DEVELOPMENT.md)
 - [Manual QA checklist](docs/QA_CHECKLIST.md)
 - [Packaging guide](docs/PACKAGING.md)

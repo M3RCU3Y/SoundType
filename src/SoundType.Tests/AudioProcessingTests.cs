@@ -38,6 +38,43 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_PruneKeepsSystemPacksLoadedForHotPath()
+    {
+        AudioEngine engine = new() { MaxCachedPacks = 2 };
+
+        engine.LoadPack(CreateLoadedPack("system-ding", tags: ["system"]), makeActive: false);
+        engine.LoadPack(CreateLoadedPack("one"), makeActive: true);
+        engine.LoadPack(CreateLoadedPack("two"), makeActive: false);
+        engine.LoadPack(CreateLoadedPack("three"), makeActive: false);
+
+        Assert.True(engine.TryGetLoadedPack("system-ding", out _));
+        Assert.Equal(2, engine.LoadedPackCount);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task AudioEngine_TryPlay_RecreatesOutputAfterUnexpectedStop()
+    {
+        FakeAudioOutputDeviceFactory factory = new();
+        AudioEngine engine = new(factory);
+        engine.LoadPack(CreateLoadedPack("device-test"));
+        FakeAudioOutputDevice firstOutput = factory.CreatedDevices.Single();
+        firstOutput.MarkStopped();
+
+        bool played = engine.TryPlay(new PlaybackRequest
+        {
+            Key = new KeyIdentity("A", "A", KeyCategory.Character),
+            SoundGroup = "normal",
+            SoundPackId = "device-test"
+        });
+
+        Assert.True(played);
+        Assert.Equal(2, factory.CreatedDevices.Count);
+        Assert.Equal(PlaybackState.Playing, factory.CreatedDevices[^1].PlaybackState);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void LimiterSampleProvider_ClampsSamplesToThreshold()
     {
         ArraySampleProvider source = new([-2.0f, -0.25f, 0.25f, 2.0f]);
@@ -323,7 +360,7 @@ public sealed class AudioProcessingTests
         return samples;
     }
 
-    private static LoadedSoundPack CreateLoadedPack(string id)
+    private static LoadedSoundPack CreateLoadedPack(string id, IReadOnlyList<string>? tags = null)
     {
         WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
         LoadedSoundSample sample = new(
@@ -334,11 +371,40 @@ public sealed class AudioProcessingTests
             format);
 
         return new LoadedSoundPack(
-            new SoundPackMetadata { Id = id, Name = id },
+            new SoundPackMetadata { Id = id, Name = id, Tags = tags?.ToList() ?? [] },
             new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase)
             {
                 ["normal"] = [sample]
             });
+    }
+
+    private sealed class FakeAudioOutputDeviceFactory : IAudioOutputDeviceFactory
+    {
+        public List<FakeAudioOutputDevice> CreatedDevices { get; } = [];
+
+        public IAudioOutputDevice Create()
+        {
+            FakeAudioOutputDevice device = new();
+            CreatedDevices.Add(device);
+            return device;
+        }
+    }
+
+    private sealed class FakeAudioOutputDevice : IAudioOutputDevice
+    {
+        public PlaybackState PlaybackState { get; private set; } = PlaybackState.Stopped;
+
+        public void Init(ISampleProvider provider)
+        {
+        }
+
+        public void Play() => PlaybackState = PlaybackState.Playing;
+
+        public void Stop() => PlaybackState = PlaybackState.Stopped;
+
+        public void MarkStopped() => PlaybackState = PlaybackState.Stopped;
+
+        public void Dispose() => PlaybackState = PlaybackState.Stopped;
     }
 
     private sealed class ArraySampleProvider : ISampleProvider

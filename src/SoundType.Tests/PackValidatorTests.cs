@@ -61,6 +61,37 @@ public sealed class PackValidatorTests
         Assert.Equal(string.Empty, error.ToString());
     }
 
+    [Fact]
+    public void Run_PrintsAudioQualityWarningsWithoutFailingPack()
+    {
+        string pack = CreateTempDirectory();
+        Directory.CreateDirectory(Path.Combine(pack, "normal"));
+        using (NAudio.Wave.WaveFileWriter writer = new(
+            Path.Combine(pack, "normal", "key.wav"),
+            NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(44100, 2)))
+        {
+            writer.WriteSamples([1.0f, 1.0f], 0, 2);
+        }
+
+        File.WriteAllText(Path.Combine(pack, "pack.json"), """
+            {
+              "id": "loud-pack",
+              "name": "Loud Pack",
+              "groups": {
+                "normal": [ "normal/key.wav" ]
+              }
+            }
+            """);
+        using StringWriter output = new();
+        using StringWriter error = new();
+
+        int exitCode = PackValidatorCommand.Run([pack], output, error);
+
+        Assert.Equal(0, exitCode);
+        Assert.Contains("Warning", output.ToString());
+        Assert.Equal(string.Empty, error.ToString());
+    }
+
     private static string CreateValidPack(string id, string name)
     {
         string root = CreateTempDirectory();

@@ -402,7 +402,7 @@
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
                 <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    <ScaleTransform ScaleX="0.996" ScaleY="0.996"/>
                 </Setter.Value>
             </Setter>
             <EventSetter Event="MouseEnter" Handler="AnimatedCard_MouseEnter"/>
@@ -416,7 +416,7 @@
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
                 <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    <ScaleTransform ScaleX="0.996" ScaleY="0.996"/>
                 </Setter.Value>
             </Setter>
             <EventSetter Event="MouseEnter" Handler="AnimatedCard_MouseEnter"/>

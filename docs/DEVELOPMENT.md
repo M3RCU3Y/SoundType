@@ -40,6 +40,17 @@ SoundType stores user settings at `%AppData%\SoundType\settings.json`.
 
 Prefer adding logic to the lowest project that owns the behavior. UI code should orchestrate services, not duplicate validation or audio rules.
 
+## Navigation
+
+For quick repo orientation, use [REPO_GUIDE.md](REPO_GUIDE.md). The WPF shell is intentionally split by ownership where it is low-risk:
+
+| Path | Owns |
+| --- | --- |
+| `src/SoundType.App/MainWindow.xaml` | Current WPF layout |
+| `src/SoundType.App/MainWindow.xaml.cs` | Window orchestration and event handlers |
+| `src/SoundType.App/ViewModels` | Display-only list items and small UI binding models |
+| `src/SoundType.App/Controls` | Reusable WPF controls |
+
 ## Branch Policy
 
 The repository is currently cleaned back to `main` only. If future feature branches are needed, delete merged branches after the PR lands so Codex and humans both start from an obvious base.
@@ -65,3 +76,5 @@ For changes touching tray, startup, or audio, also run the manual checklist in [
 | `artifacts` | Build and packaging outputs |
 
 Keep committed source, docs, assets, tests, and scripts in the visible repo tree.
+
+Use `artifacts\publish\SoundType\SoundType.exe` for direct no-extraction local launch checks after packaging. Keep release screenshots under `artifacts\screenshots` and temporary UI QA captures under `artifacts\ui-qa` so the artifact root remains readable.

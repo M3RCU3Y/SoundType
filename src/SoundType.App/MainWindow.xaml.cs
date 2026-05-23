@@ -11,6 +11,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using SoundType.App.Controls;
+using SoundType.App.ViewModels;
 using SoundType.Audio;
 using SoundType.Core.Models;
 using SoundType.Core.Rules;
@@ -26,6 +27,8 @@ public partial class MainWindow : Window
 {
     private const int ToggleHotkeyId = 0x534B;
     private const string EnterDingPackId = "soundtype-enter-ding";
+    private const double CardRestScale = 0.996;
+    private const double CardHoverScale = 1.0;
     private static readonly TimeSpan EnterDingMinimumInterval = TimeSpan.FromMilliseconds(150);
     private static readonly double[] DefaultAudioPageEqCurve = [0, -2, 1, 0, 2.5, 4, 5.5, 3, 0, 0.5];
     private static readonly IReadOnlyList<EnterDingSoundListItem> EnterDingSounds =
@@ -1042,8 +1045,8 @@ public partial class MainWindow : Window
 
         ScaleTransform scale = EnsureCardScaleTransform(border);
         CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
-        scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1.004, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
-        scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1.004, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(CardHoverScale, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
+        scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(CardHoverScale, TimeSpan.FromMilliseconds(130)) { EasingFunction = ease });
     }
 
     private void AnimatedCard_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1055,8 +1058,8 @@ public partial class MainWindow : Window
 
         ScaleTransform scale = EnsureCardScaleTransform(border);
         CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
-        scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
-        scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(CardRestScale, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
+        scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(CardRestScale, TimeSpan.FromMilliseconds(120)) { EasingFunction = ease });
     }
 
     private static ScaleTransform EnsureCardScaleTransform(Border border)
@@ -1066,8 +1069,8 @@ public partial class MainWindow : Window
             return scale;
         }
 
-        double scaleX = border.RenderTransform is ScaleTransform existing ? existing.ScaleX : 1;
-        double scaleY = border.RenderTransform is ScaleTransform existingScale ? existingScale.ScaleY : 1;
+        double scaleX = border.RenderTransform is ScaleTransform existing ? existing.ScaleX : CardRestScale;
+        double scaleY = border.RenderTransform is ScaleTransform existingScale ? existingScale.ScaleY : CardRestScale;
         ScaleTransform localScale = new(scaleX, scaleY);
         border.RenderTransform = localScale;
         return localScale;
@@ -1553,7 +1556,7 @@ public partial class MainWindow : Window
             SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: false);
             await ReloadPacksAndSelectAsync(metadata.Id);
             PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-            PackValidationText.Text = $"Imported {metadata.Name}.";
+            PackValidationText.Text = BuildImportResultMessage("Imported", metadata);
         }
         catch (IOException ex) when (ex.Message.Contains("already exists", StringComparison.OrdinalIgnoreCase))
         {
@@ -1574,7 +1577,7 @@ public partial class MainWindow : Window
                 SoundPackMetadata metadata = TryImportPack(dialog.FileName, overwrite: true);
                 await ReloadPacksAndSelectAsync(metadata.Id);
                 PackValidationText.Foreground = (MediaBrush)FindResource("MutedTextBrush");
-                PackValidationText.Text = $"Replaced {metadata.Name}.";
+                PackValidationText.Text = BuildImportResultMessage("Replaced", metadata);
             }
             catch (Exception retryException)
             {
@@ -1621,6 +1624,14 @@ public partial class MainWindow : Window
 
     private SoundPackMetadata TryImportPack(string archivePath, bool overwrite) =>
         _archiveService.ImportPack(archivePath, _packsRoot, overwrite);
+
+    private string BuildImportResultMessage(string action, SoundPackMetadata metadata)
+    {
+        SoundPackValidationResult validation = _packLoader.Validate(metadata, analyzeAudioQuality: true);
+        return validation.Warnings.Count == 0
+            ? $"{action} {metadata.Name}."
+            : $"{action} {metadata.Name}. Warning: {validation.Warnings[0]}";
+    }
 
     private async Task ReloadPacksAndSelectAsync(string packId)
     {
@@ -2779,126 +2790,4 @@ public partial class MainWindow : Window
         public const string Digital = "Digital";
     }
 
-    private sealed class RecentAppChipItem(string processName)
-    {
-        private readonly AppVisual _visual = AppVisual.ForProcess(processName);
-
-        public string ProcessName { get; } = processName;
-        public string IconText => _visual.IconText;
-        public System.Windows.Media.FontFamily IconFont => _visual.IconFontFamily;
-        public MediaBrush IconForeground => _visual.IconForeground;
-
-        public override string ToString() => ProcessName;
-    }
-
-    private sealed class AppRuleListItem(AppRule rule, IReadOnlyDictionary<string, SoundPackMetadata> packsById)
-    {
-        private readonly AppVisual _visual = AppVisual.ForProcess(rule.ProcessName);
-
-        public AppRule Rule { get; } = rule;
-        public string ProcessName => Rule.ProcessName;
-        public string ProcessInitial => string.IsNullOrWhiteSpace(Rule.ProcessName)
-            ? "?"
-            : Rule.ProcessName.Trim()[0].ToString().ToUpperInvariant();
-        public string ProcessIconText => _visual.IconText;
-        public System.Windows.Media.FontFamily ProcessIconFont => _visual.IconFontFamily;
-        public MediaBrush ProcessIconForeground => _visual.IconForeground;
-        public MediaBrush ProcessIconBackground => _visual.IconBackground;
-        public double ProcessIconFontSize => _visual.IconFontSize;
-        public string ModeLabel => Rule.Mode switch
-        {
-            AppRuleMode.Default => "Default",
-            AppRuleMode.Disabled => "Disabled",
-            AppRuleMode.EnabledOnly => "Enabled Only",
-            AppRuleMode.UseSpecificPack => "Use Specific Pack",
-            _ => Rule.Mode.ToString()
-        };
-        public MediaBrush ModeBrush => new SolidColorBrush(Rule.Mode == AppRuleMode.Disabled
-            ? System.Windows.Media.Color.FromRgb(240, 109, 119)
-            : System.Windows.Media.Color.FromRgb(124, 240, 187));
-
-        public string PackDisplayName
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(Rule.SoundPackId))
-                {
-                    return "(Default)";
-                }
-
-                return packsById.TryGetValue(Rule.SoundPackId, out SoundPackMetadata? pack)
-                    ? pack.Name
-                    : Rule.SoundPackId;
-            }
-        }
-
-        public int VolumePercent => (int)Math.Round(Math.Clamp(Rule.VolumeOverride ?? 1.0, 0.0, 1.5) * 100);
-        public string VolumeText => $"{VolumePercent}%";
-        public string LastSeenText => ProcessName.ToLowerInvariant() switch
-        {
-            "discord.exe" => "2m ago",
-            "chrome.exe" => "5m ago",
-            "obs64.exe" => "12m ago",
-            "spotify.exe" => "18m ago",
-            "explorer.exe" => "1h ago",
-            _ => "Now"
-        };
-        public bool IsEnabled => Rule.Mode != AppRuleMode.Disabled;
-
-        public override string ToString()
-        {
-            string pack = string.IsNullOrWhiteSpace(Rule.SoundPackId) ? "" : $" | Pack: {PackDisplayName}";
-            string volume = Rule.VolumeOverride is double value ? $" | Volume: {Math.Round(value * 100)}%" : "";
-            return $"{Rule.ProcessName} | {ModeLabel}{pack}{volume}";
-        }
-    }
-
-    private sealed record AppVisual(
-        string IconText,
-        System.Windows.Media.FontFamily IconFontFamily,
-        MediaBrush IconForeground,
-        MediaBrush IconBackground,
-        double IconFontSize)
-    {
-        private static readonly System.Windows.Media.FontFamily Segoe = new("Segoe UI");
-        private static readonly System.Windows.Media.FontFamily Mdl2 = new("Segoe MDL2 Assets");
-
-        public static AppVisual ForProcess(string? processName)
-        {
-            string normalized = (processName ?? "").Trim().ToLowerInvariant();
-            return normalized switch
-            {
-                "code.exe" or "devenv.exe" => new("\uE8A7", Mdl2, Brush(48, 166, 255), Brush(19, 32, 42), 24),
-                "discord.exe" => new("\u25CF", Segoe, Brush(255, 255, 255), Brush(88, 101, 242), 18),
-                "chrome.exe" => new("\u25CF", Segoe, Brush(255, 255, 255), Brush(246, 78, 57), 18),
-                "obs64.exe" => new("\u25CC", Segoe, Brush(255, 255, 255), Brush(24, 28, 32), 22),
-                "spotify.exe" => new("\u25CF", Segoe, Brush(9, 16, 13), Brush(30, 215, 96), 18),
-                "explorer.exe" => new("\uE8B7", Mdl2, Brush(255, 213, 74), Brush(23, 31, 39), 22),
-                "powershell.exe" => new(">", Segoe, Brush(124, 166, 255), Brush(23, 31, 39), 18),
-                "notepad.exe" => new("\uE70B", Mdl2, Brush(113, 220, 255), Brush(23, 31, 39), 20),
-                "" or "unknown" => new("?", Segoe, Brush(78, 217, 154), Brush(19, 32, 42), 18),
-                _ => new(GetInitial(normalized), Segoe, Brush(78, 217, 154), Brush(19, 32, 42), 16)
-            };
-        }
-
-        private static string GetInitial(string value) =>
-            string.IsNullOrWhiteSpace(value) ? "?" : value[0].ToString().ToUpperInvariant();
-
-        private static SolidColorBrush Brush(byte r, byte g, byte b) =>
-            new(System.Windows.Media.Color.FromRgb(r, g, b));
-    }
-
-    private sealed class PanModeListItem(PanMode mode, string displayName)
-    {
-        public PanMode Mode { get; } = mode;
-
-        public override string ToString() => displayName;
-    }
-
-    private sealed class EnterDingSoundListItem(string soundGroup, string displayName)
-    {
-        public string SoundGroup { get; } = soundGroup;
-
-        public override string ToString() => displayName;
-    }
 }
