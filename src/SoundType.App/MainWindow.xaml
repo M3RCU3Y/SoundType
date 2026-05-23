@@ -2039,11 +2039,11 @@
                                           Unchecked="EqChanged"/>
                             </StackPanel>
                             <WrapPanel Grid.Row="1" Margin="0,0,0,10">
-                                <Button Content="Flat" Style="{StaticResource PrimaryNavButtonStyle}" Height="32" Width="60" Click="PresetFlat_Click" Margin="0,0,6,0"/>
-                                <Button Content="Warm" Height="32" Width="64" Click="PresetWarm_Click" Margin="0,0,6,0"/>
-                                <Button Content="Thock" Height="32" Width="64" Click="PresetThock_Click" Margin="0,0,6,0"/>
-                                <Button Content="Crisp" Height="32" Width="64" Click="PresetCrisp_Click" Margin="0,0,6,0"/>
-                                <Button Content="Soft Night" Height="32" Width="86" Click="PresetSoftNight_Click"/>
+                                <Button Content="Flat" Style="{StaticResource PrimaryNavButtonStyle}" Height="32" Width="62" Padding="0" Click="PresetFlat_Click" Margin="0,0,6,0"/>
+                                <Button Content="Warm" Height="32" Width="72" Padding="0" Click="PresetWarm_Click" Margin="0,0,6,0"/>
+                                <Button Content="Thock" Height="32" Width="74" Padding="0" Click="PresetThock_Click" Margin="0,0,6,0"/>
+                                <Button Content="Crisp" Height="32" Width="72" Padding="0" Click="PresetCrisp_Click" Margin="0,0,6,0"/>
+                                <Button Content="Soft Night" Height="32" Width="104" Padding="0" Click="PresetSoftNight_Click"/>
                             </WrapPanel>
                             <Grid Grid.Row="2" Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>

@@ -50,6 +50,26 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void MainWindow_DoesNotRewriteFlatEqOnStartup()
+    {
+        string root = FindRepositoryRoot();
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.DoesNotContain("ApplyDefaultAudioPageEqCurve", code);
+        Assert.DoesNotContain("DefaultAudioPageEqCurve", code);
+    }
+
+    [Fact]
+    public void EqualizerPresetButtonsLeaveRoomForLabels()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("Content=\"Thock\" Height=\"32\" Width=\"74\" Padding=\"0\"", xaml);
+        Assert.Contains("Content=\"Soft Night\" Height=\"32\" Width=\"104\" Padding=\"0\"", xaml);
+    }
+
+    [Fact]
     public void MainWindow_FlushesSettingsWhenClosingToTray()
     {
         string root = FindRepositoryRoot();

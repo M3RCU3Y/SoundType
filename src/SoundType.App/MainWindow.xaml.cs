@@ -30,7 +30,6 @@ public partial class MainWindow : Window
     private const double CardRestScale = 0.996;
     private const double CardHoverScale = 1.0;
     private static readonly TimeSpan EnterDingMinimumInterval = TimeSpan.FromMilliseconds(150);
-    private static readonly double[] DefaultAudioPageEqCurve = [0, -2, 1, 0, 2.5, 4, 5.5, 3, 0, 0.5];
     private static readonly IReadOnlyList<EnterDingSoundListItem> EnterDingSounds =
     [
         new("random", "Random"),
@@ -102,7 +101,6 @@ public partial class MainWindow : Window
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         _settings = await _settingsService.LoadAsync();
-        ApplyDefaultAudioPageEqCurve();
         await _settingsService.SaveAsync(_settings);
         _settings.StartWithWindows = _startup.IsEnabled();
         RebuildPlaybackProfile();
@@ -537,17 +535,6 @@ public partial class MainWindow : Window
         PanModeComboBox.Items.Clear();
         PanModeComboBox.Items.Add(new PanModeListItem(PanMode.KeyPosition, "Stereo"));
         PanModeComboBox.Items.Add(new PanModeListItem(PanMode.Random, "Random"));
-    }
-
-    private void ApplyDefaultAudioPageEqCurve()
-    {
-        _settings.Eq.Normalize();
-        bool isFlatDefault = _settings.Eq.PresetName.Equals("Flat", StringComparison.OrdinalIgnoreCase) &&
-            _settings.Eq.BandGainsDb.All(gain => Math.Abs(gain) < 0.001);
-        if (isFlatDefault)
-        {
-            _settings.Eq.SetPreset("Flat", DefaultAudioPageEqCurve);
-        }
     }
 
     private void ConfigureEnterDingControls()
