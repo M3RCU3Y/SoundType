@@ -190,27 +190,42 @@
         </Style>
 
         <Style x:Key="ChromeIconButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="44"/>
-            <Setter Property="Height" Value="36"/>
+            <Setter Property="Width" Value="54"/>
+            <Setter Property="Height" Value="38"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Margin" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Chrome" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border x:Name="Chrome" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Chrome" Property="Background" Value="#182128"/>
+                                <Setter TargetName="Chrome" Property="Background" Value="#172027"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Chrome" Property="Background" Value="#222C34"/>
+                                <Setter TargetName="Chrome" Property="Background" Value="#232D35"/>
                             </Trigger>
+                            <Trigger Property="Tag" Value="Close">
+                                <Setter Property="FontSize" Value="12"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Tag" Value="Close"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Chrome" Property="Background" Value="#C42B1C"/>
+                            </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -1387,12 +1402,12 @@
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" BorderBrush="#2D343B" BorderThickness="0,0,0,1" MouseLeftButtonDown="ShellDrag_MouseLeftButtonDown">
-                    <Grid Margin="32,0,16,0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,560,0">
+                    <Grid Margin="32,0,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,690,0">
                             <TextBlock x:Name="PageTitleText" Text="Library" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock x:Name="PageSubtitleText" Text="Browse packs" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="28,6,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,172,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
                             <StackPanel x:Name="LibraryHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
                                 <Button Width="136" Margin="0,0,12,0" Click="ImportSoundPack_Click">
                                     <StackPanel Orientation="Horizontal">
@@ -1480,9 +1495,14 @@
                                 </Button>
                                 <Button Content="..." Style="{StaticResource KeyboardToolbarButtonStyle}" MinWidth="58" Width="58" FontSize="18" Click="HeaderMore_Click"/>
                             </StackPanel>
-                            <Button Style="{StaticResource ChromeIconButtonStyle}" Content="-" Margin="20,0,2,0" Click="MinimizeDot_Click"/>
-                            <Button Style="{StaticResource ChromeIconButtonStyle}" Content="□" Click="MaximizeDot_Click"/>
-                            <Button Style="{StaticResource ChromeIconButtonStyle}" Content="x" FontSize="18" Click="CloseDot_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button Style="{StaticResource ChromeIconButtonStyle}" Content="&#xE921;" Click="MinimizeDot_Click"/>
+                            <Button Style="{StaticResource ChromeIconButtonStyle}" Content="&#xE922;" Click="MaximizeDot_Click"/>
+                            <Button Style="{StaticResource ChromeIconButtonStyle}" Content="&#xE8BB;" Tag="Close" Click="CloseDot_Click"/>
                         </StackPanel>
                     </Grid>
                 </Border>
