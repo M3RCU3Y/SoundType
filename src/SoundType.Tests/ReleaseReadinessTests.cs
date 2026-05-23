@@ -70,6 +70,17 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void PitchCharacterHelpMarkersExplainTheirControls()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("Adds tiny pitch differences between keystrokes", xaml);
+        Assert.Contains("Softens the start of each key sound", xaml);
+        Assert.Contains("PitchHelpBadgeStyle", xaml);
+    }
+
+    [Fact]
     public void MainWindow_FlushesSettingsWhenClosingToTray()
     {
         string root = FindRepositoryRoot();
