@@ -1,46 +1,24 @@
 # Roadmap
 
-## 0.1 Functional Prototype
+SoundType already has the original prototype milestones: global keyboard hook, tray behavior, settings persistence, built-in sourced packs, import/export, pack validation, app rules, EQ, panning controls, portable packaging, screenshots, and release notes.
 
-- Global keyboard hook.
-- Normal key sound and Enter ding.
-- Enable/mute toggle.
-- Master volume.
-- JSON settings.
-- Clean hook shutdown.
+## Current Polish
 
-## 0.2 Sound Engine
+- Keep audio playback centered by default and preserve low-latency key handling.
+- Continue trimming `MainWindow.xaml` and `MainWindow.xaml.cs` into clear UI controls, view models, and services when a change naturally touches those areas.
+- Keep pack metadata, loudness, and licensing easy to audit.
+- Keep the portable package self-contained and easy to launch locally at `artifacts\publish\SoundType\SoundType.exe`.
 
-- Preloaded sound packs.
-- Overlapping playback.
-- Random normal samples.
-- Enter, Space, and Backspace groups.
-- Non-blocking queue.
+## Release Readiness
 
-## 0.3 Rules
+- Add code signing when a certificate is available.
+- Add an installer or MSIX only after portable zip releases are stable.
+- Expand manual QA coverage on physical Windows machines.
+- Keep release assets limited to the portable zip and SHA-256 checksum unless the release process changes.
 
-- Key exclusion UI.
-- App process exclusion UI.
-- Persisted process-name rules.
-- Per-app disabled/default/enabled-only modes.
-- Per-app pack and volume overrides.
+## Future Product Ideas
 
-## 0.4 Shell Behavior
-
-- Tray menu.
-- Minimize to tray.
-- Start with Windows.
-- Global toggle hotkey.
-
-## 0.5 Sound Shaping
-
-- Bass, mid, and treble EQ implementation.
-- Per-group volumes.
-- Limiter or safer mixer.
-
-## 1.0 Release Polish
-
-- Real sound design assets.
-- Import/export packaged sound packs.
-- Installer or portable release zip.
-- Screenshots, app icon, and manual QA pass.
+- Richer pack marketplace-style browsing.
+- More guided sound-pack creation and validation feedback.
+- More app-rule presets for games, calls, streaming, and editors.
+- Optional update flow after the signed distribution story is settled.

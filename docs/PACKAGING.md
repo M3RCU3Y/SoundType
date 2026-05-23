@@ -50,6 +50,12 @@ The script publishes `src\SoundType.App\SoundType.App.csproj` as a self-containe
 artifacts\publish\SoundType
 ```
 
+For local smoke testing and debugging without extracting the zip, run:
+
+```text
+artifacts\publish\SoundType\SoundType.exe
+```
+
 It then creates the portable archive and checksum:
 
 ```text

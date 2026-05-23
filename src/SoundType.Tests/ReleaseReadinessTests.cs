@@ -60,6 +60,16 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("HideToTray();", code);
     }
 
+    [Fact]
+    public void AnimatedCards_DoNotScalePastTheirLayoutSlot()
+    {
+        string root = FindRepositoryRoot();
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.DoesNotContain("new DoubleAnimation(1.004", code);
+        Assert.Contains("CardHoverScale = 1.0", code);
+    }
+
     private static string FindRepositoryRoot()
     {
         DirectoryInfo? current = new(AppContext.BaseDirectory);

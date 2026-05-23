@@ -1,4 +1,6 @@
-# SoundType Build Spec
+# SoundType Historical Build Spec
+
+This document captures the first implementation scope. For current navigation, use `docs/REPO_GUIDE.md` and `docs/DEVELOPMENT.md`.
 
 SoundType is a local-only Windows desktop utility that plays customizable typing sounds on global keypresses.
 
