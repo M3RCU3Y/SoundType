@@ -21,6 +21,7 @@ public sealed class AudioEngine : IAsyncDisposable
     private readonly VoiceLimiter _voiceLimiter = new(DefaultMaxActiveVoices);
     private readonly WaveFormat _playbackFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
     private readonly MixingSampleProvider _mixer;
+    private readonly StereoOutputMeterSampleProvider _outputMeter;
     private readonly ISampleProvider _outputSource;
     private IAudioOutputDevice _output;
     private EqSettings _eq = CreateEqSnapshot(new EqSettings());
@@ -38,12 +39,14 @@ public sealed class AudioEngine : IAsyncDisposable
     {
         _outputFactory = outputFactory;
         _mixer = new MixingSampleProvider(_playbackFormat) { ReadFully = true };
-        _outputSource = new SoftLimiterSampleProvider(_mixer);
+        _outputMeter = new StereoOutputMeterSampleProvider(new SoftLimiterSampleProvider(_mixer));
+        _outputSource = _outputMeter;
         _output = CreateAndStartOutput();
     }
 
     public double MasterVolume { get; set; } = 0.75;
     public double PitchVariation { get; set; }
+    public StereoOutputLevel OutputLevel => _outputMeter.Level;
     public EqSettings Eq
     {
         get => CreateEqSnapshot(_eq);

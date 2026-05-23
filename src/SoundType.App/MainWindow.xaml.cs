@@ -20,6 +20,8 @@ using SoundType.Core.Settings;
 using SoundType.Input;
 using Forms = System.Windows.Forms;
 using MediaBrush = System.Windows.Media.Brush;
+using MediaColor = System.Windows.Media.Color;
+using ShapeRectangle = System.Windows.Shapes.Rectangle;
 
 namespace SoundType.App;
 
@@ -52,10 +54,13 @@ public partial class MainWindow : Window
     private readonly ActiveWindowService _activeWindow = new();
     private readonly StartupService _startup = new();
     private readonly DispatcherTimer _activeAppTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+    private readonly DispatcherTimer _outputMeterTimer = new() { Interval = TimeSpan.FromMilliseconds(50) };
     private readonly string _packsRoot;
     private readonly Forms.NotifyIcon _trayIcon = new();
     private readonly List<Slider> _eqBandSliders = [];
     private readonly List<TextBlock> _eqBandValueTexts = [];
+    private readonly List<ShapeRectangle> _leftOutputMeterBars = [];
+    private readonly List<ShapeRectangle> _rightOutputMeterBars = [];
     private readonly List<string> _startupWarnings = [];
     private readonly DebouncedAsyncAction _settingsSaveQueue;
     private readonly WaveformPeakCache _waveformPeakCache = new();
@@ -90,11 +95,13 @@ public partial class MainWindow : Window
             TimeSpan.FromMilliseconds(400),
             cancellationToken => _settingsService.SaveAsync(_settings, cancellationToken));
         BuildEqBandControls();
+        BuildOutputMeterBars();
         _packsRoot = Path.Combine(AppContext.BaseDirectory, "assets", "packs");
         Loaded += MainWindow_Loaded;
         Closing += MainWindow_Closing;
         _keyboardHook.KeyPressed += KeyboardHook_KeyPressed;
         _activeAppTimer.Tick += (_, _) => RefreshCurrentApp();
+        _outputMeterTimer.Tick += (_, _) => RefreshOutputMeter();
         _libraryScrollTimer.Tick += LibraryScrollTimer_Tick;
     }
 
@@ -121,6 +128,7 @@ public partial class MainWindow : Window
             AddStartupWarning(keyboardHookStart.ErrorMessage ?? "Keyboard hook unavailable.");
         }
         _activeAppTimer.Start();
+        _outputMeterTimer.Start();
         _loading = false;
         ShowPage(LibraryPage);
         RefreshStatus();
@@ -610,6 +618,23 @@ public partial class MainWindow : Window
             _eqBandSliders.Add(slider);
             _eqBandValueTexts.Add(valueText);
         }
+    }
+
+    private void BuildOutputMeterBars()
+    {
+        _leftOutputMeterBars.Clear();
+        _rightOutputMeterBars.Clear();
+        foreach (ShapeRectangle bar in LeftOutputMeterBars.Children.OfType<ShapeRectangle>())
+        {
+            _leftOutputMeterBars.Add(bar);
+        }
+
+        foreach (ShapeRectangle bar in RightOutputMeterBars.Children.OfType<ShapeRectangle>())
+        {
+            _rightOutputMeterBars.Add(bar);
+        }
+
+        RefreshOutputMeter();
     }
 
     private void ConfigurePackFilters()
@@ -2300,6 +2325,41 @@ public partial class MainWindow : Window
         PanStatusText.Text = $"{Math.Round(_settings.Pan.Strength * 100)}%";
     }
 
+    private void RefreshOutputMeter()
+    {
+        StereoOutputLevel level = _audio?.OutputLevel ?? default;
+        UpdateOutputMeterBars(_leftOutputMeterBars, level.Left);
+        UpdateOutputMeterBars(_rightOutputMeterBars, level.Right);
+    }
+
+    private void UpdateOutputMeterBars(IReadOnlyList<ShapeRectangle> bars, float level)
+    {
+        if (bars.Count == 0)
+        {
+            return;
+        }
+
+        MediaBrush activeBrush = (MediaBrush)FindResource("AccentBrush");
+        SolidColorBrush inactiveBrush = new(MediaColor.FromRgb(41, 51, 60));
+        int activeBars = ResolveOutputMeterBarCount(level, bars.Count);
+        for (int i = 0; i < bars.Count; i++)
+        {
+            bars[i].Fill = i < activeBars ? activeBrush : inactiveBrush;
+        }
+    }
+
+    private static int ResolveOutputMeterBarCount(float level, int barCount)
+    {
+        if (barCount <= 0 || level <= 0.000001f)
+        {
+            return 0;
+        }
+
+        double decibels = 20.0 * Math.Log10(Math.Clamp(level, 0.000001f, 1.0f));
+        double normalized = Math.Clamp((decibels + 48.0) / 48.0, 0.0, 1.0);
+        return (int)Math.Round(normalized * barCount);
+    }
+
     private static string FormatDb(double value)
     {
         double rounded = Math.Round(value, 1);
@@ -2358,6 +2418,9 @@ public partial class MainWindow : Window
         }
 
         _keyboardHook.Dispose();
+        _outputMeterTimer.Stop();
+        _activeAppTimer.Stop();
+        _libraryScrollTimer.Stop();
         _hotkeySource?.RemoveHook(WndProc);
         _globalHotkey.Dispose();
         _trayIcon.Visible = false;

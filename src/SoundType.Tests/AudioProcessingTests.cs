@@ -107,6 +107,35 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public void StereoOutputMeterSampleProvider_ReportsChannelPeaksFromReadSamples()
+    {
+        ArraySampleProvider source = new([0.1f, -0.5f, -0.7f, 0.2f], channels: 2);
+        StereoOutputMeterSampleProvider meter = new(source);
+        float[] buffer = new float[4];
+
+        int read = meter.Read(buffer, 0, buffer.Length);
+
+        Assert.Equal(4, read);
+        Assert.Equal(0.7f, meter.Level.Left, precision: 5);
+        Assert.Equal(0.5f, meter.Level.Right, precision: 5);
+        Assert.Equal(buffer, [0.1f, -0.5f, -0.7f, 0.2f]);
+    }
+
+    [Fact]
+    public void StereoOutputMeterSampleProvider_DropsToSilenceWhenReadContainsNoSamples()
+    {
+        ArraySampleProvider source = new([0.1f, -0.5f], channels: 2);
+        StereoOutputMeterSampleProvider meter = new(source);
+        float[] buffer = new float[2];
+
+        Assert.Equal(2, meter.Read(buffer, 0, buffer.Length));
+        Assert.Equal(0, meter.Read(buffer, 0, buffer.Length));
+
+        Assert.Equal(0.0f, meter.Level.Left);
+        Assert.Equal(0.0f, meter.Level.Right);
+    }
+
+    [Fact]
     public void ThreeBandEqSampleProvider_ProcessesSamplesWithoutChangingReadCount()
     {
         ArraySampleProvider source = new(CreateSineWave(512));
@@ -233,6 +262,8 @@ public sealed class AudioProcessingTests
         float[] flatOutput = ReadOutput(flatFactory.CreatedDevices.Single().Provider, 1024);
         float[] eqOutput = ReadOutput(eqFactory.CreatedDevices.Single().Provider, 1024);
 
+        Assert.True(eqEngine.OutputLevel.Left > 0.0f);
+        Assert.True(eqEngine.OutputLevel.Right > 0.0f);
         Assert.Contains(
             eqOutput.Zip(flatOutput, (processed, flat) => Math.Abs(processed - flat)),
             delta => delta > 0.0001f);
