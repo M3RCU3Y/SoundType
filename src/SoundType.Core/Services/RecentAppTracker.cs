@@ -3,11 +3,14 @@ namespace SoundType.Core.Services;
 public sealed class RecentAppTracker
 {
     public const int DefaultLimit = 20;
+    private static readonly TimeSpan DefaultActivityWindow = TimeSpan.FromMinutes(30);
 
     private readonly int _limit;
     private readonly Dictionary<string, RecentAppEntry> _entries = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<RecentAppSwitchEvent> _switchEvents = [];
     private readonly object _syncRoot = new();
     private DateTimeOffset _lastTimestampUtc = DateTimeOffset.MinValue;
+    private int _nextLane;
 
     public RecentAppTracker(int limit = DefaultLimit)
     {
@@ -39,6 +42,8 @@ public sealed class RecentAppTracker
                 _entries[key] = new RecentAppEntry(normalizedName, now, now, 1);
             }
 
+            _switchEvents.Add(new RecentAppSwitchEvent(normalizedName, now, _nextLane));
+            _nextLane = (_nextLane + 1) % 2;
             Prune();
         }
     }
@@ -54,12 +59,27 @@ public sealed class RecentAppTracker
         }
     }
 
+    public IReadOnlyList<RecentAppSwitchEvent> ListSwitchEvents(TimeSpan? window = null)
+    {
+        lock (_syncRoot)
+        {
+            DateTimeOffset cutoffUtc = DateTimeOffset.UtcNow - (window ?? DefaultActivityWindow);
+            return _switchEvents
+                .Where(app => app.SeenUtc >= cutoffUtc)
+                .OrderBy(app => app.SeenUtc)
+                .ToList();
+        }
+    }
+
     private void Prune()
     {
         foreach (RecentAppEntry app in _entries.Values.OrderByDescending(app => app.LastSeenUtc).Skip(_limit).ToList())
         {
             _entries.Remove(app.ProcessName.ToUpperInvariant());
         }
+
+        DateTimeOffset cutoffUtc = DateTimeOffset.UtcNow - DefaultActivityWindow;
+        _switchEvents.RemoveAll(app => app.SeenUtc < cutoffUtc);
     }
 
     private DateTimeOffset GetNextTimestampUtc()

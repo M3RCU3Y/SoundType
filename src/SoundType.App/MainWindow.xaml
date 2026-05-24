@@ -7,8 +7,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="SoundType"
-        Width="1574"
-        Height="1000"
+        Width="1552"
+        Height="1014"
         Left="0"
         Top="0"
         WindowStartupLocation="Manual"
@@ -1059,7 +1059,7 @@
                                 Background="Transparent"
                                 BorderBrush="#243039"
                                 BorderThickness="0,0,0,1"
-                                Padding="18,12">
+                                Padding="18,9">
                             <ContentPresenter/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -1070,7 +1070,7 @@
                                 <Setter TargetName="Row" Property="Background" Value="{StaticResource SelectedRowBrush}"/>
                                 <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
                                 <Setter TargetName="Row" Property="BorderThickness" Value="1"/>
-                                <Setter TargetName="Row" Property="Padding" Value="17,11"/>
+                                <Setter TargetName="Row" Property="Padding" Value="17,8"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -1080,22 +1080,19 @@
 
         <Style x:Key="RecentAppChipItemStyle" TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="Chip"
                                 Height="40"
-                                MinWidth="126"
+                                MinWidth="112"
                                 Background="#151C22"
                                 BorderBrush="{StaticResource ControlBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="7"
                                 Padding="12,0">
-                            <TextBlock Text="{Binding}"
-                                       VerticalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis"
-                                       FontWeight="SemiBold"/>
+                            <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -1106,6 +1103,19 @@
                                 <Setter TargetName="Chip" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RecentAppActivityItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,0,7"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <ContentPresenter/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -1134,7 +1144,7 @@
             </Setter>
         </Style>
 
-        <Style x:Key="SettingsCardStyle" TargetType="Border" BasedOn="{StaticResource SectionCardStyle}"/>
+        <Style x:Key="SettingsCardStyle" TargetType="Border" BasedOn="{StaticResource PanelStyle}"/>
         <Style x:Key="SettingsHeaderButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardToolbarButtonStyle}"/>
         <Style x:Key="SettingsPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardSelectedToolbarButtonStyle}"/>
         <Style x:Key="SettingsSmallButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardToolbarButtonStyle}">
@@ -1151,7 +1161,7 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="SettingsSectionTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
         <Style x:Key="SettingsRowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -1164,17 +1174,75 @@
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
         <Style x:Key="HotkeyChipStyle" TargetType="Border">
-            <Setter Property="Background" Value="#151C22"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
+            <Setter Property="Background" Value="#151D24"/>
+            <Setter Property="BorderBrush" Value="#31404B"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="5"/>
-            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,5"/>
         </Style>
         <Style x:Key="HotkeyChipTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#F1F5F7"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="SettingsHotkeyRowStyle" TargetType="Border">
+            <Setter Property="Height" Value="43"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#23303A"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="14,0"/>
+        </Style>
+        <Style x:Key="SettingsHotkeyEditButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardToolbarButtonStyle}">
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
+        <Style x:Key="SettingsHotkeyLabelStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#E0E7ED"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="SettingsHotkeyTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#F2F6F8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="SettingsTrayTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#D8DEE4"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="SettingsTrayRowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#DCE3EA"/>
+        </Style>
+        <Style x:Key="SettingsTrayRowDescriptionStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#A7B0B8"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="SettingsStorageTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#D8DEE4"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="SettingsStorageLabelStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#A7B0B8"/>
+        </Style>
+        <Style x:Key="SettingsStorageValueStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#E4E9EE"/>
         </Style>
     </Window.Resources>
 
@@ -1184,13 +1252,14 @@
             CornerRadius="8"
             ClipToBounds="True"
             MouseLeftButtonDown="ShellDrag_MouseLeftButtonDown">
-        <Grid>
+        <Grid x:Name="ShellGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="302"/>
+                <ColumnDefinition x:Name="SidebarColumn" Width="320"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0"
+            <Border x:Name="Sidebar"
+                    Grid.Column="0"
                     Background="{StaticResource SidebarBrush}"
                     BorderBrush="#303942"
                     BorderThickness="0,0,1,0"
@@ -1223,20 +1292,93 @@
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="4,0,0,16" Height="116">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="214"/>
+                            <ColumnDefinition Width="62"/>
+                        </Grid.ColumnDefinitions>
                         <TextBlock Text="GLOBAL OUTPUT"
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource MutedTextBrush}"
                                    VerticalAlignment="Top"/>
                         <ToggleButton x:Name="EnabledToggle"
-                                      Style="{StaticResource PowerToggleStyle}"
-                                      Click="EnabledToggle_Click"
-                                      Width="208"
-                                      Height="64"
-                                      HorizontalAlignment="Left"
-                                      VerticalAlignment="Top"
-                                      Margin="0,28,0,0"
-                                      Content="Listening"/>
+                                       Style="{StaticResource PowerToggleStyle}"
+                                       Click="EnabledToggle_Click"
+                                       Width="208"
+                                       Height="64"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Margin="0,28,0,0"
+                                       Content="Listening"/>
+                        <Grid Grid.Column="1" Width="58" Height="104" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Height="100" VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="6"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="64"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom">
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Bottom" Margin="3,0,0,0">
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Bottom" Margin="3,0,0,0">
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
+                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Column="1" Margin="10,0,0,0">
+                                <TextBlock Text="0" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                <TextBlock Text="-12" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,21,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                <TextBlock Text="-24" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,43,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                <TextBlock Text="-36" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,65,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                <TextBlock Text="-48" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                            </Grid>
+                        </Grid>
                     </Grid>
 
                     <StackPanel Grid.Row="2" Margin="4,0,0,14">
@@ -1314,7 +1456,7 @@
                                         <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeLineJoin="Round" Fill="Transparent" Data="M4,4 L10,4 L10,10 L4,10 Z M14,4 L20,4 L20,10 L14,10 Z M4,14 L10,14 L10,20 L4,20 Z M14,14 L20,14 L20,20 L14,20 Z"/>
                                     </Canvas>
                                 </Viewbox>
-                                <TextBlock Text="Application Rules" VerticalAlignment="Center"/>
+                                <TextBlock Text="App Rules" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button x:Name="SettingsNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowSettings_Click">
@@ -1397,12 +1539,12 @@
 
             <Grid Grid.Column="1" x:Name="PageHost" Background="{StaticResource HeroPanelBrush}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="96"/>
+                    <RowDefinition Height="98"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" BorderBrush="#2D343B" BorderThickness="0,0,0,1" MouseLeftButtonDown="ShellDrag_MouseLeftButtonDown">
-                    <Grid Margin="32,0,0,0">
+                    <Grid Margin="26,0,0,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,690,0">
                             <TextBlock x:Name="PageTitleText" Text="Library" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock x:Name="PageSubtitleText" Text="Browse packs" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="28,6,0,0" VerticalAlignment="Center"/>
@@ -1456,32 +1598,50 @@
                             <StackPanel x:Name="RulesHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
                                 <Button Width="116" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="FocusNewRule_Click">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="+" FontSize="22" Margin="0,-2,10,0"/>
+                                        <Viewbox Width="16" Height="16" Margin="0,0,10,0">
+                                            <Canvas Width="16" Height="16">
+                                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.9" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M8,3 L8,13 M3,8 L13,8"/>
+                                            </Canvas>
+                                        </Viewbox>
                                         <TextBlock Text="Add Rule"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Width="190" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="DetectCurrentApp_Click">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <Viewbox Width="16" Height="16" Margin="0,0,10,0">
+                                            <Canvas Width="16" Height="16">
+                                                <Ellipse Canvas.Left="4" Canvas.Top="4" Width="8" Height="8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Fill="Transparent"/>
+                                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M8,1.5 L8,4 M8,12 L8,14.5 M1.5,8 L4,8 M12,8 L14.5,8"/>
+                                                <Ellipse Canvas.Left="7" Canvas.Top="7" Width="2" Height="2" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                            </Canvas>
+                                        </Viewbox>
                                         <TextBlock Text="Detect Current App"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}">
+                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ImportAppRules_Click">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <Viewbox Width="16" Height="16" Margin="0,0,10,0">
+                                            <Canvas Width="16" Height="16">
+                                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M8,2 L8,9 M5,6 L8,9 L11,6 M3,11.5 L3,14 L13,14 L13,11.5"/>
+                                            </Canvas>
+                                        </Viewbox>
                                         <TextBlock Text="Import"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}">
+                                <Button Width="108" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ExportAppRules_Click">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE898;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                        <Viewbox Width="16" Height="16" Margin="0,0,10,0">
+                                            <Canvas Width="16" Height="16">
+                                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M8,9 L8,2 M5,5 L8,2 L11,5 M3,11.5 L3,14 L13,14 L13,11.5"/>
+                                            </Canvas>
+                                        </Viewbox>
                                         <TextBlock Text="Export"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Content="..." Style="{StaticResource KeyboardToolbarButtonStyle}" MinWidth="58" Width="58" FontSize="18" Click="HeaderMore_Click"/>
                             </StackPanel>
                             <StackPanel x:Name="SettingsHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
-                                <Button Width="176" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ResetSettingsToDefaults_Click">
+                                <Button Width="174" Style="{StaticResource KeyboardToolbarButtonStyle}" Click="ResetSettingsToDefaults_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
                                         <TextBlock Text="Reset to Defaults"/>
@@ -2182,7 +2342,7 @@
                         </Grid>
                     </Border>
 
-                    <Border Grid.Column="4" Style="{StaticResource SectionCardStyle}" Padding="11,13" Height="414" VerticalAlignment="Top">
+                    <Border Grid.Column="4" Style="{StaticResource SectionCardStyle}" Padding="11,13">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="45"/>
@@ -2700,7 +2860,10 @@
                                             <ColumnDefinition Width="34"/>
                                         </Grid.ColumnDefinitions>
                                         <Border Width="58" Height="58" Background="#13202A" BorderBrush="#2F3A43" BorderThickness="1" CornerRadius="8">
-                                            <TextBlock x:Name="CurrentAppIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Grid>
+                                                <TextBlock x:Name="CurrentAppIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <Image x:Name="CurrentAppIconImage" Width="34" Height="34" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
                                         </Border>
                                         <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                                             <TextBlock Text="Current app" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
@@ -2740,7 +2903,14 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Border Width="58" Height="58" Background="#11181E" BorderBrush="#2F3A43" BorderThickness="1" CornerRadius="8">
-                                            <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="34" Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Grid>
+                                                <Viewbox Width="32" Height="32">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Stroke="{StaticResource TextBrush}" StrokeThickness="1.7" StrokeLineJoin="Round" Fill="Transparent" Data="M12,3 L20,7.5 L20,16.5 L12,21 L4,16.5 L4,7.5 Z M12,3 L12,12 M20,7.5 L12,12 L4,7.5 M12,21 L12,12"/>
+                                                    </Canvas>
+                                                </Viewbox>
+                                                <Image x:Name="DefaultProfileImage" Width="42" Height="42" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
                                         </Border>
                                         <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                                             <TextBlock Text="Default profile" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
@@ -2809,8 +2979,11 @@
                                                             </Grid.ColumnDefinitions>
 
                                                             <StackPanel Orientation="Horizontal">
-                                                                <Border Width="30" Height="30" Background="{Binding ProcessIconBackground}" CornerRadius="15" Margin="0,0,12,0">
-                                                                    <TextBlock Text="{Binding ProcessIconText}" FontFamily="{Binding ProcessIconFont}" Foreground="{Binding ProcessIconForeground}" FontSize="{Binding ProcessIconFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Border Width="30" Height="30" Background="Transparent" CornerRadius="4" Margin="0,0,12,0">
+                                                                    <Grid>
+                                                                        <TextBlock Text="{Binding ProcessIconText}" FontFamily="{Binding ProcessIconFont}" Foreground="{Binding ProcessIconForeground}" FontSize="{Binding ProcessIconFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding ProcessIconSource}" Width="24" Height="24" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Grid>
                                                                 </Border>
                                                                 <TextBlock Text="{Binding ProcessName}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                                             </StackPanel>
@@ -2824,21 +2997,43 @@
                                                                     <ColumnDefinition Width="*"/>
                                                                 </Grid.ColumnDefinitions>
                                                                 <TextBlock Text="{Binding VolumeText}" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                                                <ProgressBar Grid.Column="1" Style="{StaticResource ThinProgressBarStyle}" Minimum="0" Maximum="150" Value="{Binding VolumePercent}" VerticalAlignment="Center"/>
+                                                                <ProgressBar Grid.Column="1" Style="{StaticResource ThinProgressBarStyle}" Minimum="0" Maximum="150" Value="{Binding VolumePercent, Mode=OneWay}" VerticalAlignment="Center"/>
                                                             </Grid>
 
                                                             <TextBlock Grid.Column="4" Text="{Binding LastSeenText}" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                                            <CheckBox Grid.Column="5" IsChecked="{Binding IsEnabled}" Style="{StaticResource KeyboardSwitchStyle}" IsHitTestVisible="False" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                            <CheckBox Grid.Column="5" IsChecked="{Binding IsEnabled, Mode=OneWay}" Style="{StaticResource KeyboardSwitchStyle}" IsHitTestVisible="False" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                             <TextBlock Grid.Column="6" Text="..." FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ListBox.ItemTemplate>
                                             </ListBox>
+                                            <Border x:Name="AppRulesEmptyState"
+                                                    Grid.Row="2"
+                                                    Visibility="Collapsed"
+                                                    Padding="24"
+                                                    Background="#10171C">
+                                                <StackPanel Width="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="AppRulesEmptyTitleText" Text="No app rules yet" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                                    <TextBlock x:Name="AppRulesEmptyDescriptionText"
+                                                               Text="Create a rule for the current foreground app or type a process name in the editor."
+                                                               Foreground="{StaticResource MutedTextBrush}"
+                                                               TextAlignment="Center"
+                                                               TextWrapping="Wrap"
+                                                               Margin="0,8,0,18"/>
+                                                    <Button Width="142" Height="38" HorizontalAlignment="Center" Click="FocusNewRule_Click">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="+" FontSize="22" Margin="0,-3,10,0"/>
+                                                            <TextBlock Text="Create Rule"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
 
                                             <DockPanel Grid.Row="3" Margin="18,0">
                                                 <TextBlock x:Name="AppRuleSelectionText" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
                                                 <Grid DockPanel.Dock="Right" Width="194" Height="32" VerticalAlignment="Center">
-                                                    <TextBox Height="32" Padding="12,0,34,0" Text="Search rules..." Foreground="{StaticResource SubtleTextBrush}"/>
+                                                    <TextBox x:Name="RuleSearchTextBox" Height="32" Padding="12,0,34,0" TextChanged="RuleSearchTextBox_TextChanged"/>
+                                                    <TextBlock x:Name="RuleSearchPlaceholderText" Text="Search rules..." Foreground="{StaticResource SubtleTextBrush}" Margin="13,0,34,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
                                                     <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="13" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,11,0"/>
                                                 </Grid>
                                             </DockPanel>
@@ -2851,40 +3046,54 @@
                                                 <RowDefinition Height="48"/>
                                                 <RowDefinition Height="*"/>
                                             </Grid.RowDefinitions>
-                                            <DockPanel>
-                                                <TextBlock Text="Recent apps" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Top"/>
-                                                <Button DockPanel.Dock="Right" Width="128" Height="38" Click="FocusNewRule_Click">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="12"/>
+                                                    <ColumnDefinition Width="128"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="Recent apps" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <Button Grid.Column="3" Width="128" Height="38" Click="FocusNewRule_Click">
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text="+" FontSize="22" Margin="0,-3,10,0"/>
                                                         <TextBlock Text="Create Rule"/>
                                                     </StackPanel>
                                                 </Button>
-                                                <ListBox x:Name="RecentAppsList"
-                                                         BorderThickness="0"
-                                                         Height="40"
-                                                         ItemContainerStyle="{StaticResource RecentAppChipItemStyle}"
-                                                         SelectionChanged="RecentAppsList_SelectionChanged">
-                                                    <ListBox.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <VirtualizingStackPanel Orientation="Horizontal"/>
-                                                        </ItemsPanelTemplate>
-                                                    </ListBox.ItemsPanel>
-                                                    <ListBox.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="{Binding IconText}" FontFamily="{Binding IconFont}" Foreground="{Binding IconForeground}" FontSize="18" Margin="0,0,9,0" VerticalAlignment="Center"/>
-                                                                <TextBlock Text="{Binding ProcessName}" VerticalAlignment="Center"/>
-                                                            </StackPanel>
-                                                        </DataTemplate>
-                                                    </ListBox.ItemTemplate>
-                                                </ListBox>
-                                            </DockPanel>
+                                                <ScrollViewer Grid.Column="1"
+                                                              Margin="12,0,0,0"
+                                                              HorizontalScrollBarVisibility="Hidden"
+                                                              VerticalScrollBarVisibility="Disabled">
+                                                    <ListBox x:Name="RecentAppsList"
+                                                             BorderThickness="0"
+                                                             Height="40"
+                                                             ItemContainerStyle="{StaticResource RecentAppChipItemStyle}"
+                                                             SelectionChanged="RecentAppsList_SelectionChanged">
+                                                        <ListBox.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <VirtualizingStackPanel Orientation="Horizontal"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ListBox.ItemsPanel>
+                                                        <ListBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Grid Width="20" Height="20" Margin="0,0,9,0">
+                                                                        <TextBlock Text="{Binding IconText}" FontFamily="{Binding IconFont}" Foreground="{Binding IconForeground}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding IconSource}" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Grid>
+                                                                    <TextBlock Text="{Binding ProcessName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="126"/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ListBox.ItemTemplate>
+                                                    </ListBox>
+                                                </ScrollViewer>
+                                            </Grid>
 
                                             <Grid Grid.Row="1" Margin="0,14,0,0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="1.95*"/>
-                                                    <ColumnDefinition Width="20"/>
-                                                    <ColumnDefinition Width="0.9*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="18"/>
+                                                    <ColumnDefinition Width="224"/>
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel>
                                                     <DockPanel Margin="0,0,0,12">
@@ -2902,32 +3111,16 @@
                                                         <Rectangle Fill="#2C353D"/>
                                                         <Rectangle Grid.Row="2" Fill="#2C353D"/>
                                                         <Rectangle Grid.Row="4" Fill="#2C353D"/>
-                                                        <UniformGrid Grid.Row="1" Columns="22" Margin="0,10,0,10">
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="#637BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="#637BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="#637BFF"/>
-                                                            <Rectangle Width="3" Fill="#AF6BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource DangerBrush}"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource WarningBrush}"/>
-                                                        </UniformGrid>
-                                                        <UniformGrid Grid.Row="3" Columns="22" Margin="0,10,0,10">
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="#637BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource DangerBrush}"/>
-                                                            <Rectangle Width="3" Fill="#637BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="#AF6BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource WarningBrush}"/>
-                                                            <Rectangle Width="3" Fill="#637BFF"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                            <Rectangle Width="3" Fill="{StaticResource AccentBrush}"/>
-                                                        </UniformGrid>
+                                                        <UniformGrid x:Name="RecentAppActivityLaneTop" Grid.Row="1" Columns="22" Margin="0,10,0,10"/>
+                                                        <UniformGrid x:Name="RecentAppActivityLaneBottom" Grid.Row="3" Columns="22" Margin="0,10,0,10"/>
+                                                        <TextBlock x:Name="RecentAppActivityEmptyText"
+                                                                   Grid.Row="1"
+                                                                   Grid.RowSpan="3"
+                                                                   Text="Waiting for app switches"
+                                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"
+                                                                   Visibility="Collapsed"/>
                                                     </Grid>
                                                     <Grid Margin="0,8,0,0">
                                                         <Grid.ColumnDefinitions>
@@ -2947,17 +3140,41 @@
                                                     </Grid>
                                                 </StackPanel>
 
-                                                <StackPanel Grid.Column="2">
+                                                <Border Grid.Column="2" BorderBrush="#26313A" BorderThickness="1,0,0,0" Padding="14,0,0,0">
+                                                <StackPanel>
                                                     <Grid Margin="0,0,0,10">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="72"/>
+                                                            <ColumnDefinition Width="66"/>
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Text="App" Foreground="{StaticResource MutedTextBrush}"/>
-                                                        <TextBlock Grid.Column="1" Text="Last seen" Foreground="{StaticResource MutedTextBrush}"/>
+                                                        <TextBlock Grid.Column="1" Text="Last seen" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right"/>
                                                     </Grid>
-                                                    <TextBlock x:Name="RecentAppSummaryText" Text="No recent apps detected yet." Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ListBox x:Name="RecentAppActivityList"
+                                                             BorderThickness="0"
+                                                             ItemContainerStyle="{StaticResource RecentAppActivityItemStyle}">
+                                                        <ListBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="24"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="10"/>
+                                                                        <ColumnDefinition Width="58"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid Width="20" Height="20" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding IconText}" FontFamily="{Binding IconFont}" Foreground="{Binding IconForeground}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding IconSource}" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Grid>
+                                                                    <TextBlock Grid.Column="1" Text="{Binding ProcessName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                                                    <Ellipse Grid.Column="2" Width="5" Height="5" Fill="{Binding DotBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="3" Text="{Binding LastSeenText}" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ListBox.ItemTemplate>
+                                                    </ListBox>
                                                 </StackPanel>
+                                                </Border>
                                             </Grid>
                                         </Grid>
                                     </Border>
@@ -2966,53 +3183,72 @@
                                 <StackPanel Grid.Column="2">
                                     <Border Style="{StaticResource SectionCardStyle}" Padding="18">
                                         <StackPanel>
-                                            <DockPanel Margin="0,0,0,20" LastChildFill="False">
-                                                <TextBlock Text="Rule editor" FontSize="18" FontWeight="SemiBold"/>
-                                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                                    <TextBlock x:Name="RuleEditorIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="22" Margin="0,0,8,0"/>
-                                                    <TextBlock x:Name="RuleEditorProcessText" Text="New rule" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis"/>
-                                                </StackPanel>
-                                            </DockPanel>
-
-                                            <Grid Margin="0,0,0,14">
+                                            <Grid Margin="0,0,0,20">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="Rule editor" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <Border Grid.Column="1" Background="#10171C" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="7" Padding="7,4" MaxWidth="138">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Grid Width="20" Height="20" Margin="0,0,7,0">
+                                                            <TextBlock x:Name="RuleEditorIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            <Image x:Name="RuleEditorIconImage" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Grid>
+                                                        <TextBlock x:Name="RuleEditorProcessText" Text="New rule" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+
+                                            <Grid Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="106"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="Process name" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                                <TextBox x:Name="ProcessRuleTextBox" Grid.Column="1"/>
+                                                <TextBox x:Name="ProcessRuleTextBox" Grid.Column="1" Height="44" VerticalContentAlignment="Center"/>
                                             </Grid>
 
-                                            <Grid Margin="0,0,0,14">
+                                            <Grid Margin="0,0,0,12">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="106"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="24"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="Mode" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                                <ComboBox x:Name="RuleModeComboBox" Grid.Column="1"/>
-                                                <TextBlock Grid.Column="2" Text="i" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="Mode" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                                    <Border Width="15" Height="15" CornerRadius="8" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="7,0,0,0" Opacity="0.9">
+                                                        <TextBlock Text="i" Foreground="{StaticResource MutedTextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </StackPanel>
+                                                <ComboBox x:Name="RuleModeComboBox" Grid.Column="1" Height="42" DisplayMemberPath="Label"/>
                                             </Grid>
 
-                                            <Grid Margin="0,0,0,22">
+                                            <Grid Margin="0,0,0,16">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="106"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="Pack override" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                                <ComboBox x:Name="RulePackComboBox" Grid.Column="1"/>
+                                                <ComboBox x:Name="RulePackComboBox" Grid.Column="1" Height="42" DisplayMemberPath="Name"/>
                                             </Grid>
 
-                                            <DockPanel Margin="0,0,0,8">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="Volume override" Foreground="{StaticResource MutedTextBrush}"/>
-                                                    <TextBlock Text="i" Foreground="{StaticResource MutedTextBrush}" FontWeight="Bold" Margin="8,0,0,0"/>
+                                            <Grid Margin="0,0,0,9">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="Volume override" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                                    <Border Width="15" Height="15" CornerRadius="8" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" Margin="7,0,0,0" Opacity="0.9">
+                                                        <TextBlock Text="i" Foreground="{StaticResource MutedTextBrush}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
                                                 </StackPanel>
-                                                <Border DockPanel.Dock="Right" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6">
-                                                    <TextBlock x:Name="RuleVolumeText" Foreground="{StaticResource TextBrush}"/>
+                                                <Border Grid.Column="1" Height="32" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6">
+                                                    <TextBlock x:Name="RuleVolumeText" Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
-                                            </DockPanel>
-                                            <Grid Margin="0,0,0,16">
+                                            </Grid>
+
+                                            <Grid Margin="0,0,0,18">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="28"/>
                                                     <ColumnDefinition Width="*"/>
@@ -3021,38 +3257,41 @@
                                                 <Slider x:Name="RuleVolumeSlider" Grid.Column="1" Minimum="0" Maximum="1.5" Value="1" TickFrequency="0.05" ValueChanged="RuleVolumeSlider_ValueChanged"/>
                                             </Grid>
 
-                                            <DockPanel>
-                                                <TextBlock Text="Enable rule" VerticalAlignment="Center"/>
-                                                <CheckBox x:Name="RuleEnabledCheckBox"
-                                                          DockPanel.Dock="Right"
-                                                          Style="{StaticResource KeyboardSwitchStyle}"
-                                                          Checked="RuleEnabledCheckBox_Changed"
-                                                          Unchecked="RuleEnabledCheckBox_Changed"/>
-                                            </DockPanel>
+                                            <Border Height="44" Background="#10171C" BorderBrush="#202B33" BorderThickness="1" CornerRadius="7" Padding="12,0">
+                                                <DockPanel>
+                                                    <TextBlock Text="Enable rule" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    <CheckBox x:Name="RuleEnabledCheckBox"
+                                                              DockPanel.Dock="Right"
+                                                              Style="{StaticResource KeyboardSwitchStyle}"
+                                                              VerticalAlignment="Center"
+                                                              Checked="RuleEnabledCheckBox_Changed"
+                                                              Unchecked="RuleEnabledCheckBox_Changed"/>
+                                                </DockPanel>
+                                            </Border>
 
-                                            <Grid Margin="0,36,0,0">
+                                            <Grid Margin="0,18,0,0">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="14"/>
+                                                    <ColumnDefinition Width="8"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="14"/>
+                                                    <ColumnDefinition Width="8"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Button>
+                                                <Button Height="40" FontSize="13">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                                        <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,8,0"/>
                                                         <TextBlock Text="Test Rule"/>
                                                     </StackPanel>
                                                 </Button>
-                                                <Button Grid.Column="2" Foreground="{StaticResource AccentHoverBrush}" BorderBrush="{StaticResource AccentBrush}" Click="AddAppRule_Click">
+                                                <Button Grid.Column="2" Height="40" FontSize="13" Foreground="{StaticResource AccentHoverBrush}" BorderBrush="{StaticResource AccentBrush}" Click="AddAppRule_Click">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,8,0"/>
                                                         <TextBlock Text="Save Rule"/>
                                                     </StackPanel>
                                                 </Button>
-                                                <Button Grid.Column="4" Foreground="{StaticResource DangerBrush}" BorderBrush="{StaticResource DangerBrush}" Click="RemoveAppRule_Click">
+                                                <Button Grid.Column="4" Height="40" FontSize="13" Foreground="{StaticResource DangerBrush}" BorderBrush="{StaticResource DangerBrush}" Click="RemoveAppRule_Click">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                                        <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,8,0"/>
                                                         <TextBlock Text="Delete"/>
                                                     </StackPanel>
                                                 </Button>
@@ -3075,7 +3314,10 @@
                                                 <StackPanel>
                                                     <TextBlock Text="Last detected" Foreground="{StaticResource MutedTextBrush}"/>
                                                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                                        <TextBlock x:Name="LastDetectedIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="22" Margin="0,0,10,0"/>
+                                                        <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                            <TextBlock x:Name="LastDetectedIconText" Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" Foreground="#35A7FF" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            <Image x:Name="LastDetectedIconImage" Width="21" Height="21" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Grid>
                                                         <TextBlock x:Name="LastDetectedAppText" Text="Unknown" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                                     </StackPanel>
                                                     <Button HorizontalAlignment="Left" Margin="0,18,0,0" Click="DetectCurrentApp_Click">
@@ -3099,17 +3341,17 @@
                     </ScrollViewer>
                 </Grid>
 
-                <Grid x:Name="SettingsPage" Grid.Row="1" Visibility="Collapsed" Margin="26,18,26,24">
+                <Grid x:Name="SettingsPage" Grid.Row="1" Visibility="Collapsed" Margin="26,15,26,24">
                     <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="60"/>
+                                <RowDefinition Height="54"/>
                                 <RowDefinition Height="16"/>
                                 <RowDefinition Height="324"/>
                                 <RowDefinition Height="16"/>
                                 <RowDefinition Height="288"/>
                                 <RowDefinition Height="14"/>
-                                <RowDefinition Height="146"/>
+                                <RowDefinition Height="130"/>
                             </Grid.RowDefinitions>
 
                             <Grid Visibility="Collapsed">
@@ -3117,25 +3359,25 @@
                                 <CheckBox x:Name="EnterDingEnabledCheck" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged"/>
                             </Grid>
 
-                            <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}" Padding="18,8">
+                            <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}" Padding="24,6">
                                 <DockPanel LastChildFill="False">
                                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="Active pack:" Foreground="{StaticResource MutedTextBrush}" FontSize="15" VerticalAlignment="Center"/>
-                                        <Border Width="46" Height="46" CornerRadius="8" Background="#182029" BorderBrush="#2C3944" BorderThickness="1" Margin="18,0,14,0">
+                                        <TextBlock Text="Active pack:" Foreground="{StaticResource MutedTextBrush}" FontSize="14" VerticalAlignment="Center"/>
+                                        <Border Width="40" Height="40" CornerRadius="7" Background="#182029" BorderBrush="#2C3944" BorderThickness="1" Margin="18,0,14,0">
                                             <Grid ClipToBounds="True">
-                                                <TextBlock Text="K" Foreground="{StaticResource AccentHoverBrush}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock Text="K" Foreground="{StaticResource AccentHoverBrush}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 <Image x:Name="SettingsActivePackPreviewImage"
                                                        Stretch="UniformToFill"
                                                        RenderOptions.BitmapScalingMode="HighQuality"/>
                                             </Grid>
                                         </Border>
-                                        <TextBlock x:Name="SettingsActivePackNameText" Text="Alpaca Switches" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        <Border CornerRadius="5" Padding="9,4" Background="#12372E" BorderBrush="#1F6D52" BorderThickness="1" Margin="14,0,12,0">
-                                            <TextBlock x:Name="SettingsActivePackTypeText" Text="Mechanical" Foreground="{StaticResource AccentHoverBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="SettingsActivePackNameText" Text="Alpaca Switches" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <Border CornerRadius="5" Padding="8,4" Background="#102E28" BorderBrush="#1F6D52" BorderThickness="1" Margin="14,0,12,0">
+                                            <TextBlock x:Name="SettingsActivePackTypeText" Text="Mechanical" Foreground="{StaticResource AccentHoverBrush}" FontSize="11" FontWeight="SemiBold"/>
                                         </Border>
-                                        <TextBlock x:Name="SettingsActivePackSizeText" Text="5.2 MB" Foreground="{StaticResource MutedTextBrush}" FontSize="14" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="SettingsActivePackSizeText" Text="5.2 MB" Foreground="{StaticResource MutedTextBrush}" FontSize="13" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button DockPanel.Dock="Right" Content="Change Pack" Width="128" Height="40" Click="ShowLibrary_Click"/>
+                                    <Button DockPanel.Dock="Right" Content="Change Pack" Width="112" Height="38" Click="ShowLibrary_Click"/>
                                 </DockPanel>
                             </Border>
 
@@ -3157,7 +3399,11 @@
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE9D2;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
+                                            <Viewbox Width="24" Height="24" Margin="0,0,16,0">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M5,10 L5,16 M10,6 L10,18 M15,9 L15,15 M20,12 L20,13"/>
+                                                </Canvas>
+                                            </Viewbox>
                                             <TextBlock Text="Playback Behavior" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
                                         <Grid Grid.Row="1" Margin="2,0,0,0">
@@ -3215,50 +3461,78 @@
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE7F4;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
-                                            <TextBlock Text="Tray &amp; Startup" Style="{StaticResource SettingsSectionTitleStyle}"/>
+                                            <Viewbox Width="22" Height="22" Margin="0,0,14,0">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.7" StrokeLineJoin="Round" Fill="Transparent" Data="M7,4 L17,4 L17,20 L7,20 Z M9,7 L15,7 M9,10 L15,10 M9,13 L12,13"/>
+                                                    <Ellipse Width="2" Height="2" Canvas.Left="14" Canvas.Top="12.5" Fill="{StaticResource AccentBrush}"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <TextBlock Text="Tray &amp; Startup" Style="{StaticResource SettingsTrayTitleStyle}"/>
                                         </StackPanel>
                                         <Grid Grid.Row="1" Margin="2,0,0,0">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="&#xE8A7;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
+                                            <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M4,9 L14,9 L14,6 L20,12 L14,18 L14,15 L8,15 L8,20 L4,20 Z"/>
+                                                </Canvas>
+                                            </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="Minimize to tray" Style="{StaticResource SettingsRowTitleStyle}"/>
-                                                <TextBlock Text="Keep SoundType running in the system tray" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                                <TextBlock Text="Minimize to tray" Style="{StaticResource SettingsTrayRowTitleStyle}"/>
+                                                <TextBlock Text="Keep SoundType running in the system tray" Style="{StaticResource SettingsTrayRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="MinimizeToTrayCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="SettingsCheckChanged" Unchecked="SettingsCheckChanged" VerticalAlignment="Center"/>
                                         </Grid>
                                         <Grid Grid.Row="2" Margin="2,0,0,0">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="&#xE8BB;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
+                                            <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M4,9 L14,9 L14,6 L20,12 L14,18 L14,15 L8,15 L8,20 L4,20 Z"/>
+                                                </Canvas>
+                                            </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="Hide to tray on close" Style="{StaticResource SettingsRowTitleStyle}"/>
-                                                <TextBlock x:Name="TrayStatusText" Text="Don't exit when the window is closed" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                                <TextBlock Text="Hide to tray on close" Style="{StaticResource SettingsTrayRowTitleStyle}"/>
+                                                <TextBlock x:Name="TrayStatusText" Text="Don't exit when the window is closed" Style="{StaticResource SettingsTrayRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" Style="{StaticResource SettingsSwitchStyle}" IsChecked="{Binding IsChecked, ElementName=MinimizeToTrayCheck}" IsHitTestVisible="False" Focusable="False" VerticalAlignment="Center"/>
                                         </Grid>
                                         <Grid Grid.Row="3" Margin="2,0,0,0">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="&#xE945;" Style="{StaticResource SettingsIconTextStyle}" Foreground="{StaticResource MutedTextBrush}" FontSize="18"/>
+                                            <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <Ellipse Width="20" Height="20" Canvas.Left="2" Canvas.Top="2" Stroke="#A7B0B8" StrokeThickness="1.6" Fill="Transparent"/>
+                                                    <Path Stroke="#A7B0B8" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M12,6 L12,15 M8.5,11.5 L12,15 L15.5,11.5"/>
+                                                </Canvas>
+                                            </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="Start with Windows" Style="{StaticResource SettingsRowTitleStyle}"/>
-                                                <TextBlock Text="Launch SoundType when Windows starts" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                                <TextBlock Text="Start with Windows" Style="{StaticResource SettingsTrayRowTitleStyle}"/>
+                                                <TextBlock Text="Launch SoundType when Windows starts" Style="{StaticResource SettingsTrayRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="StartWithWindowsCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged" VerticalAlignment="Center"/>
                                         </Grid>
                                         <Grid Grid.Row="4" Margin="2,0,0,0">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="&#xE9F5;" Style="{StaticResource SettingsIconTextStyle}" FontSize="18"/>
+                                            <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <Ellipse Width="20" Height="20" Canvas.Left="2" Canvas.Top="2" Stroke="#A7B0B8" StrokeThickness="1.6" Fill="Transparent"/>
+                                                    <Path Stroke="#A7B0B8" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M12,6 L12,15 M8.5,11.5 L12,15 L15.5,11.5"/>
+                                                </Canvas>
+                                            </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="Start hidden in tray" Style="{StaticResource SettingsRowTitleStyle}"/>
-                                                <TextBlock Text="Don't show the window on startup" Style="{StaticResource SettingsRowDescriptionStyle}"/>
+                                                <TextBlock Text="Start hidden in tray" Style="{StaticResource SettingsTrayRowTitleStyle}"/>
+                                                <TextBlock Text="Don't show the window on startup" Style="{StaticResource SettingsTrayRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" x:Name="StartHiddenInTrayCheck" Style="{StaticResource SettingsSwitchStyle}" Checked="StartWithWindowsChanged" Unchecked="StartWithWindowsChanged" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Rectangle Grid.Row="5" Fill="#2A343D"/>
+                                        <Rectangle Grid.Row="5" Fill="#263039"/>
                                         <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Center">
                                             <TextBlock Text="Windows startup status:" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource AccentHoverBrush}" FontSize="13" Margin="16,1,7,0"/>
-                                            <TextBlock x:Name="StartupStatusText" Text="Enabled" Foreground="{StaticResource AccentHoverBrush}" FontSize="13"/>
+                                            <Viewbox Width="16" Height="16" Margin="16,1,7,0">
+                                                <Canvas Width="16" Height="16">
+                                                    <Ellipse Width="13" Height="13" Canvas.Left="1.5" Canvas.Top="1.5" Stroke="{StaticResource AccentBrush}" StrokeThickness="1.5" Fill="Transparent"/>
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M5,8 L7,10 L11,5.5"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <TextBlock x:Name="StartupStatusText" Text="Enabled" Foreground="{StaticResource AccentHoverBrush}" FontSize="13" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -3271,78 +3545,90 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Padding="18">
+                                <Border Grid.Column="0" Style="{StaticResource SettingsCardStyle}" Padding="18,16">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="42"/>
                                             <RowDefinition Height="38"/>
-                                            <RowDefinition Height="8"/>
-                                            <RowDefinition Height="38"/>
-                                            <RowDefinition Height="8"/>
-                                            <RowDefinition Height="38"/>
-                                            <RowDefinition Height="8"/>
-                                            <RowDefinition Height="38"/>
+                                            <RowDefinition Height="174"/>
                                             <RowDefinition Height="1"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE765;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
-                                            <TextBlock Text="Hotkeys" Style="{StaticResource SettingsSectionTitleStyle}"/>
-                                        </StackPanel>
-                                        <Border Grid.Row="1" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Viewbox Width="22" Height="22" Margin="0,0,14,0" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.7" StrokeLineJoin="Round" Fill="Transparent" Data="M4,7 L20,7 L20,17 L4,17 Z M7,10 L8,10 M10,10 L11,10 M13,10 L14,10 M16,10 L17,10 M7,13.5 L8,13.5 M10,13.5 L11,13.5 M13,13.5 L14,13.5 M16,13.5 L17,13.5"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <TextBlock Grid.Column="1" Text="Hotkeys" Style="{StaticResource SettingsHotkeyTitleStyle}"/>
+                                        </Grid>
+                                        <Border Grid.Row="1" CornerRadius="8" Background="#0E151A" BorderBrush="#24303A" BorderThickness="1" Margin="0,8,0,0" ClipToBounds="True">
                                             <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="210"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
-                                                <TextBlock Text="Toggle Listening" VerticalAlignment="Center"/>
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="36"><TextBlock Text="L" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                </StackPanel>
-                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="43"/>
+                                                    <RowDefinition Height="43"/>
+                                                    <RowDefinition Height="43"/>
+                                                    <RowDefinition Height="43"/>
+                                                </Grid.RowDefinitions>
+                                                <Border Grid.Row="0" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="Toggle Listening" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="36"><TextBlock Text="L" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                    </Grid>
+                                                </Border>
+                                                <Border Grid.Row="1" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="Preview (Normal)" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                        <Border Grid.Column="1" Style="{StaticResource HotkeyChipStyle}" Width="68" HorizontalAlignment="Right"><TextBlock Text="Space" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                    </Grid>
+                                                </Border>
+                                                <Border Grid.Row="2" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="Next Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="62"><TextBlock Text="Right" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                    </Grid>
+                                                </Border>
+                                                <Border Grid.Row="3" Style="{StaticResource SettingsHotkeyRowStyle}" BorderThickness="0">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="Previous Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="58"><TextBlock Text="Left" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                    </Grid>
+                                                </Border>
                                             </Grid>
                                         </Border>
-                                        <Border Grid.Row="3" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
-                                                <TextBlock Text="Preview (Normal)" VerticalAlignment="Center"/>
-                                                <Border Grid.Column="1" Style="{StaticResource HotkeyChipStyle}" Width="62" HorizontalAlignment="Right"><TextBlock Text="Space" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
-                                            </Grid>
-                                        </Border>
-                                        <Border Grid.Row="5" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
-                                                <TextBlock Text="Next Pack" VerticalAlignment="Center"/>
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="64"><TextBlock Text="Right" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                </StackPanel>
-                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
-                                            </Grid>
-                                        </Border>
-                                        <Border Grid.Row="7" CornerRadius="6" Background="#111922" BorderBrush="#27323C" BorderThickness="1" Padding="12,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
-                                                <TextBlock Text="Previous Pack" VerticalAlignment="Center"/>
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                    <TextBlock Text="+" Foreground="{StaticResource MutedTextBrush}" Margin="9,5"/>
-                                                    <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="58"><TextBlock Text="Left" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                </StackPanel>
-                                                <Button Grid.Column="2" Width="36" Height="34" Padding="0" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="15"/></Button>
-                                            </Grid>
-                                        </Border>
-                                        <Rectangle Grid.Row="8" Fill="#2A343D" Margin="0,12,0,0"/>
-                                        <Button Grid.Row="9" Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="226">
+                                        <Rectangle Grid.Row="2" Fill="#25313A" Margin="0,14,0,0"/>
+                                        <Button Grid.Row="3" Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="224">
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
+                                                <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" Margin="0,0,9,0"/>
                                                 <TextBlock Text="Restore Hotkeys to Defaults"/>
                                             </StackPanel>
                                         </Button>
@@ -3361,7 +3647,11 @@
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xEA18;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
+                                            <Viewbox Width="24" Height="24" Margin="0,0,16,0">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M12,3 L19,6 L19,11 C19,16 16,19.5 12,21 C8,19.5 5,16 5,11 L5,6 Z"/>
+                                                </Canvas>
+                                            </Viewbox>
                                             <TextBlock Text="Privacy" Style="{StaticResource SettingsSectionTitleStyle}"/>
                                         </StackPanel>
                                         <Grid Grid.Row="1">
@@ -3407,52 +3697,73 @@
                                 </Border>
                             </Grid>
 
-                            <Border Grid.Row="6" Style="{StaticResource SettingsCardStyle}" Padding="18,14">
+                            <Border Grid.Row="6" Style="{StaticResource SettingsCardStyle}" Padding="16,12">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1.05*"/>
-                                        <ColumnDefinition Width="1"/>
-                                        <ColumnDefinition Width="0.95*"/>
+                                        <ColumnDefinition Width="528"/>
+                                        <ColumnDefinition Width="38"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                                            <TextBlock Text="&#xE7C3;" Style="{StaticResource SettingsIconTextStyle}" Margin="0,0,16,0"/>
-                                            <TextBlock Text="Storage" Style="{StaticResource SettingsSectionTitleStyle}"/>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="34"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="40"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Width="22" Height="22" Margin="0,0,14,0">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M6,7 C6,5.3 18,5.3 18,7 L18,17 C18,18.7 6,18.7 6,17 Z M6,7 C6,8.7 18,8.7 18,7 M6,12 C6,13.7 18,13.7 18,12"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <TextBlock Text="Storage" Style="{StaticResource SettingsStorageTitleStyle}"/>
                                         </StackPanel>
-                                        <TextBlock Text="Packs folder location" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,8"/>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="44"/><ColumnDefinition Width="152"/></Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Height="40" CornerRadius="6" Background="#121922" BorderBrush="#2A3540" BorderThickness="1" Padding="12,0">
-                                                <TextBlock x:Name="PacksFolderPathText" Text="C:\Users\brand\Documents\SoundType\Packs" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Row="1" Text="Packs folder location" Style="{StaticResource SettingsStorageLabelStyle}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="340"/>
+                                                <ColumnDefinition Width="40"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="132"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Height="38" CornerRadius="6,0,0,6" Background="#111922" BorderBrush="#27333D" BorderThickness="1" Padding="12,0">
+                                                <TextBlock x:Name="PacksFolderPathText" Text="C:\Users\brand\Documents\SoundType\Packs" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="#D8DEE4" FontSize="13"/>
                                             </Border>
-                                            <Button Grid.Column="1" Width="44" Height="40" Padding="0" Margin="0,0,10,0" Content="..."/>
-                                            <Button Grid.Column="2" Width="144" Height="40" Click="OpenPackFolder_Click">
+                                            <Button Grid.Column="1" Width="40" Height="38" Padding="0" Margin="-1,0,0,0" Content="..."/>
+                                            <Button Grid.Column="3" Width="130" Height="38" Click="OpenPackFolder_Click">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,10,0"/>
+                                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,10,0" Foreground="#D8DEE4"/>
                                                     <TextBlock Text="Open Folder"/>
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
-                                    </StackPanel>
-                                    <Rectangle Grid.Column="1" Fill="#2A343D" Margin="18,30,18,0"/>
-                                    <Grid Grid.Column="2" Margin="34,34,0,0">
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    </Grid>
+                                    <Rectangle Grid.Column="1" Width="1" Fill="#263039" HorizontalAlignment="Center" Margin="0,28,0,14"/>
+                                    <Grid Grid.Column="2" Margin="18,37,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="280"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="Waveform cache" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            <TextBlock Text="84 MB" FontWeight="SemiBold" Margin="0,3,0,7"/>
-                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" Click="ClearWaveformCache_Click">
+                                            <TextBlock Text="Waveform cache" Style="{StaticResource SettingsStorageLabelStyle}"/>
+                                            <TextBlock Text="84 MB" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,6"/>
+                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="194" HorizontalAlignment="Left" Click="ClearWaveformCache_Click">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Margin="0,0,9,0" Foreground="#D8DEE4"/>
                                                     <TextBlock Text="Clear Waveform Cache"/>
                                                 </StackPanel>
                                             </Button>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock Text="Packs installed" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            <TextBlock x:Name="SettingsPacksInstalledText" Text="22" FontWeight="SemiBold" Margin="0,3,0,7"/>
-                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" Click="ShowLibrary_Click">
+                                            <TextBlock Text="Packs installed" Style="{StaticResource SettingsStorageLabelStyle}"/>
+                                            <TextBlock x:Name="SettingsPacksInstalledText" Text="22" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,6"/>
+                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="150" HorizontalAlignment="Left" Click="ShowLibrary_Click">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0"/>
+                                                    <Viewbox Width="17" Height="17" Margin="0,0,9,0">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Stroke="#D8DEE4" StrokeThickness="1.7" StrokeLineJoin="Round" Fill="Transparent" Data="M4,7 L12,3 L20,7 L12,11 Z M4,12 L12,16 L20,12 M4,17 L12,21 L20,17"/>
+                                                        </Canvas>
+                                                    </Viewbox>
                                                     <TextBlock Text="Manage Packs"/>
                                                 </StackPanel>
                                             </Button>

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -44,6 +45,8 @@ public partial class MainWindow : Window
         new("ding-07", "Reward Tap Bell"),
         new("ding-08", "Soft Desk Chime")
     ];
+    private const int RecentAppActivitySlots = 22;
+    private static readonly TimeSpan RecentAppActivityWindow = TimeSpan.FromMinutes(30);
     private readonly SettingsService _settingsService = new();
     private readonly SoundPackLoader _packLoader = new();
     private readonly SoundPackArchiveService _archiveService = new();
@@ -523,11 +526,11 @@ public partial class MainWindow : Window
         try
         {
             RuleModeComboBox.Items.Clear();
-            RuleModeComboBox.Items.Add(AppRuleMode.Disabled);
-            RuleModeComboBox.Items.Add(AppRuleMode.Default);
-            RuleModeComboBox.Items.Add(AppRuleMode.EnabledOnly);
-            RuleModeComboBox.Items.Add(AppRuleMode.UseSpecificPack);
-            RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
+            RuleModeComboBox.Items.Add(new AppRuleModeOption(AppRuleMode.Disabled, "Disabled"));
+            RuleModeComboBox.Items.Add(new AppRuleModeOption(AppRuleMode.Default, "Default"));
+            RuleModeComboBox.Items.Add(new AppRuleModeOption(AppRuleMode.EnabledOnly, "Enabled Only"));
+            RuleModeComboBox.Items.Add(new AppRuleModeOption(AppRuleMode.UseSpecificPack, "Use Specific Pack"));
+            SelectRuleMode(AppRuleMode.Disabled);
             RuleVolumeSlider.Value = 1.0;
             RuleVolumeText.Text = "100%";
             RuleEnabledCheckBox.IsChecked = false;
@@ -738,20 +741,51 @@ public partial class MainWindow : Window
 
     private void RefreshAppRules()
     {
+        string? selectedProcess = AppRulesList.SelectedItem is AppRuleListItem selectedItem
+            ? selectedItem.ProcessName
+            : null;
+        IReadOnlyList<AppRule> allRules = GetAppRuleDisplayRules();
+        IReadOnlyList<AppRule> displayRules = FilterAppRules(allRules);
         AppRulesList.Items.Clear();
-        foreach (AppRule rule in _settings.AppRules.OrderBy(rule => rule.ProcessName))
+        foreach (AppRule rule in displayRules)
         {
             AppRulesList.Items.Add(new AppRuleListItem(rule, _packsById));
         }
 
-        int enabledRules = _settings.AppRules.Count(rule => rule.Mode != AppRuleMode.Disabled);
-        RuleCountText.Text = _settings.AppRules.Count.ToString();
-        ActiveRulesText.Text = $"{enabledRules} active";
-        AppRuleSelectionText.Text = $"{_settings.AppRules.Count} rules total";
+        int activeRules = allRules.Count(rule => rule.Mode != AppRuleMode.Disabled);
+        RuleCountText.Text = allRules.Count.ToString();
+        ActiveRulesText.Text = $"{activeRules} active";
+        AppRuleSelectionText.Text = string.IsNullOrWhiteSpace(GetRuleSearchText())
+            ? FormatRuleCount(allRules.Count)
+            : $"{displayRules.Count} of {FormatRuleCount(allRules.Count)}";
+        bool showEmptyState = displayRules.Count == 0;
+        AppRulesList.Visibility = showEmptyState ? Visibility.Collapsed : Visibility.Visible;
+        AppRulesEmptyState.Visibility = showEmptyState ? Visibility.Visible : Visibility.Collapsed;
+        if (showEmptyState)
+        {
+            bool hasRules = allRules.Count > 0;
+            AppRulesEmptyTitleText.Text = hasRules ? "No matching rules" : "No app rules yet";
+            AppRulesEmptyDescriptionText.Text = hasRules
+                ? "Clear the search field or try a different process, mode, or pack name."
+                : "Create a rule for the current foreground app or type a process name in the editor.";
+        }
+
+        if (RuleSearchPlaceholderText is not null)
+        {
+            RuleSearchPlaceholderText.Visibility = string.IsNullOrWhiteSpace(GetRuleSearchText())
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         DefaultProfileText.Text = _activePack?.Name ?? "No pack selected";
         DefaultProfileTagText.Text = _activePack is null
             ? "Default"
             : new PackListItem(_activePack).TypeLabel;
+        DefaultProfileImage.Source = _activePack is null ? null : CreatePackPreviewImageSource(_activePack);
+
+        AppRulesList.SelectedItem = AppRulesList.Items
+            .OfType<AppRuleListItem>()
+            .FirstOrDefault(item => item.ProcessName.Equals(selectedProcess, StringComparison.OrdinalIgnoreCase));
 
         if (AppRulesList.SelectedItem is AppRuleListItem selected)
         {
@@ -765,35 +799,101 @@ public partial class MainWindow : Window
         }
     }
 
+    private IReadOnlyList<AppRule> GetAppRuleDisplayRules() =>
+        _settings.AppRules
+            .Where(rule => !string.IsNullOrWhiteSpace(rule.ProcessName))
+            .GroupBy(rule => rule.ProcessName, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.Last())
+            .OrderBy(rule => rule.ProcessName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+    private static string NormalizeRuleProcessName(string? processName)
+    {
+        if (string.IsNullOrWhiteSpace(processName))
+        {
+            return string.Empty;
+        }
+
+        string normalized = processName.Trim();
+        return normalized.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+            ? normalized
+            : $"{normalized}.exe";
+    }
+
+    private IReadOnlyList<AppRule> FilterAppRules(IReadOnlyList<AppRule> rules)
+    {
+        string query = GetRuleSearchText();
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return rules;
+        }
+
+        return rules
+            .Where(rule =>
+                rule.ProcessName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                rule.Mode.ToString().Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                (!string.IsNullOrWhiteSpace(rule.SoundPackId) && ResolvePackDisplayName(rule.SoundPackId).Contains(query, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+    }
+
+    private string GetRuleSearchText() =>
+        RuleSearchTextBox is null ? string.Empty : RuleSearchTextBox.Text.Trim();
+
+    private string ResolvePackDisplayName(string packId) =>
+        _packsById.TryGetValue(packId, out SoundPackMetadata? pack) ? pack.Name : packId;
+
+    private static string FormatRuleCount(int count) =>
+        count == 1 ? "1 rule total" : $"{count} rules total";
+
     private void RefreshCurrentApp()
     {
         string? processName = _activeWindow.GetActiveProcessName();
         _currentProcessName = processName;
-        if (!string.Equals(processName, _lastRecordedProcessName, StringComparison.OrdinalIgnoreCase))
+        if (IsTrackableRecentProcess(processName))
         {
-            _lastRecordedProcessName = processName;
-            _recentApps.Record(processName);
-            RefreshRecentApps();
+            if (!string.Equals(processName, _lastRecordedProcessName, StringComparison.OrdinalIgnoreCase))
+            {
+                _lastRecordedProcessName = processName;
+                _recentApps.Record(processName);
+                RefreshRecentApps();
+            }
+        }
+        else
+        {
+            _lastRecordedProcessName = null;
         }
 
-        string displayName = string.IsNullOrWhiteSpace(processName) ? "Unknown" : processName;
+        string displayName = ResolveRulesPageForegroundDisplay(processName);
         AppVisual currentAppVisual = AppVisual.ForProcess(displayName);
         CurrentAppIconText.Text = currentAppVisual.IconText;
         CurrentAppIconText.FontFamily = currentAppVisual.IconFontFamily;
         CurrentAppIconText.Foreground = currentAppVisual.IconForeground;
+        CurrentAppIconImage.Source = currentAppVisual.IconSource;
         LastDetectedIconText.Text = currentAppVisual.IconText;
         LastDetectedIconText.FontFamily = currentAppVisual.IconFontFamily;
         LastDetectedIconText.Foreground = currentAppVisual.IconForeground;
+        LastDetectedIconImage.Source = currentAppVisual.IconSource;
         CurrentAppText.Text = displayName;
-        CurrentAppStatusText.Text = string.IsNullOrWhiteSpace(processName) ? "Waiting for focus" : "Active now";
+        CurrentAppStatusText.Text = displayName.Equals("Unknown", StringComparison.OrdinalIgnoreCase) ? "Waiting for focus" : "Active now";
         LastDetectedAppText.Text = displayName;
-        LastDetectedTimeText.Text = string.IsNullOrWhiteSpace(processName) ? "No app detected" : "Updated just now";
-        if (string.IsNullOrWhiteSpace(ProcessRuleTextBox.Text) && processName is not null)
+        LastDetectedTimeText.Text = displayName.Equals("Unknown", StringComparison.OrdinalIgnoreCase) ? "No app detected" : "Updated just now";
+        if (string.IsNullOrWhiteSpace(ProcessRuleTextBox.Text) && !displayName.Equals("Unknown", StringComparison.OrdinalIgnoreCase))
         {
-            ProcessRuleTextBox.Text = processName;
-            RuleEditorProcessText.Text = processName;
-            ApplyRuleEditorIcon(processName);
+            ProcessRuleTextBox.Text = displayName;
+            RuleEditorProcessText.Text = displayName;
+            ApplyRuleEditorIcon(displayName);
         }
+    }
+
+    private static string ResolveRulesPageForegroundDisplay(string? processName)
+    {
+        if (string.IsNullOrWhiteSpace(processName) ||
+            processName.Equals("SoundType.exe", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Unknown";
+        }
+
+        return processName;
     }
 
     private void RefreshStatus()
@@ -970,12 +1070,21 @@ public partial class MainWindow : Window
         }
 
         UpdateNavigationState(activePage);
+        UpdateShellLayout(activePage);
         UpdateHeaderText(activePage);
         if (!wasVisible)
         {
             AnimatePageEntrance(activePage);
             AnimateHeaderEntrance();
         }
+    }
+
+    private void UpdateShellLayout(FrameworkElement activePage)
+    {
+        Sidebar.Visibility = Visibility.Visible;
+        SidebarColumn.Width = new GridLength(320);
+        Grid.SetColumn(PageHost, 1);
+        Grid.SetColumnSpan(PageHost, 1);
     }
 
     private void AnimatePageEntrance(FrameworkElement page)
@@ -1637,6 +1746,134 @@ public partial class MainWindow : Window
     private SoundPackMetadata TryImportPack(string archivePath, bool overwrite) =>
         _archiveService.ImportPack(archivePath, _packsRoot, overwrite);
 
+    private async void ImportAppRules_Click(object sender, RoutedEventArgs e)
+    {
+        Microsoft.Win32.OpenFileDialog dialog = new()
+        {
+            Filter = "SoundType app rules (*.json)|*.json|All files (*.*)|*.*"
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            await using FileStream stream = File.OpenRead(dialog.FileName);
+            List<AppRule>? importedRules = await JsonSerializer.DeserializeAsync<List<AppRule>>(stream);
+            if (importedRules is null)
+            {
+                throw new InvalidDataException("The selected file does not contain app rules.");
+            }
+
+            int importedCount = MergeAppRules(importedRules);
+            RefreshAppRules();
+            await SaveSettingsAsync();
+            System.Windows.MessageBox.Show(
+                this,
+                $"Imported {FormatRuleCount(importedCount).Replace(" total", "", StringComparison.Ordinal)}.",
+                "Import app rules",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                this,
+                $"Could not import app rules: {ex.Message}",
+                "Import app rules",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private void ExportAppRules_Click(object sender, RoutedEventArgs e)
+    {
+        IReadOnlyList<AppRule> rules = GetAppRuleDisplayRules();
+        if (rules.Count == 0)
+        {
+            System.Windows.MessageBox.Show(
+                this,
+                "There are no app rules to export.",
+                "Export app rules",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        Microsoft.Win32.SaveFileDialog dialog = new()
+        {
+            Filter = "SoundType app rules (*.json)|*.json",
+            FileName = "soundtype-app-rules.json",
+            DefaultExt = ".json"
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            JsonSerializerOptions options = new() { WriteIndented = true };
+            File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(rules, options));
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                this,
+                $"Could not export app rules: {ex.Message}",
+                "Export app rules",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private int MergeAppRules(IEnumerable<AppRule> importedRules)
+    {
+        int importedCount = 0;
+        foreach (AppRule importedRule in importedRules)
+        {
+            string processName = NormalizeRuleProcessName(importedRule.ProcessName);
+            if (string.IsNullOrWhiteSpace(processName))
+            {
+                continue;
+            }
+
+            AppRuleMode mode = Enum.IsDefined(importedRule.Mode) ? importedRule.Mode : AppRuleMode.Disabled;
+            string? soundPackId = mode == AppRuleMode.UseSpecificPack && !string.IsNullOrWhiteSpace(importedRule.SoundPackId)
+                ? importedRule.SoundPackId
+                : null;
+            double? volumeOverride = importedRule.VolumeOverride is double volume
+                ? Math.Clamp(volume, 0.0, 1.5)
+                : null;
+
+            AppRule? existing = _settings.AppRules.FirstOrDefault(rule =>
+                rule.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase));
+            if (existing is null)
+            {
+                _settings.AppRules.Add(new AppRule
+                {
+                    ProcessName = processName,
+                    Mode = mode,
+                    SoundPackId = soundPackId,
+                    VolumeOverride = volumeOverride
+                });
+            }
+            else
+            {
+                existing.Mode = mode;
+                existing.SoundPackId = soundPackId;
+                existing.VolumeOverride = volumeOverride;
+            }
+
+            importedCount++;
+        }
+
+        return importedCount;
+    }
+
     private string BuildImportResultMessage(string action, SoundPackMetadata metadata)
     {
         SoundPackValidationResult validation = _packLoader.Validate(metadata, analyzeAudioQuality: true);
@@ -1941,22 +2178,27 @@ public partial class MainWindow : Window
     private static string ToTitleCase(string value) =>
         value.Length == 0 ? value : char.ToUpperInvariant(value[0]) + value[1..];
 
+    private AppRuleMode GetSelectedRuleMode() =>
+        RuleModeComboBox.SelectedItem is AppRuleModeOption option
+            ? option.Mode
+            : AppRuleMode.Disabled;
+
+    private void SelectRuleMode(AppRuleMode mode)
+    {
+        RuleModeComboBox.SelectedItem = RuleModeComboBox.Items
+            .OfType<AppRuleModeOption>()
+            .FirstOrDefault(option => option.Mode == mode);
+    }
+
     private void AddAppRule_Click(object sender, RoutedEventArgs e)
     {
-        string processName = ProcessRuleTextBox.Text.Trim();
+        string processName = NormalizeRuleProcessName(ProcessRuleTextBox.Text);
         if (string.IsNullOrWhiteSpace(processName))
         {
             return;
         }
 
-        if (!processName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-        {
-            processName += ".exe";
-        }
-
-        AppRuleMode mode = RuleModeComboBox.SelectedItem is AppRuleMode selectedMode
-            ? selectedMode
-            : AppRuleMode.Disabled;
+        AppRuleMode mode = GetSelectedRuleMode();
         if (RuleEnabledCheckBox.IsChecked != true)
         {
             mode = AppRuleMode.Disabled;
@@ -2015,11 +2257,13 @@ public partial class MainWindow : Window
         RuleEditorIconText.Text = visual.IconText;
         RuleEditorIconText.FontFamily = visual.IconFontFamily;
         RuleEditorIconText.Foreground = visual.IconForeground;
+        RuleEditorIconImage.Source = visual.IconSource;
     }
 
     private void RefreshRecentApps()
     {
-        if (RecentAppsList is null)
+        if (RecentAppsList is null || RecentAppActivityList is null ||
+            RecentAppActivityLaneTop is null || RecentAppActivityLaneBottom is null)
         {
             return;
         }
@@ -2027,8 +2271,11 @@ public partial class MainWindow : Window
         string? selected = RecentAppsList.SelectedItem is RecentAppChipItem selectedChip
             ? selectedChip.ProcessName
             : null;
+        IReadOnlyList<RecentAppEntry> recentApps = _recentApps.ListRecentApps()
+            .Where(app => IsTrackableRecentProcess(app.ProcessName))
+            .ToList();
+
         RecentAppsList.Items.Clear();
-        IReadOnlyList<RecentAppEntry> recentApps = _recentApps.ListRecentApps();
         foreach (RecentAppEntry app in recentApps.Take(8))
         {
             RecentAppsList.Items.Add(new RecentAppChipItem(app.ProcessName));
@@ -2041,9 +2288,69 @@ public partial class MainWindow : Window
                 .FirstOrDefault(item => item.ProcessName.Equals(selected, StringComparison.OrdinalIgnoreCase));
         }
 
-        RecentAppSummaryText.Text = recentApps.Count == 0
-            ? "No recent apps detected yet."
-            : string.Join(Environment.NewLine, recentApps.Take(4).Select(FormatRecentAppSummary));
+        RecentAppActivityList.Items.Clear();
+        foreach (RecentAppEntry app in recentApps.Take(4))
+        {
+            RecentAppActivityList.Items.Add(new RecentAppActivityItem(
+                app.ProcessName,
+                FormatLastSeen(app.LastSeenUtc),
+                GetRecentAppColor(app.ProcessName)));
+        }
+
+        RefreshRecentAppActivityTimeline(_recentApps.ListSwitchEvents(RecentAppActivityWindow));
+    }
+
+    private void RefreshRecentAppActivityTimeline(IReadOnlyList<RecentAppSwitchEvent> events)
+    {
+        List<MediaColor?> topLane = Enumerable.Repeat<MediaColor?>(null, RecentAppActivitySlots).ToList();
+        List<MediaColor?> bottomLane = Enumerable.Repeat<MediaColor?>(null, RecentAppActivitySlots).ToList();
+        DateTimeOffset nowUtc = DateTimeOffset.UtcNow;
+
+        List<RecentAppSwitchEvent> trackableEvents = events
+            .Where(app => IsTrackableRecentProcess(app.ProcessName))
+            .ToList();
+
+        foreach (RecentAppSwitchEvent appEvent in trackableEvents)
+        {
+            double ageRatio = Math.Clamp(
+                (nowUtc - appEvent.SeenUtc).TotalMilliseconds / RecentAppActivityWindow.TotalMilliseconds,
+                0,
+                0.999);
+            int slot = Math.Clamp(RecentAppActivitySlots - 1 - (int)Math.Floor(ageRatio * RecentAppActivitySlots), 0, RecentAppActivitySlots - 1);
+            if (appEvent.Lane == 0)
+            {
+                topLane[slot] = GetRecentAppColor(appEvent.ProcessName);
+            }
+            else
+            {
+                bottomLane[slot] = GetRecentAppColor(appEvent.ProcessName);
+            }
+        }
+
+        PopulateRecentAppActivityLane(RecentAppActivityLaneTop, topLane);
+        PopulateRecentAppActivityLane(RecentAppActivityLaneBottom, bottomLane);
+        RecentAppActivityEmptyText.Visibility = trackableEvents.Count == 0
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
+    private static void PopulateRecentAppActivityLane(UniformGrid lane, IReadOnlyList<MediaColor?> colors)
+    {
+        lane.Children.Clear();
+        lane.Columns = RecentAppActivitySlots;
+        foreach (MediaColor? color in colors)
+        {
+            lane.Children.Add(new ShapeRectangle
+            {
+                Width = 3,
+                RadiusX = 2,
+                RadiusY = 2,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                Fill = color is MediaColor value
+                    ? new SolidColorBrush(value)
+                    : System.Windows.Media.Brushes.Transparent
+            });
+        }
     }
 
     private void RecentAppsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2056,16 +2363,66 @@ public partial class MainWindow : Window
         }
     }
 
+    private void RuleSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (AppRulesList is null)
+        {
+            return;
+        }
+
+        RefreshAppRules();
+    }
+
     private static string FormatRecentAppSummary(RecentAppEntry app)
     {
-        TimeSpan age = DateTimeOffset.UtcNow - app.LastSeenUtc;
-        string seen = age.TotalSeconds < 30
+        return $"{app.ProcessName}    {FormatLastSeen(app.LastSeenUtc)}";
+    }
+
+    private static string FormatLastSeen(DateTimeOffset lastSeenUtc)
+    {
+        TimeSpan age = DateTimeOffset.UtcNow - lastSeenUtc;
+        return age.TotalSeconds < 30
             ? "Now"
             : age.TotalMinutes < 60
                 ? $"{Math.Max(1, Math.Round(age.TotalMinutes))}m ago"
                 : $"{Math.Round(age.TotalHours)}h ago";
+    }
 
-        return $"{app.ProcessName}    {seen}";
+    private static bool IsTrackableRecentProcess(string? processName) =>
+        !string.IsNullOrWhiteSpace(processName) &&
+        !processName.Equals("Unknown", StringComparison.OrdinalIgnoreCase) &&
+        !processName.Equals("SoundType.exe", StringComparison.OrdinalIgnoreCase);
+
+    private static MediaColor GetRecentAppColor(string processName)
+    {
+        string normalized = processName.Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "code.exe" or "devenv.exe" => MediaColor.FromRgb(53, 167, 255),
+            "discord.exe" => MediaColor.FromRgb(99, 123, 255),
+            "chrome.exe" => MediaColor.FromRgb(124, 240, 187),
+            "spotify.exe" => MediaColor.FromRgb(78, 217, 154),
+            "obs64.exe" => MediaColor.FromRgb(240, 109, 119),
+            "explorer.exe" => MediaColor.FromRgb(255, 190, 83),
+            "powershell.exe" => MediaColor.FromRgb(99, 123, 255),
+            "notepad.exe" => MediaColor.FromRgb(84, 214, 255),
+            _ => StableRecentAppColor(normalized)
+        };
+    }
+
+    private static MediaColor StableRecentAppColor(string processName)
+    {
+        MediaColor[] palette =
+        [
+            MediaColor.FromRgb(78, 217, 154),
+            MediaColor.FromRgb(53, 167, 255),
+            MediaColor.FromRgb(99, 123, 255),
+            MediaColor.FromRgb(175, 107, 255),
+            MediaColor.FromRgb(255, 190, 83),
+            MediaColor.FromRgb(240, 109, 119)
+        ];
+        int hash = StringComparer.OrdinalIgnoreCase.GetHashCode(processName);
+        return palette[(hash & int.MaxValue) % palette.Length];
     }
 
     private void AppRulesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2082,7 +2439,7 @@ public partial class MainWindow : Window
             ProcessRuleTextBox.Text = rule.ProcessName;
             RuleEditorProcessText.Text = rule.ProcessName;
             ApplyRuleEditorIcon(rule.ProcessName);
-            RuleModeComboBox.SelectedItem = rule.Mode;
+            SelectRuleMode(rule.Mode);
             RuleVolumeSlider.Value = rule.VolumeOverride ?? 1.0;
             RuleEnabledCheckBox.IsChecked = rule.Mode != AppRuleMode.Disabled;
 
@@ -2112,15 +2469,15 @@ public partial class MainWindow : Window
 
         if (RuleEnabledCheckBox.IsChecked == true)
         {
-            if (RuleModeComboBox.SelectedItem is AppRuleMode.Disabled)
+            if (GetSelectedRuleMode() == AppRuleMode.Disabled)
             {
-                RuleModeComboBox.SelectedItem = AppRuleMode.Default;
+                SelectRuleMode(AppRuleMode.Default);
             }
 
             return;
         }
 
-        RuleModeComboBox.SelectedItem = AppRuleMode.Disabled;
+        SelectRuleMode(AppRuleMode.Disabled);
     }
 
     private void SettingsCheckChanged(object sender, RoutedEventArgs e)
@@ -2503,7 +2860,7 @@ public partial class MainWindow : Window
             : $"{Metadata.KeyOverrides.Count:N0} custom");
         public string? PreviewImagePath => ResolvePackPreviewImagePath(Metadata);
 
-        public override string ToString() => $"{Name} - {Description}";
+        public override string ToString() => Name;
 
         public static int MockOrder(SoundPackMetadata metadata) =>
             metadata.Id.ToLowerInvariant() switch

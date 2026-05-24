@@ -3,6 +3,7 @@ using SoundType.Core.Models;
 using MediaBrush = System.Windows.Media.Brush;
 using MediaColor = System.Windows.Media.Color;
 using MediaFontFamily = System.Windows.Media.FontFamily;
+using MediaImageSource = System.Windows.Media.ImageSource;
 
 namespace SoundType.App.ViewModels;
 
@@ -20,6 +21,7 @@ internal sealed class AppRuleListItem(AppRule rule, IReadOnlyDictionary<string, 
     public MediaBrush ProcessIconForeground => _visual.IconForeground;
     public MediaBrush ProcessIconBackground => _visual.IconBackground;
     public double ProcessIconFontSize => _visual.IconFontSize;
+    public MediaImageSource? ProcessIconSource => _visual.IconSource;
     public string ModeLabel => Rule.Mode switch
     {
         AppRuleMode.Default => "Default",
@@ -30,7 +32,9 @@ internal sealed class AppRuleListItem(AppRule rule, IReadOnlyDictionary<string, 
     };
     public MediaBrush ModeBrush => new SolidColorBrush(Rule.Mode == AppRuleMode.Disabled
         ? MediaColor.FromRgb(240, 109, 119)
-        : MediaColor.FromRgb(124, 240, 187));
+        : Rule.Mode == AppRuleMode.UseSpecificPack
+            ? MediaColor.FromRgb(124, 240, 187)
+            : MediaColor.FromRgb(185, 196, 204));
 
     public string PackDisplayName
     {
@@ -38,7 +42,7 @@ internal sealed class AppRuleListItem(AppRule rule, IReadOnlyDictionary<string, 
         {
             if (string.IsNullOrWhiteSpace(Rule.SoundPackId))
             {
-                return "(Default)";
+                return Rule.Mode == AppRuleMode.Disabled ? "--" : "(Default)";
             }
 
             return packsById.TryGetValue(Rule.SoundPackId, out SoundPackMetadata? pack)

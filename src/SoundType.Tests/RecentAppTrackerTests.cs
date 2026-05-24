@@ -65,6 +65,23 @@ public sealed class RecentAppTrackerTests
         Assert.True(apps[1].LastSeenUtc > apps[2].LastSeenUtc);
     }
 
+    [Fact]
+    public void ListSwitchEvents_ReturnsRecordedSwitches_InTimelineOrder()
+    {
+        RecentAppTracker tracker = new();
+
+        tracker.Record("Code");
+        tracker.Record("Discord");
+        tracker.Record("Chrome");
+
+        IReadOnlyList<RecentAppSwitchEvent> events = tracker.ListSwitchEvents();
+
+        Assert.Equal(["Code.exe", "Discord.exe", "Chrome.exe"], events.Select(app => app.ProcessName));
+        Assert.Equal([0, 1, 0], events.Select(app => app.Lane));
+        Assert.True(events[0].SeenUtc < events[1].SeenUtc);
+        Assert.True(events[1].SeenUtc < events[2].SeenUtc);
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
