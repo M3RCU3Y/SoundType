@@ -77,6 +77,7 @@ public partial class MainWindow : Window
     private SoundPackMetadata? _activePack;
     private HwndSource? _hotkeySource;
     private string? _currentProcessName;
+    private string? _lastDetectedProcessName;
     private string? _lastRecordedProcessName;
     private bool _loading = true;
     private bool _exitRequested;
@@ -848,9 +849,10 @@ public partial class MainWindow : Window
     private void RefreshCurrentApp()
     {
         string? processName = _activeWindow.GetActiveProcessName();
-        _currentProcessName = processName;
         if (IsTrackableRecentProcess(processName))
         {
+            _currentProcessName = processName;
+            _lastDetectedProcessName = processName;
             if (!string.Equals(processName, _lastRecordedProcessName, StringComparison.OrdinalIgnoreCase))
             {
                 _lastRecordedProcessName = processName;
@@ -860,10 +862,10 @@ public partial class MainWindow : Window
         }
         else
         {
-            _lastRecordedProcessName = null;
+            _currentProcessName = _lastDetectedProcessName;
         }
 
-        string displayName = ResolveRulesPageForegroundDisplay(processName);
+        string displayName = ResolveRulesPageForegroundDisplay(_currentProcessName);
         AppVisual currentAppVisual = AppVisual.ForProcess(displayName);
         CurrentAppIconText.Text = currentAppVisual.IconText;
         CurrentAppIconText.FontFamily = currentAppVisual.IconFontFamily;

@@ -3054,10 +3054,25 @@
                                                     <ColumnDefinition Width="128"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="Recent apps" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                <Button Grid.Column="3" Width="128" Height="38" Click="FocusNewRule_Click">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="+" FontSize="22" Margin="0,-3,10,0"/>
-                                                        <TextBlock Text="Create Rule"/>
+                                                <Button Grid.Column="3"
+                                                        Width="128"
+                                                        Height="38"
+                                                        Padding="0"
+                                                        HorizontalContentAlignment="Center"
+                                                        VerticalContentAlignment="Center"
+                                                        ToolTip="Create rule"
+                                                        Click="FocusNewRule_Click">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Viewbox Width="14" Height="14" Margin="0,0,10,0">
+                                                            <Canvas Width="16" Height="16">
+                                                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                                      StrokeThickness="2"
+                                                                      StrokeStartLineCap="Round"
+                                                                      StrokeEndLineCap="Round"
+                                                                      Data="M8,3 L8,13 M3,8 L13,8"/>
+                                                            </Canvas>
+                                                        </Viewbox>
+                                                        <TextBlock Text="Create Rule" VerticalAlignment="Center"/>
                                                     </StackPanel>
                                                 </Button>
                                                 <ScrollViewer Grid.Column="1"
@@ -3091,9 +3106,9 @@
 
                                             <Grid Grid.Row="1" Margin="0,14,0,0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="1.45*"/>
                                                     <ColumnDefinition Width="18"/>
-                                                    <ColumnDefinition Width="224"/>
+                                                    <ColumnDefinition Width="0.85*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel>
                                                     <DockPanel Margin="0,0,0,12">
@@ -3258,15 +3273,20 @@
                                             </Grid>
 
                                             <Border Height="44" Background="#10171C" BorderBrush="#202B33" BorderThickness="1" CornerRadius="7" Padding="12,0">
-                                                <DockPanel>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
                                                     <TextBlock Text="Enable rule" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                                     <CheckBox x:Name="RuleEnabledCheckBox"
-                                                              DockPanel.Dock="Right"
+                                                              Grid.Column="1"
                                                               Style="{StaticResource KeyboardSwitchStyle}"
                                                               VerticalAlignment="Center"
+                                                              HorizontalAlignment="Right"
                                                               Checked="RuleEnabledCheckBox_Changed"
                                                               Unchecked="RuleEnabledCheckBox_Changed"/>
-                                                </DockPanel>
+                                                </Grid>
                                             </Border>
 
                                             <Grid Margin="0,18,0,0">
@@ -3322,7 +3342,13 @@
                                                     </StackPanel>
                                                     <Button HorizontalAlignment="Left" Margin="0,18,0,0" Click="DetectCurrentApp_Click">
                                                         <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="15" Margin="0,0,10,0"/>
+                                                            <Viewbox Width="16" Height="16" Margin="0,0,10,0">
+                                                                <Canvas Width="16" Height="16">
+                                                                    <Ellipse Canvas.Left="4" Canvas.Top="4" Width="8" Height="8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Fill="Transparent"/>
+                                                                    <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M8,1.5 L8,4 M8,12 L8,14.5 M1.5,8 L4,8 M12,8 L14.5,8"/>
+                                                                    <Ellipse Canvas.Left="7" Canvas.Top="7" Width="2" Height="2" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                                </Canvas>
+                                                            </Viewbox>
                                                             <TextBlock Text="Detect Current App"/>
                                                         </StackPanel>
                                                     </Button>
