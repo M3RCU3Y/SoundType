@@ -3800,18 +3800,18 @@
                                             <TextBlock Text="Storage" Style="{StaticResource SettingsStorageTitleStyle}"/>
                                         </StackPanel>
                                         <TextBlock Grid.Row="1" Text="Packs folder location" Style="{StaticResource SettingsStorageLabelStyle}" VerticalAlignment="Center"/>
-                                        <Grid Grid.Row="2">
+                                        <Grid x:Name="SettingsStoragePathGrid" Grid.Row="2">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="340"/>
+                                                <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="40"/>
-                                                <ColumnDefinition Width="16"/>
-                                                <ColumnDefinition Width="132"/>
+                                                <ColumnDefinition Width="12"/>
+                                                <ColumnDefinition Width="128"/>
                                             </Grid.ColumnDefinitions>
                                             <Border Grid.Column="0" Height="38" CornerRadius="6,0,0,6" Background="#111922" BorderBrush="#27333D" BorderThickness="1" Padding="12,0">
                                                 <TextBlock x:Name="PacksFolderPathText" Text="C:\Users\brand\Documents\SoundType\Packs" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="#D8DEE4" FontSize="13"/>
                                             </Border>
-                                            <Button Grid.Column="1" Width="40" Height="38" Padding="0" Margin="-1,0,0,0" Content="..."/>
-                                            <Button Grid.Column="3" Width="130" Height="38" Click="OpenPackFolder_Click">
+                                            <Button Grid.Column="1" Width="40" Height="38" Padding="0" Margin="-1,0,0,0" Content="..." ToolTip="Browse for packs folder"/>
+                                            <Button x:Name="OpenPacksFolderButton" Grid.Column="3" Height="38" Padding="10,0" Click="OpenPackFolder_Click">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,10,0" Foreground="#D8DEE4"/>
                                                     <TextBlock Text="Open Folder"/>
@@ -3828,17 +3828,17 @@
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="Waveform cache" Style="{StaticResource SettingsStorageLabelStyle}"/>
                                             <TextBlock Text="84 MB" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,6"/>
-                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="194" HorizontalAlignment="Left" Click="ClearWaveformCache_Click">
+                                            <Button x:Name="ClearWaveformCacheButton" Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="176" HorizontalAlignment="Left" Click="ClearWaveformCache_Click">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Margin="0,0,9,0" Foreground="#D8DEE4"/>
-                                                    <TextBlock Text="Clear Waveform Cache"/>
+                                                    <TextBlock Text="Clear Cache"/>
                                                 </StackPanel>
                                             </Button>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1">
                                             <TextBlock Text="Packs installed" Style="{StaticResource SettingsStorageLabelStyle}"/>
                                             <TextBlock x:Name="SettingsPacksInstalledText" Text="22" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,6"/>
-                                            <Button Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="150" HorizontalAlignment="Left" Click="ShowLibrary_Click">
+                                            <Button x:Name="ManagePacksButton" Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="176" HorizontalAlignment="Left" Click="ShowLibrary_Click">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Viewbox Width="17" Height="17" Margin="0,0,9,0">
                                                         <Canvas Width="24" Height="24">

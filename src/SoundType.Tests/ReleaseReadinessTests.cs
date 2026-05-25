@@ -253,6 +253,27 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SettingsStorageActionsFitInsideCard()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        int start = xaml.IndexOf("x:Name=\"SettingsStoragePathGrid\"", StringComparison.Ordinal);
+        int manageButton = xaml.IndexOf("x:Name=\"ManagePacksButton\"", start, StringComparison.Ordinal);
+        Assert.True(start >= 0 && manageButton > start);
+        int end = Math.Min(xaml.Length, manageButton + 900);
+        string storageCard = xaml[start..end];
+
+        Assert.Contains("x:Name=\"SettingsStoragePathGrid\"", storageCard);
+        Assert.Contains("<ColumnDefinition Width=\"*\"/>", storageCard);
+        Assert.Contains("x:Name=\"OpenPacksFolderButton\"", storageCard);
+        Assert.Contains("x:Name=\"ClearWaveformCacheButton\"", storageCard);
+        Assert.Contains("x:Name=\"ManagePacksButton\"", storageCard);
+        Assert.DoesNotContain("<ColumnDefinition Width=\"340\"/>", storageCard);
+        Assert.DoesNotContain("Width=\"194\"", storageCard);
+        Assert.DoesNotContain("Clear Waveform Cache", storageCard);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
