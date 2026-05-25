@@ -113,7 +113,10 @@ public sealed class ReleaseReadinessTests
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
 
-        Assert.Contains("x:Name=\"DigitalCategoryButton\" Content=\"Digital\" Width=\"86\"", xaml);
+        Assert.Contains("x:Key=\"LibraryCategoryButtonStyle\"", xaml);
+        Assert.Contains("x:Name=\"MechanicalCategoryButton\" Content=\"Mechanical switches\" Style=\"{StaticResource LibraryCategoryButtonStyle}\"", xaml);
+        Assert.Contains("x:Name=\"TypewriterCategoryButton\" Content=\"Typewriters\" Style=\"{StaticResource LibraryCategoryButtonStyle}\"", xaml);
+        Assert.Contains("x:Name=\"DigitalCategoryButton\" Content=\"Digital\" Style=\"{StaticResource LibraryCategoryButtonStyle}\"", xaml);
         Assert.Contains("x:Name=\"PackCountText\"", xaml);
         Assert.Contains("Margin=\"8,0,0,0\"", xaml);
     }
@@ -144,6 +147,7 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("Click=\"BrowsePacksViewButton_Click\"", xaml);
         Assert.Contains("x:Name=\"FavoritePacksViewButton\"", xaml);
         Assert.Contains("Click=\"FavoritePacksViewButton_Click\"", xaml);
+        Assert.Contains("x:Name=\"LibraryViewTabs\" Orientation=\"Horizontal\" Margin=\"28,4,0,0\" Visibility=\"Collapsed\" shell:WindowChrome.IsHitTestVisibleInChrome=\"True\"", xaml);
         Assert.Contains("private bool _showingFavoritePacks", code);
         Assert.Contains("private void FavoritePacksViewButton_Click", code);
         Assert.Contains("!_settings.FavoriteSoundPackIds.Contains(pack.Id)", code);

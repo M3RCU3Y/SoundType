@@ -1231,6 +1231,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="LibraryCategoryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="MinWidth" Value="64"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
         <Style x:Key="SettingsSwitchStyle" TargetType="CheckBox" BasedOn="{StaticResource ToggleSwitchCheckBoxStyle}"/>
         <Style x:Key="SettingsIconTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
@@ -1563,7 +1569,7 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,620,0">
                             <TextBlock x:Name="PageTitleText" Text="Library" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock x:Name="PageSubtitleText" Text="Browse packs" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="28,6,0,0" VerticalAlignment="Center"/>
-                            <StackPanel x:Name="LibraryViewTabs" Orientation="Horizontal" Margin="28,4,0,0" Visibility="Collapsed">
+                            <StackPanel x:Name="LibraryViewTabs" Orientation="Horizontal" Margin="28,4,0,0" Visibility="Collapsed" shell:WindowChrome.IsHitTestVisibleInChrome="True">
                                 <Button x:Name="BrowsePacksViewButton"
                                         Style="{StaticResource LibraryViewButtonStyle}"
                                         Content="Browse packs"
@@ -1775,11 +1781,11 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button x:Name="AllPacksCategoryButton" Content="All" Width="60" Margin="0,0,8,0" Click="AllPacksCategory_Click"/>
-                            <Button x:Name="MechanicalCategoryButton" Content="Mechanical switches" Width="156" Margin="0,0,8,0" Click="MechanicalCategory_Click"/>
-                            <Button x:Name="TypewriterCategoryButton" Content="Typewriters" Width="104" Margin="0,0,8,0" Click="TypewriterCategory_Click"/>
-                            <Button x:Name="QuietCategoryButton" Content="Quiet" Width="76" Margin="0,0,8,0" Click="QuietCategory_Click"/>
-                            <Button x:Name="DigitalCategoryButton" Content="Digital" Width="86" Click="DigitalCategory_Click"/>
+                            <Button x:Name="AllPacksCategoryButton" Content="All" Style="{StaticResource LibraryCategoryButtonStyle}" Margin="0,0,8,0" Click="AllPacksCategory_Click"/>
+                            <Button x:Name="MechanicalCategoryButton" Content="Mechanical switches" Style="{StaticResource LibraryCategoryButtonStyle}" Margin="0,0,8,0" Click="MechanicalCategory_Click"/>
+                            <Button x:Name="TypewriterCategoryButton" Content="Typewriters" Style="{StaticResource LibraryCategoryButtonStyle}" Margin="0,0,8,0" Click="TypewriterCategory_Click"/>
+                            <Button x:Name="QuietCategoryButton" Content="Quiet" Style="{StaticResource LibraryCategoryButtonStyle}" Margin="0,0,8,0" Click="QuietCategory_Click"/>
+                            <Button x:Name="DigitalCategoryButton" Content="Digital" Style="{StaticResource LibraryCategoryButtonStyle}" Click="DigitalCategory_Click"/>
                         </StackPanel>
                         <TextBlock Grid.Column="1"
                                    x:Name="PackCountText"
