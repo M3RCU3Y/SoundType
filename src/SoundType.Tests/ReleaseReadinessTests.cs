@@ -324,6 +324,15 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("PitchHelpBadgeStyle", xaml);
     }
 
+    private static int CountNamedOutputMeterBars(string xaml, string meterName)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(
+            xaml,
+            $"<UniformGrid x:Name=\"{meterName}\"[\\s\\S]*?</UniformGrid>");
+        Assert.True(match.Success, $"Could not find {meterName}.");
+        return System.Text.RegularExpressions.Regex.Matches(match.Value, "<Rectangle ").Count;
+    }
+
     [Fact]
     public void SpatialMixPanel_KeepsControlsClearOfCardEdges()
     {
@@ -334,6 +343,8 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("<ColumnDefinition Width=\"30\"/>", xaml);
         Assert.Contains("<UniformGrid x:Name=\"LeftOutputMeterBars\" Grid.Column=\"1\" Columns=\"48\" Height=\"18\" Margin=\"4,0,8,0\">", xaml);
         Assert.Contains("<UniformGrid x:Name=\"RightOutputMeterBars\" Grid.Column=\"1\" Columns=\"48\" Height=\"18\" Margin=\"4,0,8,0\">", xaml);
+        Assert.Equal(48, CountNamedOutputMeterBars(xaml, "LeftOutputMeterBars"));
+        Assert.Equal(48, CountNamedOutputMeterBars(xaml, "RightOutputMeterBars"));
         Assert.Contains("<Rectangle Grid.Row=\"5\" Fill=\"#2C353D\" Margin=\"0,10,0,0\"/>", xaml);
     }
 
