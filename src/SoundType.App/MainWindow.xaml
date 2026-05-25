@@ -1306,8 +1306,8 @@
             <Setter Property="Background" Value="#151D24"/>
             <Setter Property="BorderBrush" Value="#31404B"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,6"/>
         </Style>
         <Style x:Key="HotkeyChipTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="12"/>
@@ -1317,27 +1317,26 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="SettingsHotkeyRowStyle" TargetType="Border">
-            <Setter Property="MinHeight" Value="44"/>
-            <Setter Property="CornerRadius" Value="7"/>
-            <Setter Property="Background" Value="#0E151A"/>
-            <Setter Property="BorderBrush" Value="#24303A"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="0,6"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderBrush" Value="#25313A"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
         </Style>
         <Style x:Key="SettingsHotkeyEditButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardToolbarButtonStyle}">
-            <Setter Property="Width" Value="82"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="Width" Value="76"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="0"/>
             <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0"/>
         </Style>
         <Style x:Key="HotkeyDisplayStyle" TargetType="Border">
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="MinWidth" Value="142"/>
-            <Setter Property="Padding" Value="12,0"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Background" Value="#121A21"/>
-            <Setter Property="BorderBrush" Value="#31404B"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="MinWidth" Value="136"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="#101820"/>
+            <Setter Property="BorderBrush" Value="#2E3C48"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -3750,48 +3749,51 @@
                                             </Viewbox>
                                             <TextBlock Grid.Column="1" Text="Hotkeys" Style="{StaticResource SettingsHotkeyTitleStyle}"/>
                                         </Grid>
-                                        <StackPanel x:Name="SettingsHotkeysPanel" Grid.Row="1" Margin="0,8,0,0">
+                                        <Grid x:Name="SettingsHotkeysPanel" Grid.Row="1" Margin="0,10,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="144"/>
+                                                <ColumnDefinition Width="12"/>
+                                                <ColumnDefinition Width="76"/>
+                                            </Grid.ColumnDefinitions>
                                             <Border x:Name="ToggleListeningHotkeyRow" Style="{StaticResource SettingsHotkeyRowStyle}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="154"/><ColumnDefinition Width="10"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Toggle Listening" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                    <Border Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
-                                                        <TextBlock x:Name="ToggleListeningHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center"/>
-                                                    </Border>
-                                                    <Button x:Name="ToggleListeningHotkeyRecordButton" Grid.Column="3" Content="Record" Tag="ToggleListening" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
-                                                </Grid>
+                                                <TextBlock Text="Toggle Listening" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
                                             </Border>
-                                            <Border Style="{StaticResource SettingsHotkeyRowStyle}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="154"/><ColumnDefinition Width="10"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Preview Normal" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                    <Border Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
-                                                        <TextBlock x:Name="PreviewNormalHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center"/>
-                                                    </Border>
-                                                    <Button x:Name="PreviewNormalHotkeyRecordButton" Grid.Column="3" Content="Record" Tag="PreviewNormal" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
-                                                </Grid>
+                                            <Border Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
+                                                <TextBlock x:Name="ToggleListeningHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                             </Border>
-                                            <Border Style="{StaticResource SettingsHotkeyRowStyle}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="154"/><ColumnDefinition Width="10"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Next Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                    <Border Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
-                                                        <TextBlock x:Name="NextPackHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center"/>
-                                                    </Border>
-                                                    <Button x:Name="NextPackHotkeyRecordButton" Grid.Column="3" Content="Record" Tag="NextPack" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
-                                                </Grid>
+                                            <Button x:Name="ToggleListeningHotkeyRecordButton" Grid.Column="3" Content="Record" Tag="ToggleListening" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
+
+                                            <Border Grid.Row="1" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                <TextBlock Text="Preview Normal" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
                                             </Border>
-                                            <Border Style="{StaticResource SettingsHotkeyRowStyle}" Margin="0">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="154"/><ColumnDefinition Width="10"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Previous Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                    <Border Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
-                                                        <TextBlock x:Name="PreviousPackHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center"/>
-                                                    </Border>
-                                                    <Button x:Name="PreviousPackHotkeyRecordButton" Grid.Column="3" Content="Record" Tag="PreviousPack" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
-                                                </Grid>
+                                            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
+                                                <TextBlock x:Name="PreviewNormalHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                             </Border>
-                                        </StackPanel>
+                                            <Button x:Name="PreviewNormalHotkeyRecordButton" Grid.Row="1" Grid.Column="3" Content="Record" Tag="PreviewNormal" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
+
+                                            <Border Grid.Row="2" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                <TextBlock Text="Next Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                            </Border>
+                                            <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
+                                                <TextBlock x:Name="NextPackHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                            </Border>
+                                            <Button x:Name="NextPackHotkeyRecordButton" Grid.Row="2" Grid.Column="3" Content="Record" Tag="NextPack" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
+
+                                            <Border Grid.Row="3" BorderThickness="0" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                <TextBlock Text="Previous Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                            </Border>
+                                            <Border Grid.Row="3" Grid.Column="1" Style="{StaticResource HotkeyDisplayStyle}">
+                                                <TextBlock x:Name="PreviousPackHotkeyText" Style="{StaticResource HotkeyChipTextStyle}" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                            </Border>
+                                            <Button x:Name="PreviousPackHotkeyRecordButton" Grid.Row="3" Grid.Column="3" Content="Record" Tag="PreviousPack" Style="{StaticResource SettingsHotkeyEditButtonStyle}" Click="StartHotkeyRecording_Click"/>
+                                        </Grid>
                                         <Rectangle Grid.Row="2" Fill="#25313A" Margin="0,14,0,0"/>
                                         <Button Grid.Row="3" Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" MinWidth="224" Click="RestoreHotkeys_Click">
                                             <StackPanel Orientation="Horizontal">
