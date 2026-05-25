@@ -2545,6 +2545,12 @@ public partial class MainWindow : Window
             SelectedKeyEnabledCheck.IsChecked = !isExcluded;
             SelectedKeyGroupComboBox.SelectedItem = ToTitleCase(soundGroup);
             SelectedKeySoundSlotComboBox.SelectedItem = ToTitleCase(soundGroup);
+            SelectedKeyPackOverrideComboBox.SelectedItem = "Default Pack";
+            SelectedKeyVolumeSlider.Value = _settings.GroupVolumes.GetVolumeForGroup(soundGroup);
+            SelectedKeyVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.GetVolumeForGroup(soundGroup) * 100)}%";
+            double pitchSemitones = Math.Round(_settings.PitchVariation * 100);
+            SelectedKeyPitchSlider.Value = pitchSemitones;
+            SelectedKeyPitchText.Text = $"{pitchSemitones:0} st";
             KeyboardPreviewSelectedButton.Content = $"Preview {displayName}";
             KeyboardPreviewKeyText.Text = displayName;
             SelectedKeyWaveformTitleText.Text = $"Waveform ({displayName})";
@@ -2591,8 +2597,15 @@ public partial class MainWindow : Window
             : _waveformPeakCache.GetPeaks(sample);
     }
 
-    private static string ResolveSoundGroupForKey(string code) =>
-        code switch
+    private string ResolveSoundGroupForKey(string code)
+    {
+        if (_activePack?.KeyOverrides.TryGetValue(code, out string? overrideGroup) == true &&
+            HasGroup(_activePack, overrideGroup))
+        {
+            return overrideGroup;
+        }
+
+        string preferred = code switch
         {
             "Enter" => "enter",
             "Space" => "space",
@@ -2600,6 +2613,68 @@ public partial class MainWindow : Window
             "Tab" => "tab",
             _ => "normal"
         };
+
+        return HasGroup(_activePack, preferred) ? preferred : "normal";
+    }
+
+    private void SelectedKeyVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading || _updatingKeyboardInspector)
+        {
+            return;
+        }
+
+        string soundGroup = ResolveSoundGroupForKey(_selectedKeyboardCode);
+        SetGroupVolume(soundGroup, SelectedKeyVolumeSlider.Value);
+        _settings.GroupVolumes.Clamp();
+        SelectedKeyVolumeText.Text = $"{Math.Round(_settings.GroupVolumes.GetVolumeForGroup(soundGroup) * 100)}%";
+        RefreshGroupVolumeText();
+        RefreshSelectedKeyInspector();
+        _ = SaveSettingsAsync();
+    }
+
+    private void SelectedKeyPitchSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading || _updatingKeyboardInspector)
+        {
+            return;
+        }
+
+        double pitchSemitones = Math.Round(SelectedKeyPitchSlider.Value);
+        _settings.PitchVariation = Math.Clamp(Math.Abs(pitchSemitones) / 100.0, 0.0, 0.12);
+        PitchVariationSlider.Value = pitchSemitones;
+        SelectedKeyPitchText.Text = $"{pitchSemitones:0} st";
+        if (_audio is not null)
+        {
+            _audio.PitchVariation = _settings.PitchVariation;
+        }
+
+        RefreshStatus();
+        _ = SaveSettingsAsync();
+    }
+
+    private void SetGroupVolume(string group, double value)
+    {
+        value = Math.Clamp(value, 0.0, 1.5);
+        switch (group.Trim().ToLowerInvariant())
+        {
+            case "enter":
+                _settings.GroupVolumes.Enter = value;
+                break;
+            case "space":
+                _settings.GroupVolumes.Space = value;
+                break;
+            case "backspace":
+                _settings.GroupVolumes.Backspace = value;
+                break;
+            case "tab":
+                _settings.GroupVolumes.Tab = value;
+                break;
+            default:
+                _settings.GroupVolumes.Normal = value;
+                break;
+        }
+    }
 
     private static string ToTitleCase(string value) =>
         value.Length == 0 ? value : char.ToUpperInvariant(value[0]) + value[1..];

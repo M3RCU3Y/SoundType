@@ -2859,18 +2859,18 @@
                                 <DockPanel>
                                     <TextBlock Text="Volume" VerticalAlignment="Center"/>
                                     <Border DockPanel.Dock="Right" Background="#151C22" CornerRadius="5" Padding="6,3">
-                                        <TextBlock Text="65%" FontSize="12"/>
+                                        <TextBlock x:Name="SelectedKeyVolumeText" Text="65%" FontSize="12"/>
                                     </Border>
                                 </DockPanel>
-                                <Slider x:Name="SelectedKeyVolumeSlider" Minimum="0" Maximum="1" Value="0.65" Margin="0,8,0,12"/>
+                                <Slider x:Name="SelectedKeyVolumeSlider" Minimum="0" Maximum="1.5" Value="0.65" TickFrequency="0.05" ValueChanged="SelectedKeyVolumeSlider_ValueChanged" Margin="0,8,0,12"/>
 
                                 <DockPanel>
                                     <TextBlock Text="Pitch offset" VerticalAlignment="Center"/>
                                     <Border DockPanel.Dock="Right" Background="#151C22" CornerRadius="5" Padding="6,3">
-                                        <TextBlock Text="0 st" FontSize="12"/>
+                                        <TextBlock x:Name="SelectedKeyPitchText" Text="0 st" FontSize="12"/>
                                     </Border>
                                 </DockPanel>
-                                <Slider x:Name="SelectedKeyPitchSlider" Minimum="-12" Maximum="12" Value="0" Margin="0,8,0,16"/>
+                                <Slider x:Name="SelectedKeyPitchSlider" Minimum="-12" Maximum="12" Value="0" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="SelectedKeyPitchSlider_ValueChanged" Margin="0,8,0,16"/>
 
                                 <DockPanel Margin="0,0,0,8">
                                     <TextBlock x:Name="SelectedKeyWaveformTitleText" Text="Waveform (Space)" FontSize="14"/>
