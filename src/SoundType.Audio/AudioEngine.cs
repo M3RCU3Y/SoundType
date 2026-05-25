@@ -296,6 +296,11 @@ public sealed class AudioEngine : IAsyncDisposable
             return samples[0];
         }
 
+        if (SampleVariationMode == SampleVariationMode.Legacy)
+        {
+            return SelectLegacySample(metadata, group, samples);
+        }
+
         int poolSize = ResolveSamplePoolSize(samples.Count);
         string groupKey = $"{metadata.Id}:{group}";
         if (SampleVariationMode == SampleVariationMode.Random ||
@@ -325,6 +330,25 @@ public sealed class AudioEngine : IAsyncDisposable
         {
             int next = _roundRobin.TryGetValue(groupKey, out int value) ? value : 0;
             _roundRobin[groupKey] = (next + 1) % poolSize;
+            return samples[next];
+        }
+    }
+
+    private LoadedSoundSample SelectLegacySample(SoundPackMetadata metadata, string group, IReadOnlyList<LoadedSoundSample> samples)
+    {
+        if (metadata.Defaults.Randomize)
+        {
+            lock (_random)
+            {
+                return samples[_random.Next(samples.Count)];
+            }
+        }
+
+        string roundRobinKey = $"{metadata.Id}:{group}";
+        lock (_roundRobin)
+        {
+            int next = _roundRobin.TryGetValue(roundRobinKey, out int value) ? value : 0;
+            _roundRobin[roundRobinKey] = (next + 1) % samples.Count;
             return samples[next];
         }
     }

@@ -47,6 +47,7 @@ public partial class MainWindow : Window
     ];
     private static readonly IReadOnlyList<SampleVariationModeListItem> SampleVariationModes =
     [
+        new(SampleVariationMode.Legacy, "Legacy"),
         new(SampleVariationMode.Consistent, "Consistent"),
         new(SampleVariationMode.Natural, "Natural"),
         new(SampleVariationMode.Random, "Random")
@@ -3296,6 +3297,7 @@ public partial class MainWindow : Window
         SampleVariationAmountText.Text = $"{Math.Round(_settings.SampleVariationAmount * 100)}%";
         SampleVariationModeText.Text = _settings.SampleVariationMode switch
         {
+            SampleVariationMode.Legacy => "Old",
             SampleVariationMode.Consistent => "Tight",
             SampleVariationMode.Random => "Wide",
             _ => "Alive"

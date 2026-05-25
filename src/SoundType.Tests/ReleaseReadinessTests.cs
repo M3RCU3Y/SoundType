@@ -368,7 +368,8 @@ public sealed class ReleaseReadinessTests
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
 
-        Assert.Contains("Controls how widely SoundType rotates through samples", xaml);
+        Assert.Contains("Legacy uses the old full-group picker", xaml);
+        Assert.Contains("Natural adds subtle life", xaml);
         Assert.Contains("Lower values keep the keyboard tighter", xaml);
         Assert.Contains("x:Name=\"SampleVariationModeComboBox\"", xaml);
         Assert.Contains("x:Name=\"SampleVariationSlider\"", xaml);

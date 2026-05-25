@@ -355,6 +355,32 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_LegacySampleVariation_UsesPreviousFullGroupSelection()
+    {
+        AudioEngine engine = new()
+        {
+            SampleVariationMode = SampleVariationMode.Legacy,
+            SampleVariationAmount = 0.0
+        };
+        LoadedSoundPack pack = CreateLoadedPackWithSamples(
+            "variation-legacy",
+            [[0.1f, 0.1f], [0.4f, 0.4f], [0.8f, 0.8f]],
+            randomize: false);
+        IReadOnlyList<LoadedSoundSample> samples = pack.Samples["normal"];
+
+        LoadedSoundSample first = InvokeSelectSample(engine, pack.Metadata, "normal", samples);
+        LoadedSoundSample second = InvokeSelectSample(engine, pack.Metadata, "normal", samples);
+        LoadedSoundSample third = InvokeSelectSample(engine, pack.Metadata, "normal", samples);
+        LoadedSoundSample fourth = InvokeSelectSample(engine, pack.Metadata, "normal", samples);
+
+        Assert.Equal("normal/key-0.wav", first.RelativePath);
+        Assert.Equal("normal/key-1.wav", second.RelativePath);
+        Assert.Equal("normal/key-2.wav", third.RelativePath);
+        Assert.Equal("normal/key-0.wav", fourth.RelativePath);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public async Task AudioEngine_BuiltInMultiSampleGroups_UseDifferentSamplesWithVariation()
     {
         string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
@@ -562,7 +588,10 @@ public sealed class AudioProcessingTests
             });
     }
 
-    private static LoadedSoundPack CreateLoadedPackWithSamples(string id, IReadOnlyList<float[]> decodedSamples)
+    private static LoadedSoundPack CreateLoadedPackWithSamples(
+        string id,
+        IReadOnlyList<float[]> decodedSamples,
+        bool randomize = true)
     {
         WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
         IReadOnlyList<LoadedSoundSample> samples = decodedSamples
@@ -575,7 +604,7 @@ public sealed class AudioProcessingTests
             .ToList();
 
         return new LoadedSoundPack(
-            new SoundPackMetadata { Id = id, Name = id },
+            new SoundPackMetadata { Id = id, Name = id, Defaults = new SoundPackDefaults { Randomize = randomize } },
             new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase)
             {
                 ["normal"] = samples

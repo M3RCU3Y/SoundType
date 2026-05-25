@@ -2,7 +2,8 @@ namespace SoundType.Core.Models;
 
 public enum SampleVariationMode
 {
-    Consistent,
-    Natural,
-    Random
+    Consistent = 0,
+    Natural = 1,
+    Random = 2,
+    Legacy = 3
 }

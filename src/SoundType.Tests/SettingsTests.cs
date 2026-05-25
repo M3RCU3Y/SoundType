@@ -34,7 +34,7 @@ public sealed class SettingsTests
             Enabled = false,
             MasterVolume = 0.25,
             PitchVariation = 0.08,
-            SampleVariationMode = SampleVariationMode.Random,
+            SampleVariationMode = SampleVariationMode.Legacy,
             SampleVariationAmount = 0.9,
             StartWithWindows = true,
             StartHiddenInTray = true,
@@ -54,7 +54,7 @@ public sealed class SettingsTests
         Assert.False(restored.Enabled);
         Assert.Equal(0.25, restored.MasterVolume);
         Assert.Equal(0.08, restored.PitchVariation);
-        Assert.Equal(SampleVariationMode.Random, restored.SampleVariationMode);
+        Assert.Equal(SampleVariationMode.Legacy, restored.SampleVariationMode);
         Assert.Equal(0.9, restored.SampleVariationAmount);
         Assert.True(restored.StartWithWindows);
         Assert.True(restored.StartHiddenInTray);
@@ -182,6 +182,24 @@ public sealed class SettingsTests
         AppSettings settings = await service.LoadAsync();
 
         Assert.Equal(1.0, settings.SampleVariationAmount);
+    }
+
+    [Fact]
+    public async Task LoadAsync_PreservesExistingNumericSampleVariationModes()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "sampleVariationMode": 1
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.Equal(SampleVariationMode.Natural, settings.SampleVariationMode);
     }
 
     [Fact]

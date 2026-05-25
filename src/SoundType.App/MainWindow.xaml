@@ -2299,7 +2299,7 @@
                                             <ToolTip Style="{StaticResource PitchHelpToolTipStyle}">
                                                 <StackPanel>
                                                     <TextBlock Text="Sample Variation" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource AccentHoverBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Text="Controls how widely SoundType rotates through samples in the current sound group." TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="17"/>
+                                                    <TextBlock Text="Legacy uses the old full-group picker. Consistent stays tight, Natural adds subtle life, and Random uses wider variation." TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="17"/>
                                                 </StackPanel>
                                             </ToolTip>
                                         </Border.ToolTip>
