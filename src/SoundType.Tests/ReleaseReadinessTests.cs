@@ -274,6 +274,19 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SettingsActivePackMetadataPillCentersText()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("x:Name=\"SettingsActivePackTypePill\"", xaml);
+        Assert.Contains("Height=\"32\"", xaml);
+        Assert.Contains("TextAlignment=\"Center\"", xaml);
+        Assert.Contains("VerticalAlignment=\"Center\"", xaml);
+        Assert.Contains("HorizontalAlignment=\"Center\"", xaml);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
