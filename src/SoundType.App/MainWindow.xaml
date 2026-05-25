@@ -1364,10 +1364,9 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="4,0,0,16" Height="116">
+                    <Grid Grid.Row="1" Margin="4,0,0,16" Height="100">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="214"/>
-                            <ColumnDefinition Width="62"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="GLOBAL OUTPUT"
                                    FontSize="12"
@@ -1383,75 +1382,6 @@
                                        VerticalAlignment="Top"
                                        Margin="0,28,0,0"
                                        Content="Listening"/>
-                        <Grid Grid.Column="1" Width="58" Height="104" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Height="100" VerticalAlignment="Top">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="6"/>
-                                    <ColumnDefinition Width="6"/>
-                                    <ColumnDefinition Width="6"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="64"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom">
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1"/>
-                                </StackPanel>
-                                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Bottom" Margin="3,0,0,0">
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1"/>
-                                </StackPanel>
-                                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Bottom" Margin="3,0,0,0">
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="#29333C" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1" Margin="0,0,0,2"/>
-                                    <Rectangle Height="4" Fill="{StaticResource AccentBrush}" RadiusX="1" RadiusY="1"/>
-                                </StackPanel>
-                            </Grid>
-                            <Grid Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="0" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                                <TextBlock Text="-12" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,21,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                                <TextBlock Text="-24" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,43,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                                <TextBlock Text="-36" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,65,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                                <TextBlock Text="-48" FontSize="12" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-                            </Grid>
-                        </Grid>
                     </Grid>
 
                     <StackPanel Grid.Row="2" Margin="4,0,0,14">

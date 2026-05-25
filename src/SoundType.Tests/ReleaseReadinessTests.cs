@@ -191,6 +191,22 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void MainGlobalOutputKeepsOnlyListeningToggle()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        int start = xaml.IndexOf("<TextBlock Text=\"GLOBAL OUTPUT\"", StringComparison.Ordinal);
+        int end = xaml.IndexOf("<StackPanel Grid.Row=\"2\"", start, StringComparison.Ordinal);
+        Assert.True(start >= 0 && end > start);
+
+        string globalOutput = xaml[start..end];
+        Assert.Contains("x:Name=\"EnabledToggle\"", globalOutput);
+        Assert.DoesNotContain("<ColumnDefinition Width=\"62\"/>", globalOutput);
+        Assert.DoesNotContain("Text=\"-48\"", globalOutput);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
