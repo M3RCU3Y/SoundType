@@ -2394,9 +2394,9 @@ public partial class MainWindow : Window
     {
         if (KeyboardSearchPlaceholder is not null)
         {
-            KeyboardSearchPlaceholder.Visibility = string.IsNullOrWhiteSpace(KeyboardSearchTextBox.Text)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            bool isEmpty = string.IsNullOrWhiteSpace(KeyboardSearchTextBox.Text);
+            KeyboardSearchPlaceholder.Visibility = isEmpty ? Visibility.Visible : Visibility.Collapsed;
+            KeyboardSearchClearButton.Visibility = isEmpty ? Visibility.Collapsed : Visibility.Visible;
         }
 
         ApplyKeyboardFilter();

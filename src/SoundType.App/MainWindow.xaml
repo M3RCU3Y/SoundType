@@ -1018,6 +1018,47 @@
             <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
             <Setter Property="Background" Value="#13241F"/>
         </Style>
+
+        <Style x:Key="KeyboardSearchTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="48,0,42,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CaretBrush" Value="{StaticResource AccentHoverBrush}"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="9">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{StaticResource InputHoverBrush}"/>
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource ControlBorderHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="EqSelectedPresetButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Height" Value="32"/>
             <Setter Property="Padding" Value="0"/>
@@ -2686,8 +2727,7 @@
                                 <DockPanel Margin="0,0,0,18">
                                     <Grid Width="296" DockPanel.Dock="Left">
                                         <TextBox x:Name="KeyboardSearchTextBox"
-                                                 Height="44"
-                                                 Padding="47,0,38,0"
+                                                 Style="{StaticResource KeyboardSearchTextBoxStyle}"
                                                  TextChanged="KeyboardSearchTextBox_TextChanged"/>
                                         <TextBlock Text="&#xE721;"
                                                    FontFamily="Segoe MDL2 Assets"
@@ -2705,10 +2745,12 @@
                                                    VerticalAlignment="Center"
                                                    Margin="47,0,0,0"
                                                    IsHitTestVisible="False"/>
-                                        <Button Style="{StaticResource KeyboardSearchClearButtonStyle}"
+                                        <Button x:Name="KeyboardSearchClearButton"
+                                                Style="{StaticResource KeyboardSearchClearButtonStyle}"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
                                                 Margin="0,0,11,0"
+                                                Visibility="Collapsed"
                                                 Click="KeyboardSearchClear_Click"/>
                                     </Grid>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
