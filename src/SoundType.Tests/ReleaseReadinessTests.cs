@@ -151,6 +151,21 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void LibraryRowsCanToggleFavoritePacks()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("x:Name=\"PackRowFavoriteButton\"", xaml);
+        Assert.Contains("Click=\"PackRowFavoriteButton_Click\"", xaml);
+        Assert.Contains("Content=\"{Binding FavoriteGlyph}\"", xaml);
+        Assert.Contains("private void PackRowFavoriteButton_Click", code);
+        Assert.Contains("private void ToggleFavoritePack", code);
+        Assert.Contains("public string FavoriteGlyph", code);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();

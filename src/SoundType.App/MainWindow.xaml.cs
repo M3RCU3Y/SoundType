@@ -1604,21 +1604,38 @@ public partial class MainWindow : Window
             return;
         }
 
-        string packId = item.Metadata.Id;
-        if (_settings.FavoriteSoundPackIds.Contains(packId))
+        ToggleFavoritePack(item.Metadata);
+    }
+
+    private void PackRowFavoriteButton_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        if (sender is not System.Windows.Controls.Button button || button.Tag is not PackListItem item)
         {
-            _settings.FavoriteSoundPackIds.Remove(packId);
+            return;
+        }
+
+        ToggleFavoritePack(item.Metadata);
+    }
+
+    private void ToggleFavoritePack(SoundPackMetadata pack)
+    {
+        if (_settings.FavoriteSoundPackIds.Contains(pack.Id))
+        {
+            _settings.FavoriteSoundPackIds.Remove(pack.Id);
         }
         else
         {
-            _settings.FavoriteSoundPackIds.Add(packId);
+            _settings.FavoriteSoundPackIds.Add(pack.Id);
         }
 
-        RefreshSelectedPackFavoriteButton(item.Metadata);
-        if (_showingFavoritePacks)
+        string? selectedPackId = (PacksList.SelectedItem as PackListItem)?.Metadata.Id;
+        if (selectedPackId is not null && selectedPackId.Equals(pack.Id, StringComparison.OrdinalIgnoreCase))
         {
-            RefreshPackLibrary();
+            RefreshSelectedPackFavoriteButton(pack);
         }
+
+        RefreshPackLibrary(selectedPackId);
         _ = SaveSettingsAsync();
     }
 
@@ -2910,9 +2927,10 @@ public partial class MainWindow : Window
         }
     }
 
-    private sealed class PackListItem(SoundPackMetadata metadata)
+    private sealed class PackListItem(SoundPackMetadata metadata, bool isFavorite = false)
     {
         public SoundPackMetadata Metadata { get; } = metadata;
+        public bool IsFavorite { get; } = isFavorite;
         public string Name => ResolveMockName(Metadata);
         public string Description => ResolveMockDescription(Metadata);
         public string TypeLabel => ResolveMockTypeLabel(Metadata);
@@ -2930,6 +2948,8 @@ public partial class MainWindow : Window
             ? "104 keys"
             : $"{Metadata.KeyOverrides.Count:N0} custom");
         public string? PreviewImagePath => ResolvePackPreviewImagePath(Metadata);
+        public string FavoriteGlyph => IsFavorite ? "★" : "☆";
+        public string FavoriteToolTip => IsFavorite ? "Remove from favorites" : "Add to favorites";
 
         public override string ToString() => Name;
 
@@ -3058,7 +3078,7 @@ public partial class MainWindow : Window
 
         List<PackListItem> visiblePacks = _packs
             .Where(PackMatchesCurrentFilters)
-            .Select(pack => new PackListItem(pack))
+            .Select(pack => new PackListItem(pack, _settings.FavoriteSoundPackIds.Contains(pack.Id)))
             .OrderBy(item => PackListItem.MockOrder(item.Metadata))
             .ThenBy(item => !string.IsNullOrWhiteSpace(priorityPackId) &&
                 item.Metadata.Id.Equals(priorityPackId, StringComparison.OrdinalIgnoreCase)

@@ -1923,6 +1923,12 @@
                                                            VerticalAlignment="Center"
                                                            Margin="0,-1,0,0"/>
                                             </Border>
+                                            <Button x:Name="PackRowFavoriteButton"
+                                                    Style="{StaticResource PackFavoriteButtonStyle}"
+                                                    Content="{Binding FavoriteGlyph}"
+                                                    Tag="{Binding}"
+                                                    ToolTip="{Binding FavoriteToolTip}"
+                                                    Click="PackRowFavoriteButton_Click"/>
                                             <Button x:Name="PackRowMenuButton"
                                                     Content="•••"
                                                     Width="32"
@@ -1948,6 +1954,9 @@
                                         <Setter TargetName="RowBorder" Property="BorderThickness" Value="1"/>
                                         <Setter TargetName="RowBorder" Property="CornerRadius" Value="7"/>
                                         <Setter TargetName="PackRowSelectedText" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                        <Setter TargetName="PackRowFavoriteButton" Property="Foreground" Value="#F8C95A"/>
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
