@@ -2994,8 +2994,20 @@
                                         <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                                             <TextBlock Text="Default profile" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
                                             <TextBlock x:Name="DefaultProfileText" FontSize="20" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
-                                            <Border HorizontalAlignment="Left" Style="{StaticResource ChipBorderStyle}" Padding="9,3" Margin="0,4,0,0">
-                                                <TextBlock x:Name="DefaultProfileTagText" Text="Default" FontSize="12" Foreground="{StaticResource MutedTextBrush}"/>
+                                            <Border x:Name="DefaultProfileTagPill"
+                                                    HorizontalAlignment="Left"
+                                                    MinWidth="84"
+                                                    Height="24"
+                                                    Style="{StaticResource ChipBorderStyle}"
+                                                    Padding="10,0"
+                                                    Margin="0,4,0,0">
+                                                <TextBlock x:Name="DefaultProfileTagText"
+                                                           Text="Default"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource MutedTextBrush}"
+                                                           TextAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
                                             </Border>
                                         </StackPanel>
                                     </Grid>

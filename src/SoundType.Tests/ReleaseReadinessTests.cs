@@ -314,6 +314,20 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void AppRulesDefaultProfileTagHasRoomForText()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("x:Name=\"DefaultProfileTagPill\"", xaml);
+        Assert.Contains("MinWidth=\"84\"", xaml);
+        Assert.Contains("x:Name=\"DefaultProfileTagText\"", xaml);
+        Assert.Contains("TextAlignment=\"Center\"", xaml);
+        Assert.Contains("HorizontalAlignment=\"Center\"", xaml);
+        Assert.Contains("VerticalAlignment=\"Center\"", xaml);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
