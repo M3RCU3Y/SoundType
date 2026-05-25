@@ -2146,7 +2146,12 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="60"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text=")))" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+                                    <TextBlock x:Name="PackPreviewVolumeIcon"
+                                               Text="&#xE767;"
+                                               FontFamily="Segoe MDL2 Assets"
+                                               FontSize="17"
+                                               VerticalAlignment="Center"
+                                               Foreground="{StaticResource TextBrush}"/>
                                     <Slider Grid.Column="1" Minimum="0" Maximum="1" Value="0.8"/>
                                     <Border Grid.Column="2" Height="28" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="10,0,0,0">
                                         <TextBlock Text="80%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"/>

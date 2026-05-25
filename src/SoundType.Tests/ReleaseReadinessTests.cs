@@ -166,6 +166,17 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void PackPreviewVolumeUsesRealIcon()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("x:Name=\"PackPreviewVolumeIcon\"", xaml);
+        Assert.Contains("FontFamily=\"Segoe MDL2 Assets\"", xaml);
+        Assert.DoesNotContain("Text=\")))\"", xaml);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
