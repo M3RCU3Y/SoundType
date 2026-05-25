@@ -2278,7 +2278,7 @@ public partial class MainWindow : Window
             .ToList();
 
         RecentAppsList.Items.Clear();
-        foreach (RecentAppEntry app in recentApps.Take(8))
+        foreach (RecentAppEntry app in recentApps.Take(4))
         {
             RecentAppsList.Items.Add(new RecentAppChipItem(app.ProcessName));
         }
@@ -2744,6 +2744,20 @@ public partial class MainWindow : Window
     private void PresetThock_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Thock", [6, 5, 3, 2, 1, 0, -1, -2, -2, -2]);
     private void PresetCrisp_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Crisp", [-2, -1, 0, 0, 1, 2, 4, 5, 4, 3]);
     private void PresetSoftNight_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Soft Night", [-2, -2, -1, -1, -1, -2, -3, -4, -4, -4]);
+    private void PresetDeep_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Deep", [5, 5, 4, 2, 0, -1, -1, 0, 1, 1]);
+    private void PresetBright_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Bright", [-3, -2, -1, 0, 1, 2, 4, 5, 5, 4]);
+    private void PresetTypewriter_Click(object sender, RoutedEventArgs e) => ApplyEqPreset("Typewriter", [-4, -3, -2, 1, 3, 4, 3, 1, -1, -2]);
+
+    private void EqMoreButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (EqMoreButton.ContextMenu is null)
+        {
+            return;
+        }
+
+        EqMoreButton.ContextMenu.PlacementTarget = EqMoreButton;
+        EqMoreButton.ContextMenu.IsOpen = true;
+    }
 
     private void ApplyEqPreset(string name, IReadOnlyList<double> gainsDb)
     {
