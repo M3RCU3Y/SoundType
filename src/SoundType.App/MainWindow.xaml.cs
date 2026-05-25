@@ -1980,11 +1980,51 @@ public partial class MainWindow : Window
         OpenFolder(_activePack?.FolderPath ?? _packsRoot);
     }
 
+    private void OpenPackWaveformLocation_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        OpenFolder(ResolvePackWaveformLocation() ?? _activePack?.FolderPath ?? _packsRoot);
+    }
+
+    private string? ResolvePackWaveformLocation()
+    {
+        if (_activePack is null ||
+            _audio is null ||
+            !_audio.TryGetLoadedPack(_activePack.Id, out LoadedSoundPack? loadedPack) ||
+            loadedPack is null)
+        {
+            return null;
+        }
+
+        LoadedSoundSample? sample = loadedPack.Samples
+            .OrderBy(group => group.Key.Equals("normal", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+            .SelectMany(group => group.Value)
+            .FirstOrDefault(candidate => candidate.DecodedSamples.Length > 0);
+        if (sample is null || string.IsNullOrWhiteSpace(sample.RelativePath))
+        {
+            return null;
+        }
+
+        string samplePath = Path.GetFullPath(Path.Combine(_activePack.FolderPath, sample.RelativePath));
+        string packFolder = Path.GetFullPath(_activePack.FolderPath);
+        if (!samplePath.StartsWith(EnsureTrailingSeparator(packFolder), StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return Path.GetDirectoryName(samplePath);
+    }
+
     private static void OpenFolder(string folderPath)
     {
         Directory.CreateDirectory(folderPath);
         Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
     }
+
+    private static string EnsureTrailingSeparator(string path) =>
+        path.EndsWith(Path.DirectorySeparatorChar)
+            ? path
+            : path + Path.DirectorySeparatorChar;
 
     private void VisualKeyboard_KeyToggled(object sender, KeyboardKeyToggledEventArgs e)
     {

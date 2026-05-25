@@ -2062,10 +2062,23 @@
                                 <DockPanel Margin="0,0,0,10" LastChildFill="False">
                                     <TextBlock Text="Waveform" FontSize="15" FontWeight="Bold"/>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                        <Button Width="38" Height="34" Padding="0" Margin="0,0,12,0" Click="PreviewNormal_Click">
-                                            <TextBlock Text="▷" FontSize="18"/>
+                                        <Button x:Name="PackWaveformLocationButton"
+                                                Width="34"
+                                                Height="34"
+                                                Padding="0"
+                                                Margin="0,0,12,0"
+                                                ToolTip="Open waveform location"
+                                                Click="OpenPackWaveformLocation_Click">
+                                            <Viewbox Width="17" Height="17">
+                                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                      StrokeThickness="1.8"
+                                                      StrokeStartLineCap="Round"
+                                                      StrokeEndLineCap="Round"
+                                                      StrokeLineJoin="Round"
+                                                      Fill="Transparent"
+                                                      Data="M5,19 L19,5 M11,5 L19,5 L19,13"/>
+                                            </Viewbox>
                                         </Button>
-                                        <TextBlock Text="↗" FontSize="18" Foreground="{StaticResource TextBrush}" Margin="0,0,14,0"/>
                                         <TextBlock Text="⚙" FontSize="18" Foreground="{StaticResource TextBrush}"/>
                                     </StackPanel>
                                 </DockPanel>

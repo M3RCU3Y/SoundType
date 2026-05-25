@@ -177,6 +177,20 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void PackWaveformToolbarOpensWaveformLocationWithoutDuplicatePlayButton()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("x:Name=\"PackWaveformLocationButton\"", xaml);
+        Assert.Contains("Click=\"OpenPackWaveformLocation_Click\"", xaml);
+        Assert.Contains("private void OpenPackWaveformLocation_Click", code);
+        Assert.Contains("ResolvePackWaveformLocation", code);
+        Assert.DoesNotContain("Margin=\"0,0,12,0\" Click=\"PreviewNormal_Click\"", xaml);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
