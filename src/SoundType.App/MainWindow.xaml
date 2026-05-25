@@ -2259,7 +2259,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="46"/>
                                 <RowDefinition Height="86"/>
-                                <RowDefinition Height="64"/>
+                                <RowDefinition Height="76"/>
                                 <RowDefinition Height="64"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
@@ -2293,13 +2293,13 @@
 
                             <StackPanel Grid.Row="2">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Random Variation" FontSize="15" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Sample Variation" FontSize="15" FontWeight="SemiBold"/>
                                     <Border Style="{StaticResource PitchHelpBadgeStyle}">
                                         <Border.ToolTip>
                                             <ToolTip Style="{StaticResource PitchHelpToolTipStyle}">
                                                 <StackPanel>
-                                                    <TextBlock Text="Random Variation" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource AccentHoverBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Text="Adds tiny pitch differences between keystrokes so repeated keys feel less identical." TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="17"/>
+                                                    <TextBlock Text="Sample Variation" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource AccentHoverBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Text="Controls how widely SoundType rotates through samples in the current sound group." TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="17"/>
                                                 </StackPanel>
                                             </ToolTip>
                                         </Border.ToolTip>
@@ -2309,24 +2309,24 @@
                                 <Grid Margin="0,8,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="78"/>
+                                        <ColumnDefinition Width="104"/>
                                     </Grid.ColumnDefinitions>
-                                    <Slider Minimum="0" Maximum="1" Value="0.06"/>
+                                    <ComboBox x:Name="SampleVariationModeComboBox" Height="34" SelectionChanged="SampleVariationChanged"/>
                                     <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="13,0,0,0">
-                                        <TextBlock Text="6%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+                                        <TextBlock x:Name="SampleVariationModeText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold"/>
                                     </Border>
                                 </Grid>
                             </StackPanel>
 
                             <StackPanel Grid.Row="3">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Attack Softness" FontSize="15" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Variation Amount" FontSize="15" FontWeight="SemiBold"/>
                                     <Border Style="{StaticResource PitchHelpBadgeStyle}">
                                         <Border.ToolTip>
                                             <ToolTip Style="{StaticResource PitchHelpToolTipStyle}">
                                                 <StackPanel>
-                                                    <TextBlock Text="Attack Softness" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource AccentHoverBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Text="Softens the start of each key sound to reduce sharp clicks while keeping the character of the pack." TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="17"/>
+                                                    <TextBlock Text="Variation Amount" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource AccentHoverBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Text="Lower values keep the keyboard tighter; higher values use more samples for a livelier sound." TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="17"/>
                                                 </StackPanel>
                                             </ToolTip>
                                         </Border.ToolTip>
@@ -2338,9 +2338,9 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="78"/>
                                     </Grid.ColumnDefinitions>
-                                    <Slider Minimum="0" Maximum="1" Value="0.18"/>
+                                    <Slider x:Name="SampleVariationSlider" Minimum="0" Maximum="1" TickFrequency="0.05" ValueChanged="SampleVariationChanged"/>
                                     <Border Grid.Column="1" Height="34" Background="#151C22" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="13,0,0,0">
-                                        <TextBlock Text="18%" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+                                        <TextBlock x:Name="SampleVariationAmountText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
                                     </Border>
                                 </Grid>
                             </StackPanel>

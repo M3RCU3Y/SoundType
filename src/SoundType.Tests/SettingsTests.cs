@@ -16,6 +16,8 @@ public sealed class SettingsTests
         Assert.True(settings.Enabled);
         Assert.Equal(0.72, settings.MasterVolume);
         Assert.Equal(0.0, settings.PitchVariation);
+        Assert.Equal(SampleVariationMode.Natural, settings.SampleVariationMode);
+        Assert.Equal(0.6, settings.SampleVariationAmount);
         Assert.False(settings.Pan.Enabled);
         Assert.Equal(0.0, settings.Pan.Strength);
         Assert.Contains("LeftShift", settings.ExcludedKeys);
@@ -32,6 +34,8 @@ public sealed class SettingsTests
             Enabled = false,
             MasterVolume = 0.25,
             PitchVariation = 0.08,
+            SampleVariationMode = SampleVariationMode.Random,
+            SampleVariationAmount = 0.9,
             StartWithWindows = true,
             StartHiddenInTray = true,
             Pan = new PanSettings { Enabled = true, Mode = PanMode.Random, Strength = 0.6 },
@@ -50,6 +54,8 @@ public sealed class SettingsTests
         Assert.False(restored.Enabled);
         Assert.Equal(0.25, restored.MasterVolume);
         Assert.Equal(0.08, restored.PitchVariation);
+        Assert.Equal(SampleVariationMode.Random, restored.SampleVariationMode);
+        Assert.Equal(0.9, restored.SampleVariationAmount);
         Assert.True(restored.StartWithWindows);
         Assert.True(restored.StartHiddenInTray);
         Assert.True(restored.Pan.Enabled);
@@ -158,6 +164,24 @@ public sealed class SettingsTests
         AppSettings settings = await service.LoadAsync();
 
         Assert.Equal(0.12, settings.PitchVariation);
+    }
+
+    [Fact]
+    public async Task LoadAsync_ClampsSampleVariationAmount()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "sampleVariationAmount": 5.0
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.Equal(1.0, settings.SampleVariationAmount);
     }
 
     [Fact]

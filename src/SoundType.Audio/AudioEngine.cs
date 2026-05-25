@@ -15,6 +15,7 @@ public sealed class AudioEngine : IAsyncDisposable
     private readonly object _outputLock = new();
     private readonly IAudioOutputDeviceFactory _outputFactory;
     private readonly Dictionary<string, int> _roundRobin = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, int> _lastSampleByGroup = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, long> _throttleLastPlayedTicks = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, LoadedSoundPack> _packs = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, long> _packLastUsedTicks = new(StringComparer.OrdinalIgnoreCase);
@@ -46,6 +47,8 @@ public sealed class AudioEngine : IAsyncDisposable
 
     public double MasterVolume { get; set; } = 0.75;
     public double PitchVariation { get; set; }
+    public SampleVariationMode SampleVariationMode { get; set; } = SampleVariationMode.Natural;
+    public double SampleVariationAmount { get; set; } = 0.6;
     public StereoOutputLevel OutputLevel => _outputMeter.Level;
     public EqSettings Eq
     {
@@ -95,6 +98,10 @@ public sealed class AudioEngine : IAsyncDisposable
                 {
                     _roundRobin.Clear();
                 }
+                lock (_lastSampleByGroup)
+                {
+                    _lastSampleByGroup.Clear();
+                }
             }
 
             PruneCachedPacks();
@@ -115,6 +122,10 @@ public sealed class AudioEngine : IAsyncDisposable
             lock (_roundRobin)
             {
                 _roundRobin.Clear();
+            }
+            lock (_lastSampleByGroup)
+            {
+                _lastSampleByGroup.Clear();
             }
             PruneCachedPacks();
             return true;
@@ -280,21 +291,62 @@ public sealed class AudioEngine : IAsyncDisposable
 
     private LoadedSoundSample SelectSample(SoundPackMetadata metadata, string group, IReadOnlyList<LoadedSoundSample> samples)
     {
-        if (metadata.Defaults.Randomize)
+        if (samples.Count == 1)
+        {
+            return samples[0];
+        }
+
+        int poolSize = ResolveSamplePoolSize(samples.Count);
+        string groupKey = $"{metadata.Id}:{group}";
+        if (SampleVariationMode == SampleVariationMode.Random ||
+            (SampleVariationMode == SampleVariationMode.Natural && metadata.Defaults.Randomize))
         {
             lock (_random)
             {
-                return samples[_random.Next(samples.Count)];
+                int selected = _random.Next(poolSize);
+                if (poolSize > 1)
+                {
+                    lock (_lastSampleByGroup)
+                    {
+                        if (_lastSampleByGroup.TryGetValue(groupKey, out int last) && selected == last)
+                        {
+                            selected = (selected + 1 + _random.Next(poolSize - 1)) % poolSize;
+                        }
+
+                        _lastSampleByGroup[groupKey] = selected;
+                    }
+                }
+
+                return samples[selected];
             }
         }
 
-        string roundRobinKey = $"{metadata.Id}:{group}";
         lock (_roundRobin)
         {
-            int next = _roundRobin.TryGetValue(roundRobinKey, out int value) ? value : 0;
-            _roundRobin[roundRobinKey] = (next + 1) % samples.Count;
+            int next = _roundRobin.TryGetValue(groupKey, out int value) ? value : 0;
+            _roundRobin[groupKey] = (next + 1) % poolSize;
             return samples[next];
         }
+    }
+
+    private int ResolveSamplePoolSize(int sampleCount)
+    {
+        double amount = Math.Clamp(SampleVariationAmount, 0.0, 1.0);
+        return SampleVariationMode switch
+        {
+            SampleVariationMode.Consistent => Math.Clamp(
+                1 + (int)Math.Round(amount * Math.Min(3, sampleCount - 1)),
+                1,
+                sampleCount),
+            SampleVariationMode.Random => Math.Clamp(
+                Math.Max(2, (int)Math.Ceiling(sampleCount * Math.Max(0.25, amount))),
+                1,
+                sampleCount),
+            _ => Math.Clamp(
+                Math.Max(2, (int)Math.Ceiling(sampleCount * (0.25 + (amount * 0.5)))),
+                1,
+                sampleCount)
+        };
     }
 
     private double ResolvePitchFactor(double pitchVariation, double packVariation)

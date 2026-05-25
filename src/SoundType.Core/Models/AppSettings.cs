@@ -11,6 +11,8 @@ public sealed class AppSettings
     public bool ShowStartupNotification { get; set; }
     public double MasterVolume { get; set; } = 0.72;
     public double PitchVariation { get; set; }
+    public SampleVariationMode SampleVariationMode { get; set; } = SampleVariationMode.Natural;
+    public double SampleVariationAmount { get; set; } = 0.6;
     public string ActiveSoundPackId { get; set; } = DefaultSoundPackId;
     public HashSet<string> FavoriteSoundPackIds { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public string GlobalToggleHotkey { get; set; } = "Ctrl+Alt+L";

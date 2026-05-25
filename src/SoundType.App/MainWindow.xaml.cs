@@ -45,6 +45,12 @@ public partial class MainWindow : Window
         new("ding-07", "Reward Tap Bell"),
         new("ding-08", "Soft Desk Chime")
     ];
+    private static readonly IReadOnlyList<SampleVariationModeListItem> SampleVariationModes =
+    [
+        new(SampleVariationMode.Consistent, "Consistent"),
+        new(SampleVariationMode.Natural, "Natural"),
+        new(SampleVariationMode.Random, "Random")
+    ];
     private const string HotkeyTargetToggleListening = "ToggleListening";
     private const string HotkeyTargetPreviewNormal = "PreviewNormal";
     private const string HotkeyTargetNextPack = "NextPack";
@@ -130,6 +136,7 @@ public partial class MainWindow : Window
         ConfigureAppRuleEditors();
         ConfigurePanControls();
         ConfigureEnterDingControls();
+        ConfigureSampleVariationControls();
         ConfigureKeyboardRuleEditors();
         ConfigurePackFilters();
         TryStartAudio();
@@ -285,6 +292,8 @@ public partial class MainWindow : Window
             {
                 MasterVolume = _settings.MasterVolume,
                 PitchVariation = _settings.PitchVariation,
+                SampleVariationMode = _settings.SampleVariationMode,
+                SampleVariationAmount = _settings.SampleVariationAmount,
                 Eq = _settings.Eq,
                 Pan = _settings.Pan
             };
@@ -577,6 +586,15 @@ public partial class MainWindow : Window
         }
     }
 
+    private void ConfigureSampleVariationControls()
+    {
+        SampleVariationModeComboBox.Items.Clear();
+        foreach (SampleVariationModeListItem item in SampleVariationModes)
+        {
+            SampleVariationModeComboBox.Items.Add(item);
+        }
+    }
+
     private void ConfigureKeyboardRuleEditors()
     {
         SelectedKeyGroupComboBox.Items.Clear();
@@ -706,6 +724,10 @@ public partial class MainWindow : Window
         EnabledToggle.IsChecked = _settings.Enabled;
         MasterVolumeSlider.Value = _settings.MasterVolume;
         PitchVariationSlider.Value = Math.Round(_settings.PitchVariation * 100);
+        SampleVariationModeComboBox.SelectedItem = SampleVariationModeComboBox.Items
+            .OfType<SampleVariationModeListItem>()
+            .FirstOrDefault(item => item.Mode == _settings.SampleVariationMode);
+        SampleVariationSlider.Value = _settings.SampleVariationAmount;
         KeyDebounceSlider.Value = _settings.KeyDebounceMilliseconds;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         EnterDingEnabledCheck.IsChecked = _settings.EnterDingEnabled;
@@ -738,12 +760,15 @@ public partial class MainWindow : Window
         {
             _audio.MasterVolume = _settings.MasterVolume;
             _audio.PitchVariation = _settings.PitchVariation;
+            _audio.SampleVariationMode = _settings.SampleVariationMode;
+            _audio.SampleVariationAmount = _settings.SampleVariationAmount;
             _audio.Eq = _settings.Eq;
             _audio.Pan = _settings.Pan;
         }
         RefreshAppRules();
         RefreshGroupVolumeText();
         RefreshEqText();
+        RefreshSampleVariationText();
         RefreshPanText();
         RefreshTrayStatus();
         RefreshStartupStatus();
@@ -1931,6 +1956,29 @@ public partial class MainWindow : Window
         }
 
         RefreshPackLibrary(selectedPackId);
+        _ = SaveSettingsAsync();
+    }
+
+    private void SampleVariationChanged(object sender, RoutedEventArgs e)
+    {
+        if (_loading)
+        {
+            return;
+        }
+
+        if (SampleVariationModeComboBox.SelectedItem is SampleVariationModeListItem item)
+        {
+            _settings.SampleVariationMode = item.Mode;
+        }
+
+        _settings.SampleVariationAmount = Math.Clamp(SampleVariationSlider.Value, 0.0, 1.0);
+        if (_audio is not null)
+        {
+            _audio.SampleVariationMode = _settings.SampleVariationMode;
+            _audio.SampleVariationAmount = _settings.SampleVariationAmount;
+        }
+
+        RefreshSampleVariationText();
         _ = SaveSettingsAsync();
     }
 
@@ -3236,6 +3284,22 @@ public partial class MainWindow : Window
         }
 
         PanStatusText.Text = $"{Math.Round(_settings.Pan.Strength * 100)}%";
+    }
+
+    private void RefreshSampleVariationText()
+    {
+        if (SampleVariationAmountText is null)
+        {
+            return;
+        }
+
+        SampleVariationAmountText.Text = $"{Math.Round(_settings.SampleVariationAmount * 100)}%";
+        SampleVariationModeText.Text = _settings.SampleVariationMode switch
+        {
+            SampleVariationMode.Consistent => "Tight",
+            SampleVariationMode.Random => "Wide",
+            _ => "Alive"
+        };
     }
 
     private void RefreshOutputMeter()

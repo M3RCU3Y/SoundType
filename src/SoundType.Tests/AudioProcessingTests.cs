@@ -301,6 +301,60 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_ConsistentSampleVariation_ReusesTightSamplePool()
+    {
+        FakeAudioOutputDeviceFactory factory = new();
+        AudioEngine engine = new(factory)
+        {
+            MasterVolume = 1.0,
+            SampleVariationMode = SampleVariationMode.Consistent,
+            SampleVariationAmount = 0.0
+        };
+        engine.LoadPack(CreateLoadedPackWithSamples("variation-tight", [[0.1f, 0.1f], [0.4f, 0.4f], [0.8f, 0.8f]]));
+
+        PlaybackRequest request = new()
+        {
+            Key = new KeyIdentity("A", "A", KeyCategory.Character),
+            SoundGroup = "normal"
+        };
+
+        Assert.True(engine.TryPlay(request));
+        float[] first = ReadOutput(factory.CreatedDevices.Single().Provider, 2);
+        Assert.True(engine.TryPlay(request));
+        float[] second = ReadOutput(factory.CreatedDevices.Single().Provider, 2);
+
+        Assert.Equal(first, second);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task AudioEngine_NaturalSampleVariation_RotatesAcrossSamples()
+    {
+        FakeAudioOutputDeviceFactory factory = new();
+        AudioEngine engine = new(factory)
+        {
+            MasterVolume = 1.0,
+            SampleVariationMode = SampleVariationMode.Natural,
+            SampleVariationAmount = 1.0
+        };
+        engine.LoadPack(CreateLoadedPackWithSamples("variation-natural", [[0.1f, 0.1f], [0.4f, 0.4f], [0.8f, 0.8f]]));
+
+        PlaybackRequest request = new()
+        {
+            Key = new KeyIdentity("A", "A", KeyCategory.Character),
+            SoundGroup = "normal"
+        };
+
+        Assert.True(engine.TryPlay(request));
+        float[] first = ReadOutput(factory.CreatedDevices.Single().Provider, 2);
+        Assert.True(engine.TryPlay(request));
+        float[] second = ReadOutput(factory.CreatedDevices.Single().Provider, 2);
+
+        Assert.NotEqual(first, second);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void MultiBandEqSampleProvider_ProcessesTenBandsWithoutChangingReadCount()
     {
         ArraySampleProvider source = new(CreateSineWave(512));
@@ -469,6 +523,26 @@ public sealed class AudioProcessingTests
             new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase)
             {
                 ["normal"] = [sample]
+            });
+    }
+
+    private static LoadedSoundPack CreateLoadedPackWithSamples(string id, IReadOnlyList<float[]> decodedSamples)
+    {
+        WaveFormat format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+        IReadOnlyList<LoadedSoundSample> samples = decodedSamples
+            .Select((sample, index) => new LoadedSoundSample(
+                $"normal/key-{index}.wav",
+                SoundSampleFormat.Wav,
+                [],
+                sample,
+                format))
+            .ToList();
+
+        return new LoadedSoundPack(
+            new SoundPackMetadata { Id = id, Name = id },
+            new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["normal"] = samples
             });
     }
 

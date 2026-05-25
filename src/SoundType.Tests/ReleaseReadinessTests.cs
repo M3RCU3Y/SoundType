@@ -368,8 +368,10 @@ public sealed class ReleaseReadinessTests
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
 
-        Assert.Contains("Adds tiny pitch differences between keystrokes", xaml);
-        Assert.Contains("Softens the start of each key sound", xaml);
+        Assert.Contains("Controls how widely SoundType rotates through samples", xaml);
+        Assert.Contains("Lower values keep the keyboard tighter", xaml);
+        Assert.Contains("x:Name=\"SampleVariationModeComboBox\"", xaml);
+        Assert.Contains("x:Name=\"SampleVariationSlider\"", xaml);
         Assert.Contains("PitchHelpBadgeStyle", xaml);
     }
 
