@@ -1367,7 +1367,7 @@ public partial class MainWindow : Window
         }
 
         PageTitleText.Text = "Settings";
-        PageSubtitleText.Text = "Preferences and privacy";
+        PageSubtitleText.Text = "Preferences";
         PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
     }
 

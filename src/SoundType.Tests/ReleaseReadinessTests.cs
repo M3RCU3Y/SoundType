@@ -266,6 +266,16 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SettingsHeaderUsesSimplePreferencesSubtitle()
+    {
+        string root = FindRepositoryRoot();
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("PageSubtitleText.Text = \"Preferences\";", code);
+        Assert.DoesNotContain("Preferences and privacy", code);
+    }
+
+    [Fact]
     public void SettingsHotkeysCardUsesReadableShortcutRows()
     {
         string root = FindRepositoryRoot();
