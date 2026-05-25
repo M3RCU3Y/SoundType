@@ -266,11 +266,24 @@ public sealed class ReleaseReadinessTests
     {
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+        string settings = File.ReadAllText(Path.Combine(root, "src", "SoundType.Core", "Models", "AppSettings.cs"));
 
         Assert.Contains("x:Name=\"SettingsHotkeysPanel\"", xaml);
         Assert.Contains("x:Name=\"ToggleListeningHotkeyRow\"", xaml);
-        Assert.Contains("ShortcutStackStyle", xaml);
-        Assert.Contains("ToolTip=\"Change shortcut\"", xaml);
+        Assert.Contains("HotkeyDisplayStyle", xaml);
+        Assert.Contains("x:Name=\"ToggleListeningHotkeyText\"", xaml);
+        Assert.Contains("x:Name=\"PreviewNormalHotkeyText\"", xaml);
+        Assert.Contains("x:Name=\"NextPackHotkeyText\"", xaml);
+        Assert.Contains("x:Name=\"PreviousPackHotkeyText\"", xaml);
+        Assert.Contains("Click=\"StartHotkeyRecording_Click\"", xaml);
+        Assert.Contains("Click=\"RestoreHotkeys_Click\"", xaml);
+        Assert.Contains("private void StartHotkeyRecording_Click", code);
+        Assert.Contains("private void CaptureHotkeyFromKeyDown", code);
+        Assert.Contains("private static bool MatchesHotkey", code);
+        Assert.Contains("PreviewNormalHotkey", settings);
+        Assert.Contains("NextPackHotkey", settings);
+        Assert.Contains("PreviousPackHotkey", settings);
         Assert.DoesNotContain("<ColumnDefinition Width=\"224\"/>", xaml);
     }
 

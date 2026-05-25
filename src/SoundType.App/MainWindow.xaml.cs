@@ -45,6 +45,10 @@ public partial class MainWindow : Window
         new("ding-07", "Reward Tap Bell"),
         new("ding-08", "Soft Desk Chime")
     ];
+    private const string HotkeyTargetToggleListening = "ToggleListening";
+    private const string HotkeyTargetPreviewNormal = "PreviewNormal";
+    private const string HotkeyTargetNextPack = "NextPack";
+    private const string HotkeyTargetPreviousPack = "PreviousPack";
     private const int RecentAppActivitySlots = 22;
     private static readonly TimeSpan RecentAppActivityWindow = TimeSpan.FromMinutes(30);
     private readonly SettingsService _settingsService = new();
@@ -92,6 +96,7 @@ public partial class MainWindow : Window
     private KeyboardKeyFilter _keyboardFilter = KeyboardKeyFilter.All;
     private int _packActivationVersion;
     private ScrollViewer? _packsScrollViewer;
+    private string? _recordingHotkeyTarget;
     private readonly DispatcherTimer _libraryScrollTimer = new() { Interval = TimeSpan.FromMilliseconds(12) };
     private double _libraryScrollTarget;
     private const double LibraryScrollWheelScale = 0.64;
@@ -109,6 +114,7 @@ public partial class MainWindow : Window
         _packsRoot = Path.Combine(AppContext.BaseDirectory, "assets", "packs");
         Loaded += MainWindow_Loaded;
         Closing += MainWindow_Closing;
+        PreviewKeyDown += MainWindow_PreviewKeyDown;
         _keyboardHook.KeyPressed += KeyboardHook_KeyPressed;
         _activeAppTimer.Tick += (_, _) => RefreshCurrentApp();
         _outputMeterTimer.Tick += (_, _) => RefreshOutputMeter();
@@ -740,6 +746,7 @@ public partial class MainWindow : Window
         RefreshPanText();
         RefreshTrayStatus();
         RefreshStartupStatus();
+        RefreshHotkeySettingsText();
         RefreshSettingsOverview();
         RefreshStatus();
         RefreshSelectedKeyInspector();
@@ -1422,8 +1429,11 @@ public partial class MainWindow : Window
         }
 
         IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-        _hotkeySource = HwndSource.FromHwnd(windowHandle);
-        _hotkeySource?.AddHook(WndProc);
+        if (_hotkeySource is null)
+        {
+            _hotkeySource = HwndSource.FromHwnd(windowHandle);
+            _hotkeySource?.AddHook(WndProc);
+        }
 
         if (!_globalHotkey.TryRegister(windowHandle, ToggleHotkeyId, gesture, out string? errorMessage))
         {
@@ -1450,6 +1460,226 @@ public partial class MainWindow : Window
         ShowTrayBalloon(_settings.Enabled ? "SoundType enabled" : "SoundType muted");
         await SaveSettingsAsync();
     }
+
+    private void MainWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (_recordingHotkeyTarget is not null)
+        {
+            CaptureHotkeyFromKeyDown(e);
+            return;
+        }
+
+        if (IsInteractiveElement(Keyboard.FocusedElement as DependencyObject))
+        {
+            return;
+        }
+
+        if (MatchesHotkey(_settings.PreviewNormalHotkey, e))
+        {
+            PreviewPackGroup("normal");
+            e.Handled = true;
+            return;
+        }
+
+        if (MatchesHotkey(_settings.NextPackHotkey, e))
+        {
+            _ = ActivateAdjacentPackAsync(1);
+            e.Handled = true;
+            return;
+        }
+
+        if (MatchesHotkey(_settings.PreviousPackHotkey, e))
+        {
+            _ = ActivateAdjacentPackAsync(-1);
+            e.Handled = true;
+        }
+    }
+
+    private async Task ActivateAdjacentPackAsync(int direction)
+    {
+        if (_packs.Count == 0)
+        {
+            return;
+        }
+
+        string? currentId = _activePack?.Id ?? (PacksList.SelectedItem as PackListItem)?.Metadata.Id;
+        int currentIndex = -1;
+        for (int i = 0; i < _packs.Count; i++)
+        {
+            if (_packs[i].Id.Equals(currentId, StringComparison.OrdinalIgnoreCase))
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+        int nextIndex = currentIndex < 0
+            ? 0
+            : (currentIndex + direction + _packs.Count) % _packs.Count;
+        SoundPackMetadata nextPack = _packs[nextIndex];
+
+        PackListItem? visibleItem = PacksList.Items
+            .OfType<PackListItem>()
+            .FirstOrDefault(item => item.Metadata.Id.Equals(nextPack.Id, StringComparison.OrdinalIgnoreCase));
+        if (visibleItem is not null)
+        {
+            PacksList.SelectedItem = visibleItem;
+            PacksList.ScrollIntoView(visibleItem);
+        }
+
+        await ActivatePackAsync(nextPack);
+        RefreshSelectedPackDetails(nextPack);
+    }
+
+    private void StartHotkeyRecording_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.Button button || button.Tag is not string target)
+        {
+            return;
+        }
+
+        _recordingHotkeyTarget = target;
+        RefreshHotkeySettingsText(recordingTarget: target);
+        button.Content = "Press keys";
+        Focus();
+    }
+
+    private void CaptureHotkeyFromKeyDown(System.Windows.Input.KeyEventArgs e)
+    {
+        e.Handled = true;
+        Key key = NormalizeShortcutKey(e);
+        if (key == Key.Escape)
+        {
+            _recordingHotkeyTarget = null;
+            RefreshHotkeySettingsText();
+            return;
+        }
+
+        if (IsModifierKey(key))
+        {
+            return;
+        }
+
+        ModifierKeys modifiers = Keyboard.Modifiers;
+        string shortcutText = FormatShortcut(modifiers, key);
+        if (_recordingHotkeyTarget == HotkeyTargetToggleListening &&
+            !HasShortcutModifier(modifiers))
+        {
+            ToggleListeningHotkeyText.Text = "Add Ctrl / Alt / Shift";
+            return;
+        }
+
+        switch (_recordingHotkeyTarget)
+        {
+            case HotkeyTargetToggleListening:
+                _settings.GlobalToggleHotkey = shortcutText;
+                RegisterGlobalHotkey();
+                break;
+            case HotkeyTargetPreviewNormal:
+                _settings.PreviewNormalHotkey = shortcutText;
+                break;
+            case HotkeyTargetNextPack:
+                _settings.NextPackHotkey = shortcutText;
+                break;
+            case HotkeyTargetPreviousPack:
+                _settings.PreviousPackHotkey = shortcutText;
+                break;
+        }
+
+        _recordingHotkeyTarget = null;
+        RefreshHotkeySettingsText();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RestoreHotkeys_Click(object sender, RoutedEventArgs e)
+    {
+        _recordingHotkeyTarget = null;
+        _settings.GlobalToggleHotkey = HotkeyGesture.DefaultText;
+        _settings.PreviewNormalHotkey = "Space";
+        _settings.NextPackHotkey = "Ctrl+Alt+Right";
+        _settings.PreviousPackHotkey = "Ctrl+Alt+Left";
+        RegisterGlobalHotkey();
+        RefreshHotkeySettingsText();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RefreshHotkeySettingsText(string? recordingTarget = null)
+    {
+        if (ToggleListeningHotkeyText is null)
+        {
+            return;
+        }
+
+        ToggleListeningHotkeyText.Text = recordingTarget == HotkeyTargetToggleListening ? "Press shortcut" : NormalizeShortcutText(_settings.GlobalToggleHotkey, HotkeyGesture.DefaultText);
+        PreviewNormalHotkeyText.Text = recordingTarget == HotkeyTargetPreviewNormal ? "Press shortcut" : NormalizeShortcutText(_settings.PreviewNormalHotkey, "Space");
+        NextPackHotkeyText.Text = recordingTarget == HotkeyTargetNextPack ? "Press shortcut" : NormalizeShortcutText(_settings.NextPackHotkey, "Ctrl+Alt+Right");
+        PreviousPackHotkeyText.Text = recordingTarget == HotkeyTargetPreviousPack ? "Press shortcut" : NormalizeShortcutText(_settings.PreviousPackHotkey, "Ctrl+Alt+Left");
+
+        ToggleListeningHotkeyRecordButton.Content = recordingTarget == HotkeyTargetToggleListening ? "Listening" : "Record";
+        PreviewNormalHotkeyRecordButton.Content = recordingTarget == HotkeyTargetPreviewNormal ? "Listening" : "Record";
+        NextPackHotkeyRecordButton.Content = recordingTarget == HotkeyTargetNextPack ? "Listening" : "Record";
+        PreviousPackHotkeyRecordButton.Content = recordingTarget == HotkeyTargetPreviousPack ? "Listening" : "Record";
+    }
+
+    private static string NormalizeShortcutText(string? value, string fallback) =>
+        string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+
+    private static bool MatchesHotkey(string? shortcutText, System.Windows.Input.KeyEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(shortcutText))
+        {
+            return false;
+        }
+
+        Key key = NormalizeShortcutKey(e);
+        if (IsModifierKey(key))
+        {
+            return false;
+        }
+
+        return string.Equals(FormatShortcut(Keyboard.Modifiers, key), shortcutText.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string FormatShortcut(ModifierKeys modifiers, Key key)
+    {
+        List<string> parts = [];
+        if (modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
+        if (modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
+        if (modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
+        if (modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
+        parts.Add(FormatKeyName(key));
+        return string.Join("+", parts);
+    }
+
+    private static string FormatKeyName(Key key) =>
+        key switch
+        {
+            Key.Return => "Enter",
+            Key.Prior => "PageUp",
+            Key.Next => "PageDown",
+            Key.Back => "Backspace",
+            Key.OemPlus => "Plus",
+            Key.OemMinus => "Minus",
+            _ => new KeyConverter().ConvertToInvariantString(key) ?? key.ToString()
+        };
+
+    private static Key NormalizeShortcutKey(System.Windows.Input.KeyEventArgs e) =>
+        e.Key switch
+        {
+            Key.System => e.SystemKey,
+            Key.ImeProcessed => e.ImeProcessedKey,
+            Key.DeadCharProcessed => e.DeadCharProcessedKey,
+            _ => e.Key
+        };
+
+    private static bool HasShortcutModifier(ModifierKeys modifiers) =>
+        (modifiers & (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift | ModifierKeys.Windows)) != ModifierKeys.None;
+
+    private static bool IsModifierKey(Key key) =>
+        key is Key.LeftCtrl or Key.RightCtrl
+            or Key.LeftAlt or Key.RightAlt
+            or Key.LeftShift or Key.RightShift
+            or Key.LWin or Key.RWin
+            or Key.System;
 
     private void ShowTrayBalloon(string message)
     {
