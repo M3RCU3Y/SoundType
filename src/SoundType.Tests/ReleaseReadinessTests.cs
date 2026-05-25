@@ -217,6 +217,34 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void PackDetailsButtonsCenterIconsAndReportIssuesOnGitHub()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("Click=\"ReportIssue_Click\"", xaml);
+        Assert.Contains("Text=\"Open Pack Folder\" VerticalAlignment=\"Center\"", xaml);
+        Assert.Contains("Text=\"Report an issue\" VerticalAlignment=\"Center\"", xaml);
+        Assert.Contains("Width=\"16\" Height=\"16\" LineHeight=\"16\"", xaml);
+        Assert.Contains("private void ReportIssue_Click", code);
+        Assert.Contains("https://github.com/M3RCU3Y/SoundType/issues/new/choose", code);
+        Assert.Contains("private static void OpenUrl", code);
+    }
+
+    [Fact]
+    public void GitHubIssueTemplatesCoverMainReportPaths()
+    {
+        string root = FindRepositoryRoot();
+        string templateRoot = Path.Combine(root, ".github", "ISSUE_TEMPLATE");
+
+        Assert.True(File.Exists(Path.Combine(templateRoot, "bug_report.yml")));
+        Assert.True(File.Exists(Path.Combine(templateRoot, "feature_request.yml")));
+        Assert.True(File.Exists(Path.Combine(templateRoot, "sound_pack_issue.yml")));
+        Assert.True(File.Exists(Path.Combine(templateRoot, "config.yml")));
+    }
+
+    [Fact]
     public void MainGlobalOutputKeepsOnlyListeningToggle()
     {
         string root = FindRepositoryRoot();

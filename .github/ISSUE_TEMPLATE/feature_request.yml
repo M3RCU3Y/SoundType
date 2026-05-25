@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest an improvement, workflow, sound option, or new pack behavior.
+title: "[Feature]: "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like SoundType to do?
+      description: Describe the feature or improvement.
+      placeholder: Add a way to...
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would this help?
+      description: Explain the user problem or workflow this would improve.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Library
+        - Audio effects
+        - Keyboard rules
+        - App rules
+        - Settings
+        - Sound packs
+        - Tray/startup
+        - Packaging/release
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Extra notes
+      description: Add screenshots, mockups, audio references, or examples if useful.

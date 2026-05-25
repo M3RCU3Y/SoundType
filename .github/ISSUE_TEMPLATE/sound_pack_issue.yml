@@ -1,0 +1,39 @@
+name: Sound pack issue
+description: Report a missing, broken, loud, quiet, clipped, or miscategorized sound pack.
+title: "[Sound pack]: "
+labels:
+  - sound-pack
+body:
+  - type: input
+    id: pack
+    attributes:
+      label: Pack name
+      placeholder: Alpaca Switches
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: Issue type
+      options:
+        - Missing sound
+        - Wrong sound
+        - Too loud or too quiet
+        - Clipping or distortion
+        - Bad metadata
+        - Import/export problem
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Tell us what sounds wrong and which key or sound group is affected.
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Attachments
+      description: Add screenshots, recordings, or pack files if they help explain the issue.

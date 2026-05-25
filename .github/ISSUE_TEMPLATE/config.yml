@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: SoundType releases
+    url: https://github.com/M3RCU3Y/SoundType/releases
+    about: Download the latest portable build and checksum.

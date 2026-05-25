@@ -1,0 +1,51 @@
+name: Bug report
+description: Report something that is broken or behaving strangely in SoundType.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Tell us what broke and what you expected instead.
+      placeholder: The Enter Ding selector is clipped in Settings...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the shortest path that triggers the issue.
+      placeholder: |
+        1. Open SoundType
+        2. Go to Settings
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: SoundType version
+      placeholder: v0.1.0 or commit/build if known
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Library
+        - Audio effects
+        - Keyboard rules
+        - App rules
+        - Settings
+        - Sound packs
+        - Tray/startup
+        - Packaging/release
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or recordings
+      description: Drag images or recordings here if the issue is visual or audio-related.

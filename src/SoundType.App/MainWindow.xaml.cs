@@ -2320,6 +2320,11 @@ public partial class MainWindow : Window
         OpenFolder(_selectedPacksFolder ?? _activePack?.FolderPath ?? _packsRoot);
     }
 
+    private void ReportIssue_Click(object sender, RoutedEventArgs e)
+    {
+        OpenUrl("https://github.com/M3RCU3Y/SoundType/issues/new/choose");
+    }
+
     private void BrowsePacksFolder_Click(object sender, RoutedEventArgs e)
     {
         e.Handled = true;
@@ -2378,6 +2383,11 @@ public partial class MainWindow : Window
     {
         Directory.CreateDirectory(folderPath);
         Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
+    }
+
+    private static void OpenUrl(string url)
+    {
+        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
 
     private static string EnsureTrailingSeparator(string path) =>
