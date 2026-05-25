@@ -709,6 +709,7 @@ public partial class MainWindow : Window
         KeyDebounceSlider.Value = _settings.KeyDebounceMilliseconds;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         EnterDingEnabledCheck.IsChecked = _settings.EnterDingEnabled;
+        EnterDingVolumeSlider.Value = _settings.EnterDingVolume;
         EnterDingSoundComboBox.SelectedItem = EnterDingSoundComboBox.Items
             .OfType<EnterDingSoundListItem>()
             .FirstOrDefault(item => item.SoundGroup.Equals(_settings.EnterDingSoundGroup, StringComparison.OrdinalIgnoreCase))
@@ -747,6 +748,7 @@ public partial class MainWindow : Window
         RefreshTrayStatus();
         RefreshStartupStatus();
         RefreshHotkeySettingsText();
+        RefreshEnterDingVolumeText();
         RefreshSettingsOverview();
         RefreshStatus();
         RefreshSelectedKeyInspector();
@@ -3034,6 +3036,28 @@ public partial class MainWindow : Window
             _settings.EnterDingSoundGroup = item.SoundGroup;
             _ = SaveSettingsAsync();
         }
+    }
+
+    private void EnterDingVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading)
+        {
+            return;
+        }
+
+        _settings.EnterDingVolume = Math.Clamp(EnterDingVolumeSlider.Value, 0.0, 1.0);
+        RefreshEnterDingVolumeText();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RefreshEnterDingVolumeText()
+    {
+        if (EnterDingVolumeText is null)
+        {
+            return;
+        }
+
+        EnterDingVolumeText.Text = $"{Math.Round(_settings.EnterDingVolume * 100)}%";
     }
 
     private void StartWithWindowsChanged(object sender, RoutedEventArgs e)
