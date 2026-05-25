@@ -964,7 +964,7 @@ public partial class MainWindow : Window
 
         if (KeyboardActivePackText is not null)
         {
-            KeyboardActivePackText.Text = _activePack?.Name ?? "No pack";
+            RefreshKeyboardActivePackSummary();
         }
     }
 
@@ -2522,8 +2522,21 @@ public partial class MainWindow : Window
 
         KeyboardEnabledCountText.Text = VisualKeyboard.EnabledCount.ToString();
         KeyboardExcludedCountText.Text = VisualKeyboard.ExcludedCount.ToString();
+        RefreshKeyboardActivePackSummary();
+    }
+
+    private void RefreshKeyboardActivePackSummary()
+    {
+        if (KeyboardActivePackText is null)
+        {
+            return;
+        }
+
         KeyboardActivePackText.Text = _activePack?.Name ?? "No pack";
-        KeyboardPreviewKeyText.Text = KeyIdentityMapper.GetDisplayName(_selectedKeyboardCode);
+        ImageSource? packImage = _activePack is null ? null : CreatePackPreviewImageSource(_activePack);
+        KeyboardActivePackImage.Source = packImage;
+        KeyboardActivePackImage.Visibility = packImage is null ? Visibility.Collapsed : Visibility.Visible;
+        KeyboardActivePackFallbackText.Visibility = packImage is null ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void RefreshSelectedKeyInspector()
@@ -2552,7 +2565,6 @@ public partial class MainWindow : Window
             SelectedKeyPitchSlider.Value = pitchSemitones;
             SelectedKeyPitchText.Text = $"{pitchSemitones:0} st";
             KeyboardPreviewSelectedButton.Content = $"Preview {displayName}";
-            KeyboardPreviewKeyText.Text = displayName;
             SelectedKeyWaveformTitleText.Text = $"Waveform ({displayName})";
         }
         finally

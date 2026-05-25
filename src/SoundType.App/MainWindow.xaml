@@ -2760,9 +2760,7 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="1.1*"/>
                                             <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="1.45*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="1.2*"/>
+                                            <ColumnDefinition Width="2.4*"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                                             <TextBlock Text="||||" Foreground="{StaticResource AccentBrush}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,18,0"/>
@@ -2783,22 +2781,15 @@
                                         </StackPanel>
                                         <Border Grid.Column="3" Style="{StaticResource KeyboardMetricDividerStyle}"/>
                                         <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Border Width="46" Height="46" CornerRadius="23" Background="#1B2525" Margin="0,0,18,0">
-                                                <TextBlock Text="PACK" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Width="52" Height="52" CornerRadius="10" Background="#1B2525" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" ClipToBounds="True" Margin="0,0,18,0">
+                                                <Grid>
+                                                    <Image x:Name="KeyboardActivePackImage" Stretch="UniformToFill"/>
+                                                    <TextBlock x:Name="KeyboardActivePackFallbackText" Text="PACK" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Grid>
                                             </Border>
-                                            <StackPanel>
+                                            <StackPanel VerticalAlignment="Center" MaxWidth="280">
                                                 <TextBlock x:Name="KeyboardActivePackText" Text="Alpaca Switches" FontSize="18" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
                                                 <TextBlock Text="Active pack" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                        <Border Grid.Column="5" Style="{StaticResource KeyboardMetricDividerStyle}"/>
-                                        <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Border Width="46" Height="46" CornerRadius="23" Background="#20272D" Margin="0,0,18,0">
-                                                <TextBlock Text="KEY" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel>
-                                                <TextBlock x:Name="KeyboardPreviewKeyText" Text="Space" FontSize="18" FontWeight="Bold"/>
-                                                <TextBlock Text="Preview key" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
