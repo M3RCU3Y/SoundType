@@ -187,6 +187,8 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("Click=\"OpenPackWaveformLocation_Click\"", xaml);
         Assert.Contains("private void OpenPackWaveformLocation_Click", code);
         Assert.Contains("ResolvePackWaveformLocation", code);
+        Assert.Contains("<Style TargetType=\"{x:Type ToolTip}\" BasedOn=\"{StaticResource PitchHelpToolTipStyle}\">", xaml);
+        Assert.Contains("ToolTip=\"Open waveform location\"", xaml);
         Assert.DoesNotContain("Margin=\"0,0,12,0\" Click=\"PreviewNormal_Click\"", xaml);
     }
 
