@@ -3805,8 +3805,8 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="34"/>
                                             <RowDefinition Height="48"/>
-                                            <RowDefinition Height="58"/>
-                                            <RowDefinition Height="58"/>
+                                            <RowDefinition Height="62"/>
+                                            <RowDefinition Height="54"/>
                                             <RowDefinition Height="1"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
@@ -3829,15 +3829,15 @@
                                         <Grid Grid.Row="2" Margin="0,2,0,0">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="20"/>
-                                                <RowDefinition Height="38"/>
+                                                <RowDefinition Height="40"/>
                                             </Grid.RowDefinitions>
                                             <TextBlock Text="Ding sound" Style="{StaticResource SettingsStorageLabelStyle}"/>
-                                            <ComboBox x:Name="EnterDingSoundComboBox" Grid.Row="1" SelectionChanged="EnterDingSoundComboBox_SelectionChanged"/>
+                                            <ComboBox x:Name="EnterDingSoundComboBox" Grid.Row="1" Height="38" VerticalAlignment="Top" SelectionChanged="EnterDingSoundComboBox_SelectionChanged"/>
                                         </Grid>
-                                        <Grid Grid.Row="3" Margin="0,4,0,0">
+                                        <Grid Grid.Row="3" Margin="0,2,0,0">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="22"/>
-                                                <RowDefinition Height="36"/>
+                                                <RowDefinition Height="20"/>
+                                                <RowDefinition Height="32"/>
                                             </Grid.RowDefinitions>
                                             <Grid>
                                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="64"/></Grid.ColumnDefinitions>
@@ -3856,10 +3856,15 @@
                                                 <TextBlock Text="Future ding packs will appear in this list automatically." Style="{StaticResource SettingsRowDescriptionStyle}"/>
                                             </StackPanel>
                                             <Button Grid.Column="1" Height="34" Padding="10,0" Click="PreviewEnterDing_Click">
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,0,8,0"/>
-                                                    <TextBlock Text="Preview"/>
-                                                </StackPanel>
+                                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="16"/>
+                                                        <ColumnDefinition Width="8"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="13" Width="16" Height="16" LineHeight="16" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2" Text="Preview" VerticalAlignment="Center"/>
+                                                </Grid>
                                             </Button>
                                         </Grid>
                                     </Grid>

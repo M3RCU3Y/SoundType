@@ -306,8 +306,11 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("x:Name=\"EnterDingSoundComboBox\"", enterDingCard);
         Assert.Contains("Text=\"Preview the selected bell\"", enterDingCard);
         Assert.Contains("Click=\"PreviewEnterDing_Click\"", enterDingCard);
-        Assert.Contains("<RowDefinition Height=\"58\"/>", enterDingCard);
+        Assert.Contains("<RowDefinition Height=\"62\"/>", enterDingCard);
+        Assert.Contains("x:Name=\"EnterDingSoundComboBox\" Grid.Row=\"1\" Height=\"38\" VerticalAlignment=\"Top\"", enterDingCard);
         Assert.Contains("<Grid Grid.Row=\"5\" Margin=\"0,8,0,0\">", enterDingCard);
+        Assert.Contains("<Grid HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\">", enterDingCard);
+        Assert.Contains("Width=\"16\" Height=\"16\" LineHeight=\"16\"", enterDingCard);
         Assert.DoesNotContain("<Grid Grid.Row=\"5\" Margin=\"0,14,0,0\">", enterDingCard);
     }
 
