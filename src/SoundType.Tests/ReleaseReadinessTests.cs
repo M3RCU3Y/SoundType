@@ -293,6 +293,25 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SettingsEnterDingCardKeepsPreviewControlsVisible()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        int title = xaml.IndexOf("Text=\"Enter Ding\"", StringComparison.Ordinal);
+        int start = xaml.LastIndexOf("<Border Grid.Column=\"2\"", title, StringComparison.Ordinal);
+        int end = xaml.IndexOf("<Border Grid.Row=\"6\"", start, StringComparison.Ordinal);
+        Assert.True(start >= 0 && end > start);
+        string enterDingCard = xaml[start..end];
+
+        Assert.Contains("x:Name=\"EnterDingSoundComboBox\"", enterDingCard);
+        Assert.Contains("Text=\"Preview the selected bell\"", enterDingCard);
+        Assert.Contains("Click=\"PreviewEnterDing_Click\"", enterDingCard);
+        Assert.Contains("<RowDefinition Height=\"58\"/>", enterDingCard);
+        Assert.Contains("<Grid Grid.Row=\"5\" Margin=\"0,8,0,0\">", enterDingCard);
+        Assert.DoesNotContain("<Grid Grid.Row=\"5\" Margin=\"0,14,0,0\">", enterDingCard);
+    }
+
+    [Fact]
     public void SettingsStorageActionsFitInsideCard()
     {
         string root = FindRepositoryRoot();
