@@ -355,6 +355,42 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_BuiltInMultiSampleGroups_UseDifferentSamplesWithVariation()
+    {
+        string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
+        SoundPackLoader loader = new();
+        AudioEngine engine = new()
+        {
+            SampleVariationMode = SampleVariationMode.Natural,
+            SampleVariationAmount = 1.0
+        };
+
+        IReadOnlyList<SoundPackMetadata> metadata = loader.DiscoverPacks(packsRoot);
+        List<string> multiSampleGroups = [];
+
+        foreach (SoundPackMetadata packMetadata in metadata)
+        {
+            LoadedSoundPack pack = loader.Load(packMetadata);
+            foreach ((string group, IReadOnlyList<LoadedSoundSample> samples) in pack.Samples)
+            {
+                if (samples.Count <= 1)
+                {
+                    continue;
+                }
+
+                multiSampleGroups.Add($"{packMetadata.Id}:{group}");
+                LoadedSoundSample first = InvokeSelectSample(engine, packMetadata, group, samples);
+                LoadedSoundSample second = InvokeSelectSample(engine, packMetadata, group, samples);
+
+                Assert.NotEqual(first.RelativePath, second.RelativePath);
+            }
+        }
+
+        Assert.NotEmpty(multiSampleGroups);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public void MultiBandEqSampleProvider_ProcessesTenBandsWithoutChangingReadCount()
     {
         ArraySampleProvider source = new(CreateSineWave(512));
@@ -544,6 +580,36 @@ public sealed class AudioProcessingTests
             {
                 ["normal"] = samples
             });
+    }
+
+    private static LoadedSoundSample InvokeSelectSample(
+        AudioEngine engine,
+        SoundPackMetadata metadata,
+        string group,
+        IReadOnlyList<LoadedSoundSample> samples)
+    {
+        System.Reflection.MethodInfo? method = typeof(AudioEngine).GetMethod(
+            "SelectSample",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+        Assert.NotNull(method);
+        return Assert.IsType<LoadedSoundSample>(method.Invoke(engine, [metadata, group, samples]));
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        DirectoryInfo? current = new(AppContext.BaseDirectory);
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "SoundType.sln")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Could not locate SoundType repository root.");
     }
 
     private sealed class FakeAudioOutputDeviceFactory : IAudioOutputDeviceFactory
