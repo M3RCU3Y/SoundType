@@ -1191,6 +1191,40 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="LibraryViewButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="SettingsSwitchStyle" TargetType="CheckBox" BasedOn="{StaticResource ToggleSwitchCheckBoxStyle}"/>
         <Style x:Key="SettingsIconTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
@@ -1584,9 +1618,22 @@
 
                 <Border Grid.Row="0" BorderBrush="#2D343B" BorderThickness="0,0,0,1" MouseLeftButtonDown="ShellDrag_MouseLeftButtonDown">
                     <Grid Margin="26,0,0,0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,690,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,620,0">
                             <TextBlock x:Name="PageTitleText" Text="Library" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
                             <TextBlock x:Name="PageSubtitleText" Text="Browse packs" FontSize="16" Foreground="{StaticResource MutedTextBrush}" Margin="28,6,0,0" VerticalAlignment="Center"/>
+                            <StackPanel x:Name="LibraryViewTabs" Orientation="Horizontal" Margin="28,4,0,0" Visibility="Collapsed">
+                                <Button x:Name="BrowsePacksViewButton"
+                                        Style="{StaticResource LibraryViewButtonStyle}"
+                                        Content="Browse packs"
+                                        Width="100"
+                                        Click="BrowsePacksViewButton_Click"/>
+                                <Button x:Name="FavoritePacksViewButton"
+                                        Style="{StaticResource LibraryViewButtonStyle}"
+                                        Content="Favorites"
+                                        Width="84"
+                                        Margin="18,0,0,0"
+                                        Click="FavoritePacksViewButton_Click"/>
+                            </StackPanel>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,172,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
                             <StackPanel x:Name="LibraryHeaderActions" Orientation="Horizontal" Visibility="Collapsed">

@@ -134,6 +134,23 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void LibraryHeaderCanShowFavoritePacks()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("x:Name=\"BrowsePacksViewButton\"", xaml);
+        Assert.Contains("Click=\"BrowsePacksViewButton_Click\"", xaml);
+        Assert.Contains("x:Name=\"FavoritePacksViewButton\"", xaml);
+        Assert.Contains("Click=\"FavoritePacksViewButton_Click\"", xaml);
+        Assert.Contains("private bool _showingFavoritePacks", code);
+        Assert.Contains("private void FavoritePacksViewButton_Click", code);
+        Assert.Contains("!_settings.FavoriteSoundPackIds.Contains(pack.Id)", code);
+        Assert.Contains("\"No favorites\"", code);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();

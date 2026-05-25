@@ -83,6 +83,7 @@ public partial class MainWindow : Window
     private bool _exitRequested;
     private bool _packFiltersConfigured;
     private bool _refreshingPackLibrary;
+    private bool _showingFavoritePacks;
     private bool _updatingAppRuleEditor;
     private bool _updatingKeyboardInspector;
     private string _selectedKeyboardCode = "Space";
@@ -1210,6 +1211,8 @@ public partial class MainWindow : Window
             actionGroup.Visibility = Visibility.Collapsed;
             actionGroup.Opacity = 1;
         }
+        LibraryViewTabs.Visibility = Visibility.Collapsed;
+        PageSubtitleText.Visibility = Visibility.Visible;
 
         if (ReferenceEquals(activePage, LibraryPage))
         {
@@ -1235,8 +1238,9 @@ public partial class MainWindow : Window
         if (ReferenceEquals(activePage, LibraryPage))
         {
             PageTitleText.Text = "Library";
-            PageSubtitleText.Text = "Browse packs";
-            PageSubtitleText.Margin = new Thickness(28, 6, 0, 0);
+            PageSubtitleText.Visibility = Visibility.Collapsed;
+            LibraryViewTabs.Visibility = Visibility.Visible;
+            RefreshLibraryViewButtons();
             return;
         }
 
@@ -1567,6 +1571,31 @@ public partial class MainWindow : Window
     private void DigitalCategory_Click(object sender, RoutedEventArgs e) =>
         SetPackFilter(PackFilter.Digital);
 
+    private void BrowsePacksViewButton_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        SetLibraryFavoritesView(false);
+    }
+
+    private void FavoritePacksViewButton_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        SetLibraryFavoritesView(true);
+    }
+
+    private void SetLibraryFavoritesView(bool showFavorites)
+    {
+        if (_showingFavoritePacks == showFavorites)
+        {
+            RefreshPackLibrary();
+            return;
+        }
+
+        _showingFavoritePacks = showFavorites;
+        RefreshLibraryViewButtons();
+        RefreshPackLibrary();
+    }
+
     private void SelectedPackFavoriteButton_Click(object sender, RoutedEventArgs e)
     {
         e.Handled = true;
@@ -1586,6 +1615,10 @@ public partial class MainWindow : Window
         }
 
         RefreshSelectedPackFavoriteButton(item.Metadata);
+        if (_showingFavoritePacks)
+        {
+            RefreshPackLibrary();
+        }
         _ = SaveSettingsAsync();
     }
 
@@ -3059,10 +3092,38 @@ public partial class MainWindow : Window
             _refreshingPackLibrary = false;
         }
 
-        PackCountText.Text = visiblePacks.Count == _packs.Count
-            ? (_packs.Count == 1 ? "1 pack" : $"{_packs.Count} packs")
-            : $"{visiblePacks.Count} of {_packs.Count} packs";
+        if (_showingFavoritePacks)
+        {
+            int favoriteCount = _packs.Count(pack => _settings.FavoriteSoundPackIds.Contains(pack.Id));
+            PackCountText.Text = visiblePacks.Count == favoriteCount
+                ? favoriteCount switch
+                {
+                    0 => "No favorites",
+                    1 => "1 favorite",
+                    _ => $"{favoriteCount} favorites"
+                }
+                : $"{visiblePacks.Count} of {favoriteCount} favorites";
+        }
+        else
+        {
+            PackCountText.Text = visiblePacks.Count == _packs.Count
+                ? (_packs.Count == 1 ? "1 pack" : $"{_packs.Count} packs")
+                : $"{visiblePacks.Count} of {_packs.Count} packs";
+        }
         RefreshPackCategoryButtons();
+        RefreshLibraryViewButtons();
+    }
+
+    private void RefreshLibraryViewButtons()
+    {
+        ApplyLibraryViewButtonState(BrowsePacksViewButton, !_showingFavoritePacks);
+        ApplyLibraryViewButtonState(FavoritePacksViewButton, _showingFavoritePacks);
+    }
+
+    private void ApplyLibraryViewButtonState(System.Windows.Controls.Button button, bool selected)
+    {
+        button.Foreground = (MediaBrush)FindResource(selected ? "AccentHoverBrush" : "MutedTextBrush");
+        button.FontWeight = selected ? FontWeights.SemiBold : FontWeights.Normal;
     }
 
     private void RefreshPackCategoryButtons()
@@ -3089,6 +3150,11 @@ public partial class MainWindow : Window
 
     private bool PackMatchesCurrentFilters(SoundPackMetadata pack)
     {
+        if (_showingFavoritePacks && !_settings.FavoriteSoundPackIds.Contains(pack.Id))
+        {
+            return false;
+        }
+
         string search = PackSearchTextBox.Text.Trim();
         if (!string.IsNullOrWhiteSpace(search) && !PackMatchesSearch(pack, search))
         {
