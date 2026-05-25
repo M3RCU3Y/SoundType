@@ -257,6 +257,7 @@ public sealed class ReleaseReadinessTests
     {
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
         int start = xaml.IndexOf("x:Name=\"SettingsStoragePathGrid\"", StringComparison.Ordinal);
         int manageButton = xaml.IndexOf("x:Name=\"ManagePacksButton\"", start, StringComparison.Ordinal);
         Assert.True(start >= 0 && manageButton > start);
@@ -268,6 +269,9 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("x:Name=\"OpenPacksFolderButton\"", storageCard);
         Assert.Contains("x:Name=\"ClearWaveformCacheButton\"", storageCard);
         Assert.Contains("x:Name=\"ManagePacksButton\"", storageCard);
+        Assert.Contains("Click=\"BrowsePacksFolder_Click\"", storageCard);
+        Assert.Contains("private void BrowsePacksFolder_Click", code);
+        Assert.Contains("FolderBrowserDialog", code);
         Assert.DoesNotContain("<ColumnDefinition Width=\"340\"/>", storageCard);
         Assert.DoesNotContain("Width=\"194\"", storageCard);
         Assert.DoesNotContain("Clear Waveform Cache", storageCard);

@@ -3832,7 +3832,7 @@
                                             <Border Grid.Column="0" Height="38" CornerRadius="6,0,0,6" Background="#111922" BorderBrush="#27333D" BorderThickness="1" Padding="12,0">
                                                 <TextBlock x:Name="PacksFolderPathText" Text="C:\Users\brand\Documents\SoundType\Packs" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="#D8DEE4" FontSize="13"/>
                                             </Border>
-                                            <Button Grid.Column="1" Width="40" Height="38" Padding="0" Margin="-1,0,0,0" Content="..." ToolTip="Browse for packs folder"/>
+                                            <Button Grid.Column="1" Width="40" Height="38" Padding="0" Margin="-1,0,0,0" Content="..." ToolTip="Browse for packs folder" Click="BrowsePacksFolder_Click"/>
                                             <Button x:Name="OpenPacksFolderButton" Grid.Column="3" Height="38" Padding="10,0" Click="OpenPackFolder_Click">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Margin="0,0,10,0" Foreground="#D8DEE4"/>

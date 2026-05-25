@@ -80,6 +80,7 @@ public partial class MainWindow : Window
     private string? _currentProcessName;
     private string? _lastDetectedProcessName;
     private string? _lastRecordedProcessName;
+    private string? _selectedPacksFolder;
     private bool _loading = true;
     private bool _exitRequested;
     private bool _packFiltersConfigured;
@@ -1018,7 +1019,7 @@ public partial class MainWindow : Window
 
         SettingsActivePackSizeText.Text = "5.2 MB";
         SettingsActivePackPreviewImage.Source = settingsDisplayPack is null ? null : CreatePackPreviewImageSource(settingsDisplayPack);
-        PacksFolderPathText.Text = @"C:\Users\brand\Documents\SoundType\Packs";
+        PacksFolderPathText.Text = _selectedPacksFolder ?? _packsRoot;
         SettingsPacksInstalledText.Text = _packs.Count.ToString();
     }
 
@@ -2034,7 +2035,26 @@ public partial class MainWindow : Window
 
     private void OpenPackFolder_Click(object sender, RoutedEventArgs e)
     {
-        OpenFolder(_activePack?.FolderPath ?? _packsRoot);
+        OpenFolder(_selectedPacksFolder ?? _activePack?.FolderPath ?? _packsRoot);
+    }
+
+    private void BrowsePacksFolder_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        using Forms.FolderBrowserDialog dialog = new()
+        {
+            Description = "Choose the packs folder",
+            SelectedPath = Directory.Exists(_selectedPacksFolder) ? _selectedPacksFolder : _packsRoot,
+            UseDescriptionForTitle = true
+        };
+
+        if (dialog.ShowDialog() != Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.SelectedPath))
+        {
+            return;
+        }
+
+        _selectedPacksFolder = dialog.SelectedPath;
+        PacksFolderPathText.Text = _selectedPacksFolder;
     }
 
     private void OpenPackWaveformLocation_Click(object sender, RoutedEventArgs e)
