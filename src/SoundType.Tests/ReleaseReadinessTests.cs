@@ -287,6 +287,18 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SettingsActivePackChangeButtonHasRoomForLabel()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("x:Name=\"SettingsChangePackButton\"", xaml);
+        Assert.Contains("Content=\"Change Pack\"", xaml);
+        Assert.Contains("MinWidth=\"136\"", xaml);
+        Assert.DoesNotContain("Content=\"Change Pack\" Width=\"112\"", xaml);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();

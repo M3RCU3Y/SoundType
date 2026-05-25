@@ -3483,7 +3483,13 @@
                                         </Border>
                                         <TextBlock x:Name="SettingsActivePackSizeText" Text="5.2 MB" Foreground="{StaticResource MutedTextBrush}" FontSize="13" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button DockPanel.Dock="Right" Content="Change Pack" Width="112" Height="38" Click="ShowLibrary_Click"/>
+                                    <Button x:Name="SettingsChangePackButton"
+                                            DockPanel.Dock="Right"
+                                            Content="Change Pack"
+                                            MinWidth="136"
+                                            Height="38"
+                                            Padding="16,0"
+                                            Click="ShowLibrary_Click"/>
                                 </DockPanel>
                             </Border>
 
