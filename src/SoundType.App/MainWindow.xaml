@@ -1261,18 +1261,24 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="SettingsHotkeyRowStyle" TargetType="Border">
-            <Setter Property="Height" Value="43"/>
-            <Setter Property="CornerRadius" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="#23303A"/>
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="MinHeight" Value="52"/>
+            <Setter Property="CornerRadius" Value="7"/>
+            <Setter Property="Background" Value="#0E151A"/>
+            <Setter Property="BorderBrush" Value="#24303A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
         </Style>
         <Style x:Key="SettingsHotkeyEditButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyboardToolbarButtonStyle}">
-            <Setter Property="Width" Value="38"/>
+            <Setter Property="Width" Value="32"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style x:Key="ShortcutStackStyle" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="SettingsHotkeyLabelStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="13"/>
@@ -3646,66 +3652,60 @@
                                             </Viewbox>
                                             <TextBlock Grid.Column="1" Text="Hotkeys" Style="{StaticResource SettingsHotkeyTitleStyle}"/>
                                         </Grid>
-                                        <Border Grid.Row="1" CornerRadius="8" Background="#0E151A" BorderBrush="#24303A" BorderThickness="1" Margin="0,8,0,0" ClipToBounds="True">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="43"/>
-                                                    <RowDefinition Height="43"/>
-                                                    <RowDefinition Height="43"/>
-                                                    <RowDefinition Height="43"/>
-                                                </Grid.RowDefinitions>
-                                                <Border Grid.Row="0" Style="{StaticResource SettingsHotkeyRowStyle}">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
-                                                        <TextBlock Text="Toggle Listening" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="36"><TextBlock Text="L" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                        </StackPanel>
-                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
-                                                    </Grid>
-                                                </Border>
-                                                <Border Grid.Row="1" Style="{StaticResource SettingsHotkeyRowStyle}">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
-                                                        <TextBlock Text="Preview (Normal)" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                        <Border Grid.Column="1" Style="{StaticResource HotkeyChipStyle}" Width="68" HorizontalAlignment="Right"><TextBlock Text="Space" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
-                                                    </Grid>
-                                                </Border>
-                                                <Border Grid.Row="2" Style="{StaticResource SettingsHotkeyRowStyle}">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
-                                                        <TextBlock Text="Next Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="62"><TextBlock Text="Right" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                        </StackPanel>
-                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
-                                                    </Grid>
-                                                </Border>
-                                                <Border Grid.Row="3" Style="{StaticResource SettingsHotkeyRowStyle}" BorderThickness="0">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="224"/><ColumnDefinition Width="46"/></Grid.ColumnDefinitions>
-                                                        <TextBlock Text="Previous Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
-                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                            <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
-                                                            <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="58"><TextBlock Text="Left" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                                        </StackPanel>
-                                                        <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
-                                                    </Grid>
-                                                </Border>
-                                            </Grid>
-                                        </Border>
+                                        <StackPanel x:Name="SettingsHotkeysPanel" Grid.Row="1" Margin="0,10,0,0">
+                                            <Border x:Name="ToggleListeningHotkeyRow" Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
+                                                    <TextBlock Text="Toggle Listening" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                    <StackPanel Grid.Column="1" Style="{StaticResource ShortcutStackStyle}">
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="36"><TextBlock Text="L" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right" ToolTip="Change shortcut"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                </Grid>
+                                            </Border>
+                                            <Border Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
+                                                    <TextBlock Text="Preview Normal" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                    <StackPanel Grid.Column="1" Style="{StaticResource ShortcutStackStyle}">
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="68"><TextBlock Text="Space" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right" ToolTip="Change shortcut"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                </Grid>
+                                            </Border>
+                                            <Border Style="{StaticResource SettingsHotkeyRowStyle}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
+                                                    <TextBlock Text="Next Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                    <StackPanel Grid.Column="1" Style="{StaticResource ShortcutStackStyle}">
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="62"><TextBlock Text="Right" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right" ToolTip="Change shortcut"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                </Grid>
+                                            </Border>
+                                            <Border Style="{StaticResource SettingsHotkeyRowStyle}" Margin="0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
+                                                    <TextBlock Text="Previous Pack" Style="{StaticResource SettingsHotkeyLabelStyle}"/>
+                                                    <StackPanel Grid.Column="1" Style="{StaticResource ShortcutStackStyle}">
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="48"><TextBlock Text="Ctrl" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="44"><TextBlock Text="Alt" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                        <TextBlock Text="+" Foreground="{StaticResource SubtleTextBrush}" Margin="8,6"/>
+                                                        <Border Style="{StaticResource HotkeyChipStyle}" MinWidth="58"><TextBlock Text="Left" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="2" Style="{StaticResource SettingsHotkeyEditButtonStyle}" HorizontalAlignment="Right" ToolTip="Change shortcut"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button>
+                                                </Grid>
+                                            </Border>
+                                        </StackPanel>
                                         <Rectangle Grid.Row="2" Fill="#25313A" Margin="0,14,0,0"/>
                                         <Button Grid.Row="3" Style="{StaticResource SettingsSmallButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="224">
                                             <StackPanel Orientation="Horizontal">

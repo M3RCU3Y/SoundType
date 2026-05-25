@@ -240,6 +240,19 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SettingsHotkeysCardUsesReadableShortcutRows()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("x:Name=\"SettingsHotkeysPanel\"", xaml);
+        Assert.Contains("x:Name=\"ToggleListeningHotkeyRow\"", xaml);
+        Assert.Contains("ShortcutStackStyle", xaml);
+        Assert.Contains("ToolTip=\"Change shortcut\"", xaml);
+        Assert.DoesNotContain("<ColumnDefinition Width=\"224\"/>", xaml);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
