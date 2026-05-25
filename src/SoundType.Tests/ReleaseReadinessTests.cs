@@ -101,9 +101,14 @@ public sealed class ReleaseReadinessTests
     {
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
 
         Assert.Contains("<ListBox x:Name=\"PacksList\"", xaml);
         Assert.Contains("Grid.RowSpan=\"2\"", xaml);
+        Assert.Contains("VirtualizingPanel.IsVirtualizing\" Value=\"True\"", xaml);
+        Assert.Contains("VirtualizingPanel.VirtualizationMode\" Value=\"Recycling\"", xaml);
+        Assert.Contains("LibraryScrollImmediateRatio", code);
+        Assert.Contains("ScrollToVerticalOffset(immediateOffset)", code);
         Assert.DoesNotContain("Text=\"22 packs total\"", xaml);
     }
 

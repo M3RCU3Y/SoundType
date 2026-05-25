@@ -92,8 +92,11 @@ public partial class MainWindow : Window
     private KeyboardKeyFilter _keyboardFilter = KeyboardKeyFilter.All;
     private int _packActivationVersion;
     private ScrollViewer? _packsScrollViewer;
-    private readonly DispatcherTimer _libraryScrollTimer = new() { Interval = TimeSpan.FromMilliseconds(16) };
+    private readonly DispatcherTimer _libraryScrollTimer = new() { Interval = TimeSpan.FromMilliseconds(12) };
     private double _libraryScrollTarget;
+    private const double LibraryScrollWheelScale = 0.64;
+    private const double LibraryScrollImmediateRatio = 0.58;
+    private const double LibraryScrollEaseRatio = 0.42;
 
     public MainWindow()
     {
@@ -311,7 +314,9 @@ public partial class MainWindow : Window
         double baseOffset = _libraryScrollTimer.IsEnabled
             ? _libraryScrollTarget
             : _packsScrollViewer.VerticalOffset;
-        _libraryScrollTarget = Math.Clamp(baseOffset - (e.Delta * 0.82), 0, maxOffset);
+        _libraryScrollTarget = Math.Clamp(baseOffset - (e.Delta * LibraryScrollWheelScale), 0, maxOffset);
+        double immediateOffset = _packsScrollViewer.VerticalOffset + ((_libraryScrollTarget - _packsScrollViewer.VerticalOffset) * LibraryScrollImmediateRatio);
+        _packsScrollViewer.ScrollToVerticalOffset(immediateOffset);
         _libraryScrollTimer.Start();
         e.Handled = true;
     }
@@ -325,8 +330,8 @@ public partial class MainWindow : Window
         }
 
         double current = _packsScrollViewer.VerticalOffset;
-        double next = current + ((_libraryScrollTarget - current) * 0.24);
-        if (Math.Abs(_libraryScrollTarget - next) < 0.45)
+        double next = current + ((_libraryScrollTarget - current) * LibraryScrollEaseRatio);
+        if (Math.Abs(_libraryScrollTarget - next) < 0.35)
         {
             next = _libraryScrollTarget;
             _libraryScrollTimer.Stop();
