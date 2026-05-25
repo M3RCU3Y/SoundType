@@ -3557,7 +3557,7 @@
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                 <Canvas Width="24" Height="24">
-                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M4,9 L14,9 L14,6 L20,12 L14,18 L14,15 L8,15 L8,20 L4,20 Z"/>
+                                                    <Path x:Name="MinimizeToTrayIconPath" Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M4,9 L14,9 L14,6 L20,12 L14,18 L14,15 L8,15 L8,20 L4,20 Z"/>
                                                 </Canvas>
                                             </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -3570,7 +3570,7 @@
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                 <Canvas Width="24" Height="24">
-                                                    <Path Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M4,9 L14,9 L14,6 L20,12 L14,18 L14,15 L8,15 L8,20 L4,20 Z"/>
+                                                    <Path x:Name="HideToTrayIconPath" Stroke="{StaticResource AccentBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Fill="Transparent" Data="M4,9 L14,9 L14,6 L20,12 L14,18 L14,15 L8,15 L8,20 L4,20 Z"/>
                                                 </Canvas>
                                             </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -3583,8 +3583,8 @@
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                 <Canvas Width="24" Height="24">
-                                                    <Ellipse Width="20" Height="20" Canvas.Left="2" Canvas.Top="2" Stroke="#A7B0B8" StrokeThickness="1.6" Fill="Transparent"/>
-                                                    <Path Stroke="#A7B0B8" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M12,6 L12,15 M8.5,11.5 L12,15 L15.5,11.5"/>
+                                                    <Ellipse x:Name="StartWithWindowsIconRing" Width="20" Height="20" Canvas.Left="2" Canvas.Top="2" Stroke="#A7B0B8" StrokeThickness="1.6" Fill="Transparent"/>
+                                                    <Path x:Name="StartWithWindowsIconPath" Stroke="#A7B0B8" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M12,6 L12,15 M8.5,11.5 L12,15 L15.5,11.5"/>
                                                 </Canvas>
                                             </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -3597,8 +3597,8 @@
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                             <Viewbox Grid.Column="0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                 <Canvas Width="24" Height="24">
-                                                    <Ellipse Width="20" Height="20" Canvas.Left="2" Canvas.Top="2" Stroke="#A7B0B8" StrokeThickness="1.6" Fill="Transparent"/>
-                                                    <Path Stroke="#A7B0B8" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M12,6 L12,15 M8.5,11.5 L12,15 L15.5,11.5"/>
+                                                    <Ellipse x:Name="StartHiddenInTrayIconRing" Width="20" Height="20" Canvas.Left="2" Canvas.Top="2" Stroke="#A7B0B8" StrokeThickness="1.6" Fill="Transparent"/>
+                                                    <Path x:Name="StartHiddenInTrayIconPath" Stroke="#A7B0B8" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Data="M12,6 L12,15 M8.5,11.5 L12,15 L15.5,11.5"/>
                                                 </Canvas>
                                             </Viewbox>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">

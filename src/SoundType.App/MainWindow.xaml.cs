@@ -933,12 +933,42 @@ public partial class MainWindow : Window
         TrayStatusText.Text = _settings.MinimizeToTray
             ? "Don't exit when the window is closed"
             : "Closing the window exits SoundType";
+        RefreshTrayStartupIcons();
     }
 
     private void RefreshStartupStatus()
     {
         StartupStatusText.Foreground = (MediaBrush)FindResource("AccentHoverBrush");
         StartupStatusText.Text = "Enabled";
+        RefreshTrayStartupIcons();
+    }
+
+    private void RefreshTrayStartupIcons()
+    {
+        AnimateIconBrush(MinimizeToTrayIconPath, _settings.MinimizeToTray);
+        AnimateIconBrush(HideToTrayIconPath, _settings.MinimizeToTray);
+        AnimateIconBrush(StartWithWindowsIconRing, _settings.StartWithWindows);
+        AnimateIconBrush(StartWithWindowsIconPath, _settings.StartWithWindows);
+        AnimateIconBrush(StartHiddenInTrayIconRing, _settings.StartHiddenInTray);
+        AnimateIconBrush(StartHiddenInTrayIconPath, _settings.StartHiddenInTray);
+    }
+
+    private static void AnimateIconBrush(System.Windows.Shapes.Shape icon, bool enabled)
+    {
+        MediaColor target = enabled
+            ? MediaColor.FromRgb(82, 226, 168)
+            : MediaColor.FromRgb(167, 176, 184);
+        MediaColor start = icon.Stroke is SolidColorBrush brush
+            ? brush.Color
+            : target;
+
+        SolidColorBrush animatedBrush = new(start);
+        icon.Stroke = animatedBrush;
+        ColorAnimation animation = new(target, TimeSpan.FromMilliseconds(enabled ? 260 : 170))
+        {
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+        };
+        animatedBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
     }
 
     private void RefreshSettingsOverview()

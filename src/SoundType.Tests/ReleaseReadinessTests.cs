@@ -207,6 +207,22 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void TrayStartupIconsReflectEnabledStateWithAnimation()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("x:Name=\"MinimizeToTrayIconPath\"", xaml);
+        Assert.Contains("x:Name=\"HideToTrayIconPath\"", xaml);
+        Assert.Contains("x:Name=\"StartWithWindowsIconPath\"", xaml);
+        Assert.Contains("x:Name=\"StartHiddenInTrayIconPath\"", xaml);
+        Assert.Contains("private void RefreshTrayStartupIcons", code);
+        Assert.Contains("AnimateIconBrush", code);
+        Assert.Contains("ColorAnimation", code);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();
