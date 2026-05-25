@@ -238,7 +238,7 @@ public partial class VisualKeyboardControl : WpfUserControl
         WpfButton button = new()
         {
             Content = label,
-            Tag = code,
+            Uid = code,
             Width = KeyWidthFor(key.Units),
             Height = KeyHeightFor(key.RowSpan),
             Style = (Style)FindResource("KeyboardKeyButton"),
@@ -260,11 +260,12 @@ public partial class VisualKeyboardControl : WpfUserControl
 
     private void KeyButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not WpfButton { Tag: string code })
+        if (sender is not WpfButton button || string.IsNullOrWhiteSpace(button.Uid))
         {
             return;
         }
 
+        string code = button.Uid;
         string? previousCode = _selectedCode;
         _selectedCode = code;
         if (!string.IsNullOrWhiteSpace(previousCode) && !previousCode.Equals(code, StringComparison.OrdinalIgnoreCase))
@@ -295,15 +296,19 @@ public partial class VisualKeyboardControl : WpfUserControl
 
     private void UpdateButton(WpfButton button, bool isExcluded)
     {
-        bool isSelected = button.Tag is string code &&
-            code.Equals(_selectedCode, StringComparison.OrdinalIgnoreCase);
+        bool isSelected = button.Uid.Equals(_selectedCode, StringComparison.OrdinalIgnoreCase);
+        button.Tag = isExcluded ? "Excluded" : "Enabled";
 
-        button.Background = isSelected
-            ? new SolidColorBrush(MediaColor.FromRgb(21, 69, 51))
-            : (MediaBrush)FindResource(isExcluded ? "KeyboardKeyExcludedBrush" : "KeyboardKeyBrush");
-        button.BorderBrush = isSelected
-            ? (MediaBrush)FindResource("AccentHoverBrush")
-            : (MediaBrush)FindResource(isExcluded ? "KeyboardKeyExcludedBorderBrush" : "KeyboardKeyBorderBrush");
+        button.Background = isExcluded
+            ? (MediaBrush)FindResource("KeyboardKeyExcludedBrush")
+            : isSelected
+                ? new SolidColorBrush(MediaColor.FromRgb(21, 69, 51))
+                : (MediaBrush)FindResource("KeyboardKeyBrush");
+        button.BorderBrush = isExcluded
+            ? (MediaBrush)FindResource("KeyboardKeyExcludedBorderBrush")
+            : isSelected
+                ? (MediaBrush)FindResource("AccentHoverBrush")
+                : (MediaBrush)FindResource("KeyboardKeyBorderBrush");
         button.Foreground = isExcluded
             ? (MediaBrush)FindResource("KeyboardKeyExcludedTextBrush")
             : new SolidColorBrush(MediaColor.FromRgb(246, 248, 250));
