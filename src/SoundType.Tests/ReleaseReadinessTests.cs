@@ -282,6 +282,7 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("x:Name=\"PreviousPackHotkeyText\"", xaml);
         Assert.Contains("Click=\"StartHotkeyRecording_Click\"", xaml);
         Assert.Contains("Click=\"RestoreHotkeys_Click\"", xaml);
+        Assert.Contains("<Setter Property=\"MinWidth\" Value=\"76\"/>", xaml);
         Assert.Contains("private void StartHotkeyRecording_Click", code);
         Assert.Contains("private void CaptureHotkeyFromKeyDown", code);
         Assert.Contains("private static bool MatchesHotkey", code);
