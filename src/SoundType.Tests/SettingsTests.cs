@@ -35,7 +35,8 @@ public sealed class SettingsTests
             StartWithWindows = true,
             StartHiddenInTray = true,
             Pan = new PanSettings { Enabled = true, Mode = PanMode.Random, Strength = 0.6 },
-            ActiveSoundPackId = "soft-laptop"
+            ActiveSoundPackId = "soft-laptop",
+            KeyDebounceMilliseconds = 24
         };
         original.FavoriteSoundPackIds.Add("ksp-alpaca");
         original.FavoriteSoundPackIds.Add("soft-laptop");
@@ -57,6 +58,7 @@ public sealed class SettingsTests
         Assert.Equal(10, restored.Eq.BandGainsDb.Count);
         Assert.Equal("Crisp", restored.Eq.PresetName);
         Assert.Equal("soft-laptop", restored.ActiveSoundPackId);
+        Assert.Equal(24, restored.KeyDebounceMilliseconds);
         Assert.Contains("ksp-alpaca", restored.FavoriteSoundPackIds);
         Assert.Contains("soft-laptop", restored.FavoriteSoundPackIds);
         Assert.Contains("Tab", restored.ExcludedKeys);
@@ -76,6 +78,24 @@ public sealed class SettingsTests
 
         Assert.True(settings.Enabled);
         Assert.Equal(AppSettings.DefaultSoundPackId, settings.ActiveSoundPackId);
+    }
+
+    [Fact]
+    public async Task LoadAsync_ClampsKeyDebounceMilliseconds()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "keyDebounceMilliseconds": 250
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.Equal(50, settings.KeyDebounceMilliseconds);
     }
 
     [Fact]

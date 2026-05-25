@@ -15,6 +15,7 @@ public sealed class AppSettings
     public HashSet<string> FavoriteSoundPackIds { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public string GlobalToggleHotkey { get; set; } = "Ctrl+Alt+L";
     public bool IgnoreKeyRepeats { get; set; } = true;
+    public int KeyDebounceMilliseconds { get; set; } = 20;
     public bool EnterDingEnabled { get; set; }
     public double EnterDingVolume { get; set; } = 0.55;
     public string EnterDingSoundGroup { get; set; } = "random";

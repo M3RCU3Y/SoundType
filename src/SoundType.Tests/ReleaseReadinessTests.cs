@@ -223,6 +223,23 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void PlaybackBehaviorDebounceSliderIsFunctionalAndNotDuplicated()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+        string settings = File.ReadAllText(Path.Combine(root, "src", "SoundType.Core", "Models", "AppSettings.cs"));
+
+        Assert.Contains("x:Name=\"KeyDebounceSlider\"", xaml);
+        Assert.Contains("ValueChanged=\"KeyDebounceSlider_ValueChanged\"", xaml);
+        Assert.Contains("x:Name=\"KeyDebounceText\"", xaml);
+        Assert.DoesNotContain("<TextBlock Text=\"20\" Style=\"{StaticResource HotkeyChipTextStyle}\"/>", xaml);
+        Assert.Contains("private void KeyDebounceSlider_ValueChanged", code);
+        Assert.Contains("ShouldDebounceKeyPress", code);
+        Assert.Contains("KeyDebounceMilliseconds", settings);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();

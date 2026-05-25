@@ -65,6 +65,7 @@ public partial class MainWindow : Window
     private readonly List<ShapeRectangle> _leftOutputMeterBars = [];
     private readonly List<ShapeRectangle> _rightOutputMeterBars = [];
     private readonly List<string> _startupWarnings = [];
+    private readonly Dictionary<string, DateTimeOffset> _lastAcceptedKeyDownByCode = new(StringComparer.OrdinalIgnoreCase);
     private readonly DebouncedAsyncAction _settingsSaveQueue;
     private readonly WaveformPeakCache _waveformPeakCache = new();
     private AudioEngine? _audio;
@@ -149,6 +150,11 @@ public partial class MainWindow : Window
     private void KeyboardHook_KeyPressed(object? sender, KeyPressedEvent e)
     {
         RuntimePlaybackProfile profile = _playbackProfile;
+        if (!e.IsRelease && ShouldDebounceKeyPress(e, profile))
+        {
+            return;
+        }
+
         if (!e.IsRelease && profile.IgnoreKeyRepeats && e.IsRepeat)
         {
             return;
@@ -688,6 +694,7 @@ public partial class MainWindow : Window
         EnabledToggle.IsChecked = _settings.Enabled;
         MasterVolumeSlider.Value = _settings.MasterVolume;
         PitchVariationSlider.Value = Math.Round(_settings.PitchVariation * 100);
+        KeyDebounceSlider.Value = _settings.KeyDebounceMilliseconds;
         IgnoreRepeatsCheck.IsChecked = _settings.IgnoreKeyRepeats;
         EnterDingEnabledCheck.IsChecked = _settings.EnterDingEnabled;
         EnterDingSoundComboBox.SelectedItem = EnterDingSoundComboBox.Items
@@ -801,6 +808,25 @@ public partial class MainWindow : Window
         }
     }
 
+    private bool ShouldDebounceKeyPress(KeyPressedEvent e, RuntimePlaybackProfile profile)
+    {
+        int debounceMilliseconds = profile.KeyDebounceMilliseconds;
+        if (debounceMilliseconds <= 0)
+        {
+            _lastAcceptedKeyDownByCode[e.Key.Code] = e.Timestamp;
+            return false;
+        }
+
+        if (_lastAcceptedKeyDownByCode.TryGetValue(e.Key.Code, out DateTimeOffset previous) &&
+            e.Timestamp - previous < TimeSpan.FromMilliseconds(debounceMilliseconds))
+        {
+            return true;
+        }
+
+        _lastAcceptedKeyDownByCode[e.Key.Code] = e.Timestamp;
+        return false;
+    }
+
     private IReadOnlyList<AppRule> GetAppRuleDisplayRules() =>
         _settings.AppRules
             .Where(rule => !string.IsNullOrWhiteSpace(rule.ProcessName))
@@ -911,6 +937,7 @@ public partial class MainWindow : Window
         UpdateEnableButton();
         VolumeText.Text = $"{Math.Round(_settings.MasterVolume * 100)}%";
         PitchVariationText.Text = $"{Math.Round(PitchVariationSlider.Value)} st";
+        RefreshKeyDebounceText();
         _trayIcon.Text = $"SoundType - {StatusText.Text}";
         if (_trayIcon.ContextMenuStrip?.Items["enabled"] is Forms.ToolStripMenuItem enabledItem)
         {
@@ -2632,6 +2659,25 @@ public partial class MainWindow : Window
         _settings.MinimizeToTray = MinimizeToTrayCheck.IsChecked == true;
         RefreshTrayStatus();
         _ = SaveSettingsAsync();
+    }
+
+    private void KeyDebounceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_loading) return;
+        _settings.KeyDebounceMilliseconds = (int)Math.Round(KeyDebounceSlider.Value);
+        RefreshKeyDebounceText();
+        _ = SaveSettingsAsync();
+    }
+
+    private void RefreshKeyDebounceText()
+    {
+        if (KeyDebounceText is null)
+        {
+            return;
+        }
+
+        int milliseconds = (int)Math.Round(KeyDebounceSlider.Value);
+        KeyDebounceText.Text = milliseconds == 0 ? "Off" : $"{milliseconds} ms";
     }
 
     private void EnterDingSoundComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -11,6 +11,7 @@ public sealed class RuntimePlaybackProfile
     private RuntimePlaybackProfile(
         bool enabled,
         bool ignoreKeyRepeats,
+        int keyDebounceMilliseconds,
         HashSet<string> excludedKeys,
         Dictionary<string, RuntimeAppRule> rulesByProcess,
         bool enabledOnlyModeActive,
@@ -18,6 +19,7 @@ public sealed class RuntimePlaybackProfile
     {
         Enabled = enabled;
         IgnoreKeyRepeats = ignoreKeyRepeats;
+        KeyDebounceMilliseconds = keyDebounceMilliseconds;
         _excludedKeys = excludedKeys;
         _rulesByProcess = rulesByProcess;
         EnabledOnlyModeActive = enabledOnlyModeActive;
@@ -26,6 +28,7 @@ public sealed class RuntimePlaybackProfile
 
     public bool Enabled { get; }
     public bool IgnoreKeyRepeats { get; }
+    public int KeyDebounceMilliseconds { get; }
     public bool EnabledOnlyModeActive { get; }
 
     public static RuntimePlaybackProfile FromSettings(AppSettings settings)
@@ -60,6 +63,7 @@ public sealed class RuntimePlaybackProfile
         return new RuntimePlaybackProfile(
             settings.Enabled,
             settings.IgnoreKeyRepeats,
+            settings.KeyDebounceMilliseconds,
             excludedKeys,
             rulesByProcess,
             enabledOnlyModeActive,

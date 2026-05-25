@@ -3524,11 +3524,8 @@
                                                 <TextBlock Text="Debounce repeated keys" Style="{StaticResource SettingsRowTitleStyle}"/>
                                                 <TextBlock Text="Filter very fast repeats" Style="{StaticResource SettingsRowDescriptionStyle}" Margin="0,5,0,0"/>
                                             </StackPanel>
-                                            <Slider Grid.Column="1" Minimum="0" Maximum="50" Value="20" VerticalAlignment="Center" Margin="8,0,16,0"/>
-                                            <StackPanel Grid.Column="2">
-                                                <TextBlock Text="20 ms" HorizontalAlignment="Left" FontSize="14"/>
-                                                <Border Style="{StaticResource HotkeyChipStyle}" Width="60" Margin="0,7,0,0"><TextBlock Text="20" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
-                                            </StackPanel>
+                                            <Slider x:Name="KeyDebounceSlider" Grid.Column="1" Minimum="0" Maximum="50" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="KeyDebounceSlider_ValueChanged" VerticalAlignment="Center" Margin="8,0,16,0"/>
+                                            <Border Grid.Column="2" Style="{StaticResource HotkeyChipStyle}" Width="60" VerticalAlignment="Center"><TextBlock x:Name="KeyDebounceText" Style="{StaticResource HotkeyChipTextStyle}"/></Border>
                                         </Grid>
                                     </Grid>
                                 </Border>
