@@ -1338,6 +1338,14 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#E4E9EE"/>
         </Style>
+        <Style x:Key="SettingsStorageActionButtonStyle" TargetType="Button" BasedOn="{StaticResource SettingsSmallButtonStyle}">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="MinWidth" Value="178"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
     </Window.Resources>
 
     <Border Background="{StaticResource ShellGradientBrush}"
@@ -3869,26 +3877,27 @@
                                         </Grid>
                                     </Grid>
                                     <Rectangle Grid.Column="1" Width="1" Fill="#263039" HorizontalAlignment="Center" Margin="0,28,0,14"/>
-                                    <Grid Grid.Column="2" Margin="18,37,0,0">
+                                    <Grid Grid.Column="2" Margin="18,8,0,0" VerticalAlignment="Center">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="280"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="24"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="Waveform cache" Style="{StaticResource SettingsStorageLabelStyle}"/>
-                                            <TextBlock Text="84 MB" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,6"/>
-                                            <Button x:Name="ClearWaveformCacheButton" Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="176" HorizontalAlignment="Left" Click="ClearWaveformCache_Click">
-                                                <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="84 MB" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,8"/>
+                                            <Button x:Name="ClearWaveformCacheButton" Style="{StaticResource SettingsStorageActionButtonStyle}" Click="ClearWaveformCache_Click">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Margin="0,0,9,0" Foreground="#D8DEE4"/>
                                                     <TextBlock Text="Clear Cache"/>
                                                 </StackPanel>
                                             </Button>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="1">
+                                        <StackPanel Grid.Column="2">
                                             <TextBlock Text="Packs installed" Style="{StaticResource SettingsStorageLabelStyle}"/>
-                                            <TextBlock x:Name="SettingsPacksInstalledText" Text="22" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,6"/>
-                                            <Button x:Name="ManagePacksButton" Style="{StaticResource SettingsSmallButtonStyle}" Height="34" Width="176" HorizontalAlignment="Left" Click="ShowLibrary_Click">
-                                                <StackPanel Orientation="Horizontal">
+                                            <TextBlock x:Name="SettingsPacksInstalledText" Text="22" Style="{StaticResource SettingsStorageValueStyle}" Margin="0,2,0,8"/>
+                                            <Button x:Name="ManagePacksButton" Style="{StaticResource SettingsStorageActionButtonStyle}" Click="ShowLibrary_Click">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <Viewbox Width="17" Height="17" Margin="0,0,9,0">
                                                         <Canvas Width="24" Height="24">
                                                             <Path Stroke="#D8DEE4" StrokeThickness="1.7" StrokeLineJoin="Round" Fill="Transparent" Data="M4,7 L12,3 L20,7 L12,11 Z M4,12 L12,16 L20,12 M4,17 L12,21 L20,17"/>

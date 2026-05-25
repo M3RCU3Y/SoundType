@@ -291,11 +291,18 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("x:Name=\"OpenPacksFolderButton\"", storageCard);
         Assert.Contains("x:Name=\"ClearWaveformCacheButton\"", storageCard);
         Assert.Contains("x:Name=\"ManagePacksButton\"", storageCard);
+        Assert.Contains("SettingsStorageActionButtonStyle", xaml);
+        Assert.Contains("Style=\"{StaticResource SettingsStorageActionButtonStyle}\"", storageCard);
+        Assert.Contains("MinWidth\" Value=\"178\"", xaml);
+        Assert.Contains("Height\" Value=\"40\"", xaml);
         Assert.Contains("Click=\"BrowsePacksFolder_Click\"", storageCard);
         Assert.Contains("private void BrowsePacksFolder_Click", code);
         Assert.Contains("FolderBrowserDialog", code);
         Assert.DoesNotContain("<ColumnDefinition Width=\"340\"/>", storageCard);
+        Assert.DoesNotContain("<ColumnDefinition Width=\"280\"/>", storageCard);
+        Assert.DoesNotContain("Margin=\"18,37,0,0\"", storageCard);
         Assert.DoesNotContain("Width=\"194\"", storageCard);
+        Assert.DoesNotContain("Width=\"176\"", storageCard);
         Assert.DoesNotContain("Clear Waveform Cache", storageCard);
     }
 
