@@ -1387,12 +1387,8 @@ public partial class MainWindow : Window
             bool selected = ReferenceEquals(page, activePage);
             button.Background = selected ? (MediaBrush)FindResource("PanelElevatedBrush") : System.Windows.Media.Brushes.Transparent;
             button.BorderBrush = selected ? (MediaBrush)FindResource("ControlBorderBrush") : System.Windows.Media.Brushes.Transparent;
-            string foregroundKey = selected && ReferenceEquals(activePage, AudioPage)
-                ? "AccentHoverBrush"
-                : selected
-                    ? "TextBrush"
-                    : "MutedTextBrush";
-            button.Foreground = (MediaBrush)FindResource(foregroundKey);
+            button.Foreground = (MediaBrush)FindResource("TextBrush");
+            button.Tag = (MediaBrush)FindResource(selected ? "AccentBrush" : "TextBrush");
         }
     }
 

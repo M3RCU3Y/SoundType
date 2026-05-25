@@ -324,6 +324,7 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="Tag" Value="{StaticResource TextBrush}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Template">
@@ -1499,7 +1500,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <Viewbox Width="28" Height="28" Margin="0,0,12,0">
                                     <Canvas Width="24" Height="24">
-                                        <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="Transparent" Data="M4,7 L12,3 L20,7 L12,11 Z M4,12 L12,16 L20,12 M4,17 L12,21 L20,17"/>
+                                        <Path Stroke="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="Transparent" Data="M4,7 L12,3 L20,7 L12,11 Z M4,12 L12,16 L20,12 M4,17 L12,21 L20,17"/>
                                     </Canvas>
                                 </Viewbox>
                                 <TextBlock Text="Library" VerticalAlignment="Center"/>
@@ -1509,10 +1510,10 @@
                             <StackPanel Orientation="Horizontal">
                                 <Viewbox Width="28" Height="28" Margin="0,0,12,0">
                                     <Canvas Width="24" Height="24">
-                                        <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" StrokeStartLineCap="Round" Data="M6,4 L6,20 M12,4 L12,20 M18,4 L18,20"/>
-                                        <Ellipse Width="5" Height="5" Canvas.Left="3.5" Canvas.Top="7" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                        <Ellipse Width="5" Height="5" Canvas.Left="9.5" Canvas.Top="13" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                        <Ellipse Width="5" Height="5" Canvas.Left="15.5" Canvas.Top="6" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                        <Path Stroke="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" StrokeStartLineCap="Round" Data="M6,4 L6,20 M12,4 L12,20 M18,4 L18,20"/>
+                                        <Ellipse Width="5" Height="5" Canvas.Left="3.5" Canvas.Top="7" Fill="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                        <Ellipse Width="5" Height="5" Canvas.Left="9.5" Canvas.Top="13" Fill="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                        <Ellipse Width="5" Height="5" Canvas.Left="15.5" Canvas.Top="6" Fill="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}"/>
                                     </Canvas>
                                 </Viewbox>
                                 <TextBlock Text="Audio Effects" VerticalAlignment="Center"/>
@@ -1522,7 +1523,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <Viewbox Width="28" Height="28" Margin="0,0,12,0">
                                     <Canvas Width="24" Height="24">
-                                        <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeLineJoin="Round" Fill="Transparent" Data="M3,7 L21,7 L21,18 L3,18 Z M6,10 L8,10 M10,10 L12,10 M14,10 L16,10 M18,10 L19,10 M6,13 L8,13 M10,13 L12,13 M14,13 L16,13 M18,13 L19,13 M7,16 L17,16"/>
+                                        <Path Stroke="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeLineJoin="Round" Fill="Transparent" Data="M3,7 L21,7 L21,18 L3,18 Z M6,10 L8,10 M10,10 L12,10 M14,10 L16,10 M18,10 L19,10 M6,13 L8,13 M10,13 L12,13 M14,13 L16,13 M18,13 L19,13 M7,16 L17,16"/>
                                     </Canvas>
                                 </Viewbox>
                                 <TextBlock Text="Keyboard Rules" VerticalAlignment="Center"/>
@@ -1532,7 +1533,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <Viewbox Width="28" Height="28" Margin="0,0,12,0">
                                     <Canvas Width="24" Height="24">
-                                        <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeLineJoin="Round" Fill="Transparent" Data="M4,4 L10,4 L10,10 L4,10 Z M14,4 L20,4 L20,10 L14,10 Z M4,14 L10,14 L10,20 L4,20 Z M14,14 L20,14 L20,20 L14,20 Z"/>
+                                        <Path Stroke="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeLineJoin="Round" Fill="Transparent" Data="M4,4 L10,4 L10,10 L4,10 Z M14,4 L20,4 L20,10 L14,10 Z M4,14 L10,14 L10,20 L4,20 Z M14,14 L20,14 L20,20 L14,20 Z"/>
                                     </Canvas>
                                 </Viewbox>
                                 <TextBlock Text="App Rules" VerticalAlignment="Center"/>
@@ -1540,7 +1541,7 @@
                         </Button>
                         <Button x:Name="SettingsNavButton" Style="{StaticResource NavButtonStyle}" Click="ShowSettings_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="23" Width="40" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="23" Width="40" VerticalAlignment="Center" Foreground="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}"/>
                                 <TextBlock Text="Settings" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>

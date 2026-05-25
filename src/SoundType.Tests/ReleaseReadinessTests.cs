@@ -233,6 +233,22 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SidebarNavIconsUseWhiteInactiveAndGreenSelectedBrushes()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("<Setter Property=\"Tag\" Value=\"{StaticResource TextBrush}\"/>", xaml);
+        Assert.Contains("Stroke=\"{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}\"", xaml);
+        Assert.Contains("Fill=\"{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}\"", xaml);
+        Assert.Contains("Foreground=\"{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}\"", xaml);
+        Assert.Contains("button.Foreground = (MediaBrush)FindResource(\"TextBrush\");", code);
+        Assert.Contains("button.Tag = (MediaBrush)FindResource(selected ? \"AccentBrush\" : \"TextBrush\");", code);
+        Assert.DoesNotContain("selected && ReferenceEquals(activePage, AudioPage)", code);
+    }
+
+    [Fact]
     public void TrayStartupIconsReflectEnabledStateWithAnimation()
     {
         string root = FindRepositoryRoot();
