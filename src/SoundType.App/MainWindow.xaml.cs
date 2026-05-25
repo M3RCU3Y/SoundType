@@ -1567,6 +1567,28 @@ public partial class MainWindow : Window
     private void DigitalCategory_Click(object sender, RoutedEventArgs e) =>
         SetPackFilter(PackFilter.Digital);
 
+    private void SelectedPackFavoriteButton_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        if (PacksList.SelectedItem is not PackListItem item)
+        {
+            return;
+        }
+
+        string packId = item.Metadata.Id;
+        if (_settings.FavoriteSoundPackIds.Contains(packId))
+        {
+            _settings.FavoriteSoundPackIds.Remove(packId);
+        }
+        else
+        {
+            _settings.FavoriteSoundPackIds.Add(packId);
+        }
+
+        RefreshSelectedPackFavoriteButton(item.Metadata);
+        _ = SaveSettingsAsync();
+    }
+
     private void SetPackFilter(string filter)
     {
         if (PackTypeComboBox.SelectedItem as string == filter)
@@ -3127,6 +3149,7 @@ public partial class MainWindow : Window
             SelectedPackSummaryCompatibilityText.Text = "";
             SelectedPackNotesText.Text = "";
             SelectedPackPreviewImage.Source = null;
+            RefreshSelectedPackFavoriteButton(null);
             PackWaveformPreview.Peaks = [];
             AudioWaveformPreview.Peaks = [];
             return;
@@ -3156,7 +3179,19 @@ public partial class MainWindow : Window
         SelectedPackNotesText.Text = pack.Id.Equals(AppSettings.DefaultSoundPackId, StringComparison.OrdinalIgnoreCase)
             ? "Recorded with a Shure SM57.\nNo EQ or compression."
             : BuildPackNotes(pack);
+        RefreshSelectedPackFavoriteButton(pack);
         RefreshWaveformPreview(pack);
+    }
+
+    private void RefreshSelectedPackFavoriteButton(SoundPackMetadata? pack)
+    {
+        bool isFavorite = pack is not null && _settings.FavoriteSoundPackIds.Contains(pack.Id);
+        SelectedPackFavoriteButton.IsEnabled = pack is not null;
+        SelectedPackFavoriteButton.Content = isFavorite ? "★" : "☆";
+        SelectedPackFavoriteButton.Foreground = isFavorite
+            ? new SolidColorBrush(MediaColor.FromRgb(248, 201, 90))
+            : (MediaBrush)FindResource("MutedTextBrush");
+        SelectedPackFavoriteButton.ToolTip = isFavorite ? "Remove from favorites" : "Add to favorites";
     }
 
     private static string GetPackReleasedDate(SoundPackMetadata pack)

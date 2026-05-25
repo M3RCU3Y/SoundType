@@ -119,6 +119,21 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void SwitchInformationFavoriteStarIsClickableAndPersistent()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+        string settings = File.ReadAllText(Path.Combine(root, "src", "SoundType.Core", "Models", "AppSettings.cs"));
+
+        Assert.Contains("x:Name=\"SelectedPackFavoriteButton\"", xaml);
+        Assert.Contains("Click=\"SelectedPackFavoriteButton_Click\"", xaml);
+        Assert.Contains("private void SelectedPackFavoriteButton_Click", code);
+        Assert.Contains("RefreshSelectedPackFavoriteButton(pack)", code);
+        Assert.Contains("FavoriteSoundPackIds", settings);
+    }
+
+    [Fact]
     public void PitchCharacterHelpMarkersExplainTheirControls()
     {
         string root = FindRepositoryRoot();

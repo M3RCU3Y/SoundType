@@ -94,6 +94,9 @@ public sealed class SettingsService
         settings.ActiveSoundPackId = string.IsNullOrWhiteSpace(settings.ActiveSoundPackId)
             ? AppSettings.DefaultSoundPackId
             : settings.ActiveSoundPackId;
+        settings.FavoriteSoundPackIds = new HashSet<string>(
+            settings.FavoriteSoundPackIds?.Where(id => !string.IsNullOrWhiteSpace(id)) ?? [],
+            StringComparer.OrdinalIgnoreCase);
         settings.ExcludedKeys ??= AppSettings.DefaultExcludedKeys();
         settings.AppRules ??= [];
         settings.GroupVolumes ??= new SoundGroupVolumeSettings();

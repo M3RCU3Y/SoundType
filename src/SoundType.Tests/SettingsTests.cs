@@ -37,6 +37,8 @@ public sealed class SettingsTests
             Pan = new PanSettings { Enabled = true, Mode = PanMode.Random, Strength = 0.6 },
             ActiveSoundPackId = "soft-laptop"
         };
+        original.FavoriteSoundPackIds.Add("ksp-alpaca");
+        original.FavoriteSoundPackIds.Add("soft-laptop");
         original.Eq.SetPreset("Crisp", [-2, -1, 0, 0, 1, 2, 4, 5, 4, 3]);
         original.ExcludedKeys.Add("Tab");
         original.AppRules.Add(new AppRule { ProcessName = "Code.exe", Mode = AppRuleMode.Disabled });
@@ -55,6 +57,8 @@ public sealed class SettingsTests
         Assert.Equal(10, restored.Eq.BandGainsDb.Count);
         Assert.Equal("Crisp", restored.Eq.PresetName);
         Assert.Equal("soft-laptop", restored.ActiveSoundPackId);
+        Assert.Contains("ksp-alpaca", restored.FavoriteSoundPackIds);
+        Assert.Contains("soft-laptop", restored.FavoriteSoundPackIds);
         Assert.Contains("Tab", restored.ExcludedKeys);
         Assert.Contains(restored.AppRules, rule => rule.ProcessName == "Code.exe");
     }

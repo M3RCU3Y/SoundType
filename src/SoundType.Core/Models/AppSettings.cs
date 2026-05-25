@@ -12,6 +12,7 @@ public sealed class AppSettings
     public double MasterVolume { get; set; } = 0.72;
     public double PitchVariation { get; set; }
     public string ActiveSoundPackId { get; set; } = DefaultSoundPackId;
+    public HashSet<string> FavoriteSoundPackIds { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public string GlobalToggleHotkey { get; set; } = "Ctrl+Alt+L";
     public bool IgnoreKeyRepeats { get; set; } = true;
     public bool EnterDingEnabled { get; set; }

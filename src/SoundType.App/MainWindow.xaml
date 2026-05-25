@@ -1152,6 +1152,45 @@
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Padding" Value="12,0"/>
         </Style>
+        <Style x:Key="PackFavoriteButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}"/>
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="#1A232A"/>
+                                <Setter Property="Foreground" Value="#F8C95A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="SettingsSwitchStyle" TargetType="CheckBox" BasedOn="{StaticResource ToggleSwitchCheckBoxStyle}"/>
         <Style x:Key="SettingsIconTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
@@ -1919,7 +1958,13 @@
                                     </StackPanel>
                                     <TextBlock x:Name="SelectedPackDescriptionText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="14" LineHeight="20" Margin="0,16,0,0"/>
                                 </StackPanel>
-                                <TextBlock Grid.Column="2" Text="☆" FontSize="24" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Top"/>
+                                <Button x:Name="SelectedPackFavoriteButton"
+                                        Grid.Column="2"
+                                        Style="{StaticResource PackFavoriteButtonStyle}"
+                                        Content="☆"
+                                        ToolTip="Add to favorites"
+                                        VerticalAlignment="Top"
+                                        Click="SelectedPackFavoriteButton_Click"/>
                             </Grid>
 
                             <Rectangle Grid.Row="1" Fill="#2C353D"/>
