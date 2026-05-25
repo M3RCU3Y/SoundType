@@ -97,6 +97,17 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void AppRulesForegroundCardAlignsWithRecentApps()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+
+        Assert.Contains("<Border Style=\"{StaticResource SectionCardStyle}\" Padding=\"16\" Margin=\"0,16,0,0\">", xaml);
+        Assert.Contains("<Border x:Name=\"ForegroundAppListeningCard\" Style=\"{StaticResource SectionCardStyle}\" Padding=\"18\" Margin=\"0,16,0,0\">", xaml);
+        Assert.DoesNotContain("x:Name=\"ForegroundAppListeningCard\" Style=\"{StaticResource SectionCardStyle}\" Padding=\"18\" Margin=\"0,28,0,0\"", xaml);
+    }
+
+    [Fact]
     public void LibraryPackListExpandsWithoutRedundantFooterCount()
     {
         string root = FindRepositoryRoot();
