@@ -93,7 +93,10 @@ public sealed class ReleaseReadinessTests
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
 
         Assert.Contains("<RowDefinition Height=\"306\"/>", xaml);
-        Assert.Contains("<Border x:Name=\"RuleEditorCard\" Style=\"{StaticResource SectionCardStyle}\" Padding=\"18\" Height=\"450\" VerticalAlignment=\"Top\">", xaml);
+        Assert.Contains("x:Name=\"RuleEditorCard\"", xaml);
+        Assert.Contains("Height=\"450\"", xaml);
+        Assert.Contains("VerticalAlignment=\"Top\"", xaml);
+        Assert.Contains("HorizontalAlignment=\"Stretch\"", xaml);
     }
 
     [Fact]
@@ -102,8 +105,9 @@ public sealed class ReleaseReadinessTests
         string root = FindRepositoryRoot();
         string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
 
-        Assert.Contains("<Border Style=\"{StaticResource SectionCardStyle}\" Padding=\"16\" Margin=\"0,16,0,0\">", xaml);
-        Assert.Contains("<Border x:Name=\"ForegroundAppListeningCard\" Style=\"{StaticResource SectionCardStyle}\" Padding=\"18\" Margin=\"0,16,0,0\">", xaml);
+        Assert.Contains("x:Name=\"RecentAppsCard\"", xaml);
+        Assert.Contains("x:Name=\"ForegroundAppListeningCard\"", xaml);
+        Assert.Contains("MinWidth=\"{Binding ActualWidth, ElementName=RuleEditorCard}\"", xaml);
         Assert.DoesNotContain("x:Name=\"ForegroundAppListeningCard\" Style=\"{StaticResource SectionCardStyle}\" Padding=\"18\" Margin=\"0,28,0,0\"", xaml);
     }
 

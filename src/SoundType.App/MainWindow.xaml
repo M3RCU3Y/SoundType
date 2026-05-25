@@ -3180,7 +3180,7 @@
                                         </Grid>
                                     </Border>
 
-                                    <Border Style="{StaticResource SectionCardStyle}" Padding="16" Margin="0,16,0,0">
+                                    <Border x:Name="RecentAppsCard" Style="{StaticResource SectionCardStyle}" Padding="16" Margin="0,16,0,0" HorizontalAlignment="Stretch">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="48"/>
@@ -3335,8 +3335,8 @@
                                     </Border>
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="2">
-                                    <Border x:Name="RuleEditorCard" Style="{StaticResource SectionCardStyle}" Padding="18" Height="450" VerticalAlignment="Top">
+                                <StackPanel Grid.Column="2" HorizontalAlignment="Stretch">
+                                    <Border x:Name="RuleEditorCard" Style="{StaticResource SectionCardStyle}" Padding="18" Height="450" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                                         <StackPanel>
                                             <Grid Margin="0,0,0,20">
                                                 <Grid.ColumnDefinitions>
@@ -3459,7 +3459,7 @@
                                         </StackPanel>
                                     </Border>
 
-                                    <Border x:Name="ForegroundAppListeningCard" Style="{StaticResource SectionCardStyle}" Padding="18" Margin="0,16,0,0">
+                                    <Border x:Name="ForegroundAppListeningCard" Style="{StaticResource SectionCardStyle}" Padding="18" Margin="0,16,0,0" HorizontalAlignment="Stretch" MinWidth="{Binding ActualWidth, ElementName=RuleEditorCard}">
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
                                                 <TextBlock Text="||||" Foreground="{StaticResource AccentBrush}" FontSize="16" FontWeight="Bold" Margin="0,0,12,0"/>
