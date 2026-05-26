@@ -3050,15 +3050,15 @@
                                             </Grid>
                                         </Border>
                                         <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock Text="Default profile" Foreground="{StaticResource MutedTextBrush}" FontSize="13"/>
-                                            <TextBlock x:Name="DefaultProfileText" FontSize="20" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                                            <TextBlock Text="Default profile" Foreground="{StaticResource MutedTextBrush}" FontSize="12" LineHeight="14" LineStackingStrategy="BlockLineHeight"/>
+                                            <TextBlock x:Name="DefaultProfileText" FontSize="19" FontWeight="SemiBold" LineHeight="23" LineStackingStrategy="BlockLineHeight" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
                                             <Border x:Name="DefaultProfileTagPill"
                                                     HorizontalAlignment="Left"
                                                     MinWidth="84"
-                                                    MinHeight="28"
+                                                    Height="24"
                                                     Style="{StaticResource ChipBorderStyle}"
-                                                    Padding="10,5"
-                                                    Margin="0,4,0,0">
+                                                    Padding="10,0"
+                                                    Margin="0,3,0,0">
                                                 <TextBlock x:Name="DefaultProfileTagText"
                                                            Text="Default"
                                                            FontSize="12"

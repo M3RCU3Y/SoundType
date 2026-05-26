@@ -451,7 +451,10 @@ public sealed class ReleaseReadinessTests
 
         Assert.Contains("x:Name=\"DefaultProfileTagPill\"", xaml);
         Assert.Contains("MinWidth=\"84\"", xaml);
+        Assert.Contains("Height=\"24\"", xaml);
         Assert.Contains("x:Name=\"DefaultProfileTagText\"", xaml);
+        Assert.Contains("Text=\"Default profile\" Foreground=\"{StaticResource MutedTextBrush}\" FontSize=\"12\" LineHeight=\"14\"", xaml);
+        Assert.Contains("x:Name=\"DefaultProfileText\" FontSize=\"19\" FontWeight=\"SemiBold\" LineHeight=\"23\"", xaml);
         Assert.Contains("TextAlignment=\"Center\"", xaml);
         Assert.Contains("HorizontalAlignment=\"Center\"", xaml);
         Assert.Contains("VerticalAlignment=\"Center\"", xaml);
