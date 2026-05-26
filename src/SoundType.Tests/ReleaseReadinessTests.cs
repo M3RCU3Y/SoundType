@@ -112,6 +112,24 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void AppRulesEmptyStateCreateRuleButtonCentersContent()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        int start = xaml.IndexOf("x:Name=\"AppRulesEmptyState\"", StringComparison.Ordinal);
+        int end = xaml.IndexOf("<DockPanel Grid.Row=\"3\"", start, StringComparison.Ordinal);
+        Assert.True(start >= 0 && end > start);
+        string emptyState = xaml[start..end];
+
+        Assert.Contains("Text=\"No app rules yet\"", emptyState);
+        Assert.Contains("Click=\"FocusNewRule_Click\"", emptyState);
+        Assert.Contains("<Grid HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\">", emptyState);
+        Assert.Contains("<ColumnDefinition Width=\"16\"/>", emptyState);
+        Assert.Contains("<ColumnDefinition Width=\"10\"/>", emptyState);
+        Assert.Contains("Text=\"Create Rule\" VerticalAlignment=\"Center\"", emptyState);
+    }
+
+    [Fact]
     public void LibraryPackListExpandsWithoutRedundantFooterCount()
     {
         string root = FindRepositoryRoot();

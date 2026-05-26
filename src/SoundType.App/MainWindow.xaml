@@ -3172,10 +3172,23 @@
                                                                TextWrapping="Wrap"
                                                                Margin="0,8,0,18"/>
                                                     <Button Width="142" Height="38" HorizontalAlignment="Center" Click="FocusNewRule_Click">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="+" FontSize="22" Margin="0,-3,10,0"/>
-                                                            <TextBlock Text="Create Rule"/>
-                                                        </StackPanel>
+                                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="16"/>
+                                                                <ColumnDefinition Width="10"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Text="+"
+                                                                       FontSize="22"
+                                                                       Width="16"
+                                                                       Height="18"
+                                                                       LineHeight="18"
+                                                                       TextAlignment="Center"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"
+                                                                       Margin="0,-2,0,0"/>
+                                                            <TextBlock Grid.Column="2" Text="Create Rule" VerticalAlignment="Center"/>
+                                                        </Grid>
                                                     </Button>
                                                 </StackPanel>
                                             </Border>
