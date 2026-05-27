@@ -303,8 +303,7 @@ public sealed class AudioEngine : IAsyncDisposable
 
         int poolSize = ResolveSamplePoolSize(samples.Count);
         string groupKey = $"{metadata.Id}:{group}";
-        if (SampleVariationMode == SampleVariationMode.Random ||
-            (SampleVariationMode == SampleVariationMode.Natural && metadata.Defaults.Randomize))
+        if (SampleVariationMode == SampleVariationMode.Random)
         {
             lock (_random)
             {

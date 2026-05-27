@@ -355,6 +355,40 @@ public sealed class AudioProcessingTests
     }
 
     [Fact]
+    public async Task AudioEngine_NaturalSampleVariation_RotatesTightPoolEvenWhenPackRandomizes()
+    {
+        AudioEngine engine = new()
+        {
+            SampleVariationMode = SampleVariationMode.Natural,
+            SampleVariationAmount = 1.0
+        };
+        LoadedSoundPack pack = CreateLoadedPackWithSamples(
+            "variation-natural-randomized-pack",
+            [[0.1f, 0.1f], [0.2f, 0.2f], [0.3f, 0.3f], [0.4f, 0.4f], [0.5f, 0.5f], [0.6f, 0.6f], [0.7f, 0.7f], [0.8f, 0.8f]],
+            randomize: true);
+        IReadOnlyList<LoadedSoundSample> samples = pack.Samples["normal"];
+
+        IReadOnlyList<string> selectedPaths = Enumerable
+            .Range(0, 8)
+            .Select(_ => InvokeSelectSample(engine, pack.Metadata, "normal", samples).RelativePath)
+            .ToList();
+
+        Assert.Equal(
+            [
+                "normal/key-0.wav",
+                "normal/key-1.wav",
+                "normal/key-2.wav",
+                "normal/key-3.wav",
+                "normal/key-4.wav",
+                "normal/key-5.wav",
+                "normal/key-0.wav",
+                "normal/key-1.wav"
+            ],
+            selectedPaths);
+        await engine.DisposeAsync();
+    }
+
+    [Fact]
     public async Task AudioEngine_LegacySampleVariation_UsesPreviousFullGroupSelection()
     {
         AudioEngine engine = new()
