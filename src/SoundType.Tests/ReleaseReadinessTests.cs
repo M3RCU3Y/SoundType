@@ -130,6 +130,22 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void AppRulesRuleEditorProcessNameIsLeftAligned()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        int start = xaml.IndexOf("x:Name=\"ProcessRuleTextBox\"", StringComparison.Ordinal);
+        int end = xaml.IndexOf("/>", start, StringComparison.Ordinal);
+        Assert.True(start >= 0 && end > start);
+        string processField = xaml[start..end];
+
+        Assert.Contains("Padding=\"14,0\"", processField);
+        Assert.Contains("TextAlignment=\"Left\"", processField);
+        Assert.Contains("HorizontalContentAlignment=\"Left\"", processField);
+        Assert.Contains("VerticalContentAlignment=\"Center\"", processField);
+    }
+
+    [Fact]
     public void LibraryPackListExpandsWithoutRedundantFooterCount()
     {
         string root = FindRepositoryRoot();

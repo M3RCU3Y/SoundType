@@ -3385,7 +3385,13 @@
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="Process name" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
-                                                <TextBox x:Name="ProcessRuleTextBox" Grid.Column="1" Height="44" VerticalContentAlignment="Center"/>
+                                                <TextBox x:Name="ProcessRuleTextBox"
+                                                         Grid.Column="1"
+                                                         Height="44"
+                                                         Padding="14,0"
+                                                         TextAlignment="Left"
+                                                         HorizontalContentAlignment="Left"
+                                                         VerticalContentAlignment="Center"/>
                                             </Grid>
 
                                             <Grid Margin="0,0,0,12">
