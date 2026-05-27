@@ -416,6 +416,45 @@ public sealed class AudioProcessingTests
         await engine.DisposeAsync();
     }
 
+    [Theory]
+    [InlineData(SampleVariationMode.Legacy)]
+    [InlineData(SampleVariationMode.Consistent)]
+    [InlineData(SampleVariationMode.Natural)]
+    [InlineData(SampleVariationMode.Random)]
+    public async Task AudioEngine_BuiltInMultiSampleGroups_SelectValidSamplesForEveryVariationMode(SampleVariationMode mode)
+    {
+        string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
+        SoundPackLoader loader = new();
+        AudioEngine engine = new()
+        {
+            SampleVariationMode = mode,
+            SampleVariationAmount = 0.6
+        };
+
+        IReadOnlyList<SoundPackMetadata> metadata = loader.DiscoverPacks(packsRoot);
+        List<string> multiSampleGroups = [];
+
+        foreach (SoundPackMetadata packMetadata in metadata)
+        {
+            LoadedSoundPack pack = loader.Load(packMetadata);
+            foreach ((string group, IReadOnlyList<LoadedSoundSample> samples) in pack.Samples)
+            {
+                if (samples.Count <= 1)
+                {
+                    continue;
+                }
+
+                multiSampleGroups.Add($"{packMetadata.Id}:{group}");
+                LoadedSoundSample selected = InvokeSelectSample(engine, packMetadata, group, samples);
+
+                Assert.Contains(samples, sample => sample.RelativePath == selected.RelativePath);
+            }
+        }
+
+        Assert.NotEmpty(multiSampleGroups);
+        await engine.DisposeAsync();
+    }
+
     [Fact]
     public void MultiBandEqSampleProvider_ProcessesTenBandsWithoutChangingReadCount()
     {

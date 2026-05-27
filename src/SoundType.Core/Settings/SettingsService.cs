@@ -88,6 +88,11 @@ public sealed class SettingsService
         settings.MasterVolume = Math.Clamp(settings.MasterVolume, 0.0, 1.0);
         settings.PitchVariation = Math.Clamp(settings.PitchVariation, 0.0, 0.12);
         settings.SampleVariationAmount = Math.Clamp(settings.SampleVariationAmount, 0.0, 1.0);
+        if (!Enum.IsDefined(settings.SampleVariationMode))
+        {
+            settings.SampleVariationMode = SampleVariationMode.Natural;
+        }
+
         settings.KeyDebounceMilliseconds = Math.Clamp(settings.KeyDebounceMilliseconds, 0, 50);
         settings.EnterDingVolume = Math.Clamp(settings.EnterDingVolume, 0.0, 1.0);
         settings.EnterDingSoundGroup = string.IsNullOrWhiteSpace(settings.EnterDingSoundGroup)

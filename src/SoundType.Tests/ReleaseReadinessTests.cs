@@ -407,7 +407,7 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("<Grid HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\">", enterDingCard);
         Assert.Contains("Width=\"16\" Height=\"16\" LineHeight=\"16\"", enterDingCard);
         Assert.DoesNotContain("<Grid Grid.Row=\"5\" Margin=\"0,14,0,0\">", enterDingCard);
-        Assert.Contains("new(\"ding-12\", \"Bright Twin Chime\")", code);
+        Assert.Contains("new(\"ding-12\", \"Deep Typewriter Bell\")", code);
         Assert.Contains("\"ding-12\": [ \"enter/ding-12.wav\" ]", packJson);
         Assert.True(File.Exists(Path.Combine(root, "assets", "packs", "SoundType-EnterDing", "enter", "ding-12.wav")));
     }

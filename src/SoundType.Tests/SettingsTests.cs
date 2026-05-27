@@ -203,6 +203,24 @@ public sealed class SettingsTests
     }
 
     [Fact]
+    public async Task LoadAsync_ResetsInvalidSampleVariationMode()
+    {
+        string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "settings.json");
+        await File.WriteAllTextAsync(path, """
+            {
+              "sampleVariationMode": 99
+            }
+            """);
+        SettingsService service = new(path);
+
+        AppSettings settings = await service.LoadAsync();
+
+        Assert.Equal(SampleVariationMode.Natural, settings.SampleVariationMode);
+    }
+
+    [Fact]
     public async Task LoadAsync_ResetsLegacyDefaultPanning()
     {
         string root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
