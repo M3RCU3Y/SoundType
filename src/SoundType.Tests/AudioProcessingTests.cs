@@ -9,7 +9,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_SetActivePack_ReturnsWhetherPackWasPreloaded()
     {
-        AudioEngine engine = new();
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory());
         LoadedSoundPack pack = new(
             new SoundPackMetadata { Id = "soft-laptop", Name = "Soft Laptop" },
             new Dictionary<string, IReadOnlyList<LoadedSoundSample>>(StringComparer.OrdinalIgnoreCase));
@@ -24,7 +24,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_PrunesInactivePacksPastCacheLimit()
     {
-        AudioEngine engine = new() { MaxCachedPacks = 2 };
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory()) { MaxCachedPacks = 2 };
 
         engine.LoadPack(CreateLoadedPack("one"), makeActive: true);
         engine.LoadPack(CreateLoadedPack("two"), makeActive: false);
@@ -40,7 +40,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_PruneKeepsSystemPacksLoadedForHotPath()
     {
-        AudioEngine engine = new() { MaxCachedPacks = 2 };
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory()) { MaxCachedPacks = 2 };
 
         engine.LoadPack(CreateLoadedPack("system-ding", tags: ["system"]), makeActive: false);
         engine.LoadPack(CreateLoadedPack("one"), makeActive: true);
@@ -208,7 +208,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_TryPlay_DoesNotMutateLiveEqOrPanSettings()
     {
-        AudioEngine engine = new();
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory());
         EqSettings eq = new()
         {
             Enabled = true,
@@ -274,7 +274,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_TryPlay_ThrottlesRepeatedOverlaySounds()
     {
-        AudioEngine engine = new();
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory());
         engine.LoadPack(CreateLoadedPack("overlay-test"));
 
         PlaybackRequest request = new()
@@ -357,7 +357,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_NaturalSampleVariation_RotatesTightPoolEvenWhenPackRandomizes()
     {
-        AudioEngine engine = new()
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory())
         {
             SampleVariationMode = SampleVariationMode.Natural,
             SampleVariationAmount = 1.0
@@ -391,7 +391,7 @@ public sealed class AudioProcessingTests
     [Fact]
     public async Task AudioEngine_LegacySampleVariation_UsesPreviousFullGroupSelection()
     {
-        AudioEngine engine = new()
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory())
         {
             SampleVariationMode = SampleVariationMode.Legacy,
             SampleVariationAmount = 0.0
@@ -419,7 +419,7 @@ public sealed class AudioProcessingTests
     {
         string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
         SoundPackLoader loader = new();
-        AudioEngine engine = new()
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory())
         {
             SampleVariationMode = SampleVariationMode.Natural,
             SampleVariationAmount = 1.0
@@ -459,7 +459,7 @@ public sealed class AudioProcessingTests
     {
         string packsRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs");
         SoundPackLoader loader = new();
-        AudioEngine engine = new()
+        AudioEngine engine = new(new FakeAudioOutputDeviceFactory())
         {
             SampleVariationMode = mode,
             SampleVariationAmount = 0.6
