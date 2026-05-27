@@ -126,6 +126,11 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("<Grid HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\">", emptyState);
         Assert.Contains("<ColumnDefinition Width=\"16\"/>", emptyState);
         Assert.Contains("<ColumnDefinition Width=\"10\"/>", emptyState);
+        Assert.Contains("Text=\"&#xE710;\"", emptyState);
+        Assert.Contains("FontFamily=\"Segoe MDL2 Assets\"", emptyState);
+        Assert.Contains("Width=\"16\"", emptyState);
+        Assert.Contains("Height=\"16\"", emptyState);
+        Assert.DoesNotContain("Margin=\"0,-2,0,0\"", emptyState);
         Assert.Contains("Text=\"Create Rule\" VerticalAlignment=\"Center\"", emptyState);
     }
 
