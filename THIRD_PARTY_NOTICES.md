@@ -99,4 +99,4 @@ Sources:
 - https://opengameart.org/content/pleasing-bell-sound-effect
 - https://opengameart.org/content/correct-bell
 
-License: Creative Commons 0 / public domain on the source pages. The bundled WAV files are trimmed, filtered, mixed, normalized, and faded derivatives for low-latency app playback. The classic typewriter bell derivative keeps a longer residual ring tail to avoid an audible cutoff after the initial strike.
+License: Creative Commons 0 / public domain on the source pages. The bundled WAV files are trimmed, filtered, mixed, normalized, and shaped with post-attack monotonic fades for low-latency app playback. The classic typewriter bell derivative keeps a longer residual ring tail with a steady decay, and the deep typewriter bell derivative is pitched and filtered lower so it is distinct from the classic bell.

@@ -194,6 +194,45 @@ public sealed class SoundPackTests
     }
 
     [Fact]
+    public void EnterDingBellSamples_DecayWithoutAudibleRmsRebounds()
+    {
+        string dingRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs", "SoundType-EnterDing", "enter");
+
+        foreach (string path in Directory.EnumerateFiles(dingRoot, "ding-*.wav").Order())
+        {
+            IReadOnlyList<double> rms = ReadWindowedRms(path);
+            double peak = rms.Max();
+            int peakIndex = rms.ToList().IndexOf(peak);
+            double audibleFloor = Math.Max(peak * 0.03, 0.00001);
+
+            for (int i = peakIndex + 2; i < rms.Count; i++)
+            {
+                if (rms[i] <= audibleFloor || rms[i - 1] <= audibleFloor)
+                {
+                    continue;
+                }
+
+                Assert.True(
+                    rms[i] <= rms[i - 1] * 1.18,
+                    $"{Path.GetFileName(path)} fades then swells again near window {i}: {rms[i - 1]:0.00000} -> {rms[i]:0.00000}.");
+            }
+        }
+    }
+
+    [Fact]
+    public void EnterDingDeepBellIsLowerThanClassicBell()
+    {
+        string dingRoot = Path.Combine(FindRepositoryRoot(), "assets", "packs", "SoundType-EnterDing", "enter");
+
+        double classicZeroCrossingFrequency = EstimateZeroCrossingFrequency(Path.Combine(dingRoot, "ding-01.wav"));
+        double deepZeroCrossingFrequency = EstimateZeroCrossingFrequency(Path.Combine(dingRoot, "ding-12.wav"));
+
+        Assert.True(
+            deepZeroCrossingFrequency < classicZeroCrossingFrequency * 0.75,
+            $"Deep bell should be clearly lower than classic bell. Classic={classicZeroCrossingFrequency:0.0}Hz, Deep={deepZeroCrossingFrequency:0.0}Hz.");
+    }
+
+    [Fact]
     public void Load_CentersStereoSamplesBeforePlayback()
     {
         string root = CreatePackRoot("""
@@ -295,6 +334,80 @@ public sealed class SoundPackTests
             Assert.True(File.Exists(previewPath), $"{pack.Id} is missing preview.png.");
             Assert.True(new FileInfo(previewPath).Length > 0, $"{pack.Id} preview.png is empty.");
         }
+    }
+
+    private static IReadOnlyList<double> ReadWindowedRms(string path, double windowSeconds = 0.025)
+    {
+        using AudioFileReader reader = new(path);
+        int channels = reader.WaveFormat.Channels;
+        int windowFrames = Math.Max(1, (int)Math.Round(reader.WaveFormat.SampleRate * windowSeconds));
+        List<float> buffer = [];
+        float[] readBuffer = new float[reader.WaveFormat.SampleRate * channels];
+        int read;
+        while ((read = reader.Read(readBuffer, 0, readBuffer.Length)) > 0)
+        {
+            buffer.AddRange(readBuffer.Take(read));
+        }
+
+        List<double> rms = [];
+        int totalFrames = buffer.Count / channels;
+        for (int frame = 0; frame < totalFrames; frame += windowFrames)
+        {
+            double sumSquares = 0.0;
+            int framesRead = 0;
+            for (int localFrame = frame; localFrame < Math.Min(totalFrames, frame + windowFrames); localFrame++)
+            {
+                double sample = 0.0;
+                for (int channel = 0; channel < channels; channel++)
+                {
+                    sample += buffer[(localFrame * channels) + channel];
+                }
+
+                sample /= channels;
+                sumSquares += sample * sample;
+                framesRead++;
+            }
+
+            rms.Add(Math.Sqrt(sumSquares / Math.Max(1, framesRead)));
+        }
+
+        return rms;
+    }
+
+    private static double EstimateZeroCrossingFrequency(string path)
+    {
+        using AudioFileReader reader = new(path);
+        int channels = reader.WaveFormat.Channels;
+        List<float> buffer = [];
+        float[] readBuffer = new float[reader.WaveFormat.SampleRate * channels];
+        int read;
+        while ((read = reader.Read(readBuffer, 0, readBuffer.Length)) > 0)
+        {
+            buffer.AddRange(readBuffer.Take(read));
+        }
+
+        int totalFrames = buffer.Count / channels;
+        int crossings = 0;
+        double previous = 0.0;
+        for (int frame = 0; frame < totalFrames; frame++)
+        {
+            double current = 0.0;
+            for (int channel = 0; channel < channels; channel++)
+            {
+                current += buffer[(frame * channels) + channel];
+            }
+
+            current /= channels;
+            if (frame > 0 && ((previous < 0.0 && current >= 0.0) || (previous > 0.0 && current <= 0.0)))
+            {
+                crossings++;
+            }
+
+            previous = current;
+        }
+
+        double durationSeconds = totalFrames / (double)reader.WaveFormat.SampleRate;
+        return crossings / Math.Max(0.001, durationSeconds) / 2.0;
     }
 
     private static string CreatePackRoot(string json)
