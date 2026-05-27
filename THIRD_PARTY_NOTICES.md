@@ -96,5 +96,7 @@ Sources:
 - https://freesound.org/people/MasterNavigator/sounds/444813/
 - https://opengameart.org/content/point-bell
 - https://opengameart.org/content/bell-dingschimes
+- https://opengameart.org/content/pleasing-bell-sound-effect
+- https://opengameart.org/content/correct-bell
 
-License: Creative Commons 0 / public domain on the source pages. The bundled WAV files are trimmed, filtered, mixed, and normalized derivatives for low-latency app playback.
+License: Creative Commons 0 / public domain on the source pages. The bundled WAV files are trimmed, filtered, mixed, normalized, and faded derivatives for low-latency app playback. The classic typewriter bell derivative keeps a longer residual ring tail to avoid an audible cutoff after the initial strike.

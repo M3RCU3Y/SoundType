@@ -43,7 +43,11 @@ public partial class MainWindow : Window
         new("ding-05", "Clean Line Bell"),
         new("ding-06", "Tiny Line Bell"),
         new("ding-07", "Reward Tap Bell"),
-        new("ding-08", "Soft Desk Chime")
+        new("ding-08", "Soft Desk Chime"),
+        new("ding-09", "Pleasing Star Bell"),
+        new("ding-10", "Warm Desk Bell"),
+        new("ding-11", "Crystal Line Bell"),
+        new("ding-12", "Bright Twin Chime")
     ];
     private static readonly IReadOnlyList<SampleVariationModeListItem> SampleVariationModes =
     [

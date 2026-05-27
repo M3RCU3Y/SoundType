@@ -5,5 +5,7 @@ Sources:
 - https://freesound.org/people/MasterNavigator/sounds/444813/ (typewriter bell)
 - https://opengameart.org/content/point-bell
 - https://opengameart.org/content/bell-dingschimes
+- https://opengameart.org/content/pleasing-bell-sound-effect (pleasing-bell.wav)
+- https://opengameart.org/content/correct-bell (bell.wav)
 License: Creative Commons 0 / public domain source recordings.
-Processing: Converted to mono 44.1 kHz 16-bit WAV, trimmed for short Enter overlays, high/low-pass filtered, lightly mixed with a typewriter carriage transient, normalized with limiter headroom, and fade-in/fade-out edges to avoid clicks, crackle, clipping, repeated-tail buildup, or harsh ringing.
+Processing: Converted to mono 44.1 kHz 16-bit WAV, trimmed for Enter overlays, high/low-pass filtered where useful, lightly mixed with a typewriter carriage transient where useful, normalized with limiter headroom, and fade-in/fade-out edges to avoid clicks, crackle, clipping, repeated-tail buildup, or harsh ringing. The classic typewriter bell keeps an extended residual ring tail so the bell decays naturally instead of cutting off after the initial strike.

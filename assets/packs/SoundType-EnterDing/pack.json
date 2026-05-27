@@ -2,8 +2,8 @@
   "id": "soundtype-enter-ding",
   "name": "SoundType Enter Ding",
   "author": "SoundType",
-  "version": "1.1.0",
-  "description": "Hidden short Enter ding options with processed CC0 typewriter line bells and bright desk chimes for the optional Enter ding overlay setting.",
+  "version": "1.2.0",
+  "description": "Hidden Enter ding options with processed CC0 typewriter line bells, longer residual rings, and bright desk chimes for the optional Enter ding overlay setting.",
   "license": "Processed CC0 source recordings. See SOURCE.txt and THIRD_PARTY_NOTICES.md.",
   "tags": [
     "hidden",
@@ -20,7 +20,11 @@
       "normal/ding-05.wav",
       "normal/ding-06.wav",
       "normal/ding-07.wav",
-      "normal/ding-08.wav"
+      "normal/ding-08.wav",
+      "normal/ding-09.wav",
+      "normal/ding-10.wav",
+      "normal/ding-11.wav",
+      "normal/ding-12.wav"
     ],
     "enter": [
       "enter/ding-01.wav",
@@ -30,7 +34,11 @@
       "enter/ding-05.wav",
       "enter/ding-06.wav",
       "enter/ding-07.wav",
-      "enter/ding-08.wav"
+      "enter/ding-08.wav",
+      "enter/ding-09.wav",
+      "enter/ding-10.wav",
+      "enter/ding-11.wav",
+      "enter/ding-12.wav"
     ],
     "ding-01": [ "enter/ding-01.wav" ],
     "ding-02": [ "enter/ding-02.wav" ],
@@ -39,7 +47,11 @@
     "ding-05": [ "enter/ding-05.wav" ],
     "ding-06": [ "enter/ding-06.wav" ],
     "ding-07": [ "enter/ding-07.wav" ],
-    "ding-08": [ "enter/ding-08.wav" ]
+    "ding-08": [ "enter/ding-08.wav" ],
+    "ding-09": [ "enter/ding-09.wav" ],
+    "ding-10": [ "enter/ding-10.wav" ],
+    "ding-11": [ "enter/ding-11.wav" ],
+    "ding-12": [ "enter/ding-12.wav" ]
   },
   "keyOverrides": {
     "Enter": "enter"

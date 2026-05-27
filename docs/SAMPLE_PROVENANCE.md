@@ -48,7 +48,7 @@ When adding or replacing samples, update the pack-local source file first, then 
 | `Mechvibes-TurquoiseFullTravel` | Turquoise Full Travel | Mechvibes `src/audio/turquoise` at commit `b7cb633`; original Mechvibes config preserved | MIT. Preserve `LICENSE` and `SOURCE_CONFIG.json`. | `pack.json`, `LICENSE`, `SOURCE_CONFIG.json` |
 | `OGACherryKC1000` | Cherry KC 1000 Real Keys | OpenGameArt keyboard soundpack `https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes` by `unicaegames` | CC0. Source README says the asset includes human typing sounds, generated sounds, and 32 single keypress sounds; SoundType bundles the single keypress recordings. | `pack.json`, `SOURCE_README.txt` |
 | `OpenGameArt-BMacTypewriter` | BMacZero Typewriter Tap | OpenGameArt Mechanical Sounds `https://opengameart.org/content/mechanical-sounds` by `BMacZero` | CC0. The source was converted to mono 44.1 kHz WAV, filtered, segmented into one-shots, normalized, and faded. | `pack.json`, `SOURCE.txt` |
-| `SoundType-EnterDing` | SoundType Enter Ding | CC0/public-domain Freesound and OpenGameArt bell/chime recordings listed in `SOURCE.txt` | Processed CC0 source recordings. Converted to mono 44.1 kHz WAV, trimmed, filtered, mixed, normalized with limiter headroom, and faded for short Enter overlays. | `pack.json`, `SOURCE.txt`, `THIRD_PARTY_NOTICES.md` |
+| `SoundType-EnterDing` | SoundType Enter Ding | CC0/public-domain Freesound and OpenGameArt bell/chime recordings listed in `SOURCE.txt` | Processed CC0 source recordings. Converted to mono 44.1 kHz WAV, trimmed, filtered, mixed, normalized with limiter headroom, and faded for Enter overlays. The classic bell keeps a longer residual ring tail; newer variants include `pleasing-bell.wav`, `bell.wav`, `bell_ding1.wav`, and `bell_ding2.wav`. | `pack.json`, `SOURCE.txt`, `THIRD_PARTY_NOTICES.md` |
 
 ## SoundType Enter Ding Source List
 
@@ -60,6 +60,8 @@ When adding or replacing samples, update the pack-local source file first, then 
 - `https://freesound.org/people/MasterNavigator/sounds/444813/`
 - `https://opengameart.org/content/point-bell`
 - `https://opengameart.org/content/bell-dingschimes`
+- `https://opengameart.org/content/pleasing-bell-sound-effect`
+- `https://opengameart.org/content/correct-bell`
 
 ## Maintenance Notes
 
