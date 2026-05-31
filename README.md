@@ -96,6 +96,7 @@ artifacts\SoundType-win-x64-Release-portable.sha256
 
 More project notes:
 
+- [Repository guide](docs/REPO_GUIDE.md)
 - [Development guide](docs/DEVELOPMENT.md)
 - [Packaging guide](docs/PACKAGING.md)
 - [Sound pack format](docs/SOUND_PACK_FORMAT.md)

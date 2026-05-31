@@ -1,6 +1,6 @@
 # Enter Ding Sample Source Notes
 
-This note is intentionally untracked. It records where the Enter Ding samples in
+This tracked maintainer note records where the Enter Ding samples in
 `assets/packs/SoundType-EnterDing` came from, based on the local source-of-truth
 files already in the repo.
 
