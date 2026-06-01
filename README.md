@@ -31,6 +31,12 @@ and keystrokes are not sent to a server.
 
 Read the short privacy note here: [docs/PRIVACY.md](docs/PRIVACY.md).
 
+## Why SoundType Is Open Source
+
+Keyboard-event utilities should be inspectable. SoundType is open source so
+users can verify that it does not store typed text, send keystrokes to a
+server, or hide telemetry behind a cute interface.
+
 ## Download
 
 The portable Windows build is published from this repository's
