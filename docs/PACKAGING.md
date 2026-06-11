@@ -72,4 +72,4 @@ The zip contains `SoundType.exe`, the .NET runtime files emitted by self-contain
 
 ## Current Limitation
 
-This package is a portable folder zip only. Users extract the archive and run `SoundType.exe`. A signed installer, MSIX package, desktop shortcuts, and update flow are future release work. Because SoundType uses a local keyboard hook, public releases should be distributed with the SHA-256 checksum and signed when a signing certificate is available.
+This package is a portable folder zip only. Users extract the archive and run `SoundType.exe`. SoundType can detect newer GitHub releases that include the portable zip and replace its portable folder after the app exits. A signed installer, MSIX package, and desktop shortcuts are future release work. Because SoundType uses a local keyboard hook, public releases should be distributed with the SHA-256 checksum and signed when a signing certificate is available.

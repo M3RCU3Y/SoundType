@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -71,6 +74,7 @@ public partial class MainWindow : Window
     private readonly GlobalHotkeyService _globalHotkey = new();
     private readonly ActiveWindowService _activeWindow = new();
     private readonly StartupService _startup = new();
+    private readonly GitHubUpdateChecker _updateChecker = new();
     private readonly DispatcherTimer _activeAppTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private readonly DispatcherTimer _outputMeterTimer = new() { Interval = TimeSpan.FromMilliseconds(50) };
     private readonly string _packsRoot;
@@ -108,6 +112,10 @@ public partial class MainWindow : Window
     private int _packActivationVersion;
     private ScrollViewer? _packsScrollViewer;
     private string? _recordingHotkeyTarget;
+    private string _latestReleaseUrl = GitHubUpdateChecker.ReleasesUrl;
+    private string? _latestPortableZipUrl;
+    private string? _latestPortableChecksumUrl;
+    private bool _updateInstallStarted;
     private readonly DispatcherTimer _libraryScrollTimer = new() { Interval = TimeSpan.FromMilliseconds(12) };
     private double _libraryScrollTarget;
     private const double LibraryScrollWheelScale = 0.64;
@@ -163,6 +171,7 @@ public partial class MainWindow : Window
         RefreshCurrentApp();
         RegisterGlobalHotkey();
         RefreshStartupWarnings();
+        _ = CheckForUpdatesAsync();
         if (ShouldStartHiddenInTray())
         {
             HideToTray(showBalloon: false);
@@ -1737,6 +1746,8 @@ public partial class MainWindow : Window
         Forms.ContextMenuStrip menu = new();
         Forms.ToolStripMenuItem title = new("SoundType") { Enabled = false };
         Forms.ToolStripMenuItem pack = new("Pack: None") { Name = "pack", Enabled = false };
+        Forms.ToolStripMenuItem update = new("Open update page") { Name = "update", Visible = false };
+        update.Click += async (_, _) => await StartPortableUpdateAsync();
         Forms.ToolStripMenuItem enabled = new("Enabled") { Name = "enabled", Checked = _settings.Enabled, CheckOnClick = true };
         enabled.Click += async (_, _) =>
         {
@@ -1761,6 +1772,7 @@ public partial class MainWindow : Window
 
         menu.Items.Add(title);
         menu.Items.Add(pack);
+        menu.Items.Add(update);
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(open);
         menu.Items.Add(hide);
@@ -1772,6 +1784,35 @@ public partial class MainWindow : Window
         _trayIcon.ContextMenuStrip = menu;
         _trayIcon.Visible = true;
         _trayIcon.DoubleClick += (_, _) => ShowFromTray();
+    }
+
+    private async Task CheckForUpdatesAsync()
+    {
+        Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
+        UpdateCheckResult result = await _updateChecker.CheckLatestReleaseAsync(currentVersion);
+        if (!result.UpdateAvailable ||
+            string.IsNullOrWhiteSpace(result.PortableZipUrl) ||
+            string.IsNullOrWhiteSpace(result.PortableChecksumUrl))
+        {
+            UpdateAvailableButton.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        _latestReleaseUrl = result.ReleaseUrl;
+        _latestPortableZipUrl = result.PortableZipUrl;
+        _latestPortableChecksumUrl = result.PortableChecksumUrl;
+        UpdateAvailableButton.Visibility = Visibility.Visible;
+        UpdateAvailableButton.ToolTip = string.IsNullOrWhiteSpace(result.LatestTag)
+            ? "Update available"
+            : $"Update available: {result.LatestTag}";
+
+        if (_trayIcon.ContextMenuStrip?.Items["update"] is Forms.ToolStripMenuItem updateItem)
+        {
+            updateItem.Visible = true;
+            updateItem.Text = string.IsNullOrWhiteSpace(result.LatestTag)
+                ? "Install update"
+                : $"Install update ({result.LatestTag})";
+        }
     }
 
     private static System.Drawing.Icon CreateTrayIcon()
@@ -2328,6 +2369,123 @@ public partial class MainWindow : Window
     {
         OpenUrl("https://github.com/M3RCU3Y/SoundType/issues/new/choose");
     }
+
+    private async void UpdateAvailableButton_Click(object sender, RoutedEventArgs e)
+    {
+        await StartPortableUpdateAsync();
+    }
+
+    private async Task StartPortableUpdateAsync()
+    {
+        if (_updateInstallStarted ||
+            string.IsNullOrWhiteSpace(_latestPortableZipUrl) ||
+            string.IsNullOrWhiteSpace(_latestPortableChecksumUrl))
+        {
+            return;
+        }
+
+        _updateInstallStarted = true;
+        UpdateAvailableButton.IsEnabled = false;
+        UpdateAvailableButton.ToolTip = "Downloading update...";
+
+        try
+        {
+            string workDir = Path.Combine(Path.GetTempPath(), "SoundTypeUpdate", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(workDir);
+            string zipPath = Path.Combine(workDir, "SoundType-update.zip");
+            string scriptPath = Path.Combine(workDir, "Install-SoundTypeUpdate.ps1");
+
+            using HttpClient client = new();
+            await using (Stream download = await client.GetStreamAsync(_latestPortableZipUrl))
+            await using (FileStream zip = File.Create(zipPath))
+            {
+                await download.CopyToAsync(zip);
+            }
+
+            string checksumText = await client.GetStringAsync(_latestPortableChecksumUrl);
+            VerifyDownloadedUpdate(zipPath, checksumText);
+            await File.WriteAllTextAsync(scriptPath, BuildPortableUpdateScript());
+
+            string exePath = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName ?? Path.Combine(AppContext.BaseDirectory, "SoundType.exe");
+            string installDir = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\" -ZipPath \"{zipPath}\" -InstallDir \"{installDir}\" -ExePath \"{exePath}\" -ProcessId {Environment.ProcessId} -WorkDir \"{workDir}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = workDir
+            };
+
+            Process.Start(startInfo);
+            _exitRequested = true;
+            Close();
+        }
+        catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            _updateInstallStarted = false;
+            UpdateAvailableButton.IsEnabled = true;
+            UpdateAvailableButton.ToolTip = "Update failed. Click to try again.";
+            Forms.MessageBox.Show(
+                $"SoundType could not install the update automatically.\n\n{ex.Message}\n\nYou can still download it from:\n{_latestReleaseUrl}",
+                "SoundType Update",
+                Forms.MessageBoxButtons.OK,
+                Forms.MessageBoxIcon.Warning);
+        }
+    }
+
+    private static void VerifyDownloadedUpdate(string zipPath, string checksumText)
+    {
+        string expectedHash = checksumText
+            .Split([' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault() ?? "";
+        if (expectedHash.Length != 64)
+        {
+            throw new InvalidOperationException("The update checksum is invalid.");
+        }
+
+        using FileStream zip = File.OpenRead(zipPath);
+        string actualHash = Convert.ToHexString(SHA256.HashData(zip)).ToLowerInvariant();
+        if (!actualHash.Equals(expectedHash, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("The update download did not match its checksum.");
+        }
+    }
+
+    private static string BuildPortableUpdateScript() =>
+        """
+        param(
+            [Parameter(Mandatory=$true)][string]$ZipPath,
+            [Parameter(Mandatory=$true)][string]$InstallDir,
+            [Parameter(Mandatory=$true)][string]$ExePath,
+            [Parameter(Mandatory=$true)][int]$ProcessId,
+            [Parameter(Mandatory=$true)][string]$WorkDir
+        )
+
+        $ErrorActionPreference = "Stop"
+        Wait-Process -Id $ProcessId -Timeout 60 -ErrorAction SilentlyContinue
+
+        $extractDir = Join-Path $WorkDir "extracted"
+        if (Test-Path -LiteralPath $extractDir) {
+            Remove-Item -LiteralPath $extractDir -Recurse -Force
+        }
+
+        New-Item -ItemType Directory -Path $extractDir -Force | Out-Null
+        Expand-Archive -LiteralPath $ZipPath -DestinationPath $extractDir -Force
+
+        $newExe = Get-ChildItem -LiteralPath $extractDir -Filter "SoundType.exe" -Recurse -File | Select-Object -First 1
+        if (-not $newExe) {
+            throw "The update package does not contain SoundType.exe."
+        }
+
+        $sourceDir = $newExe.Directory.FullName
+        Get-ChildItem -LiteralPath $InstallDir -Force |
+            Where-Object { $_.FullName -ne $WorkDir } |
+            Remove-Item -Recurse -Force
+
+        Copy-Item -Path (Join-Path $sourceDir "*") -Destination $InstallDir -Recurse -Force
+        Start-Process -FilePath $ExePath -WorkingDirectory $InstallDir
+        """;
 
     private void BrowsePacksFolder_Click(object sender, RoutedEventArgs e)
     {

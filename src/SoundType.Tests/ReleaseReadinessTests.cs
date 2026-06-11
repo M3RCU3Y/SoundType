@@ -272,6 +272,25 @@ public sealed class ReleaseReadinessTests
     }
 
     [Fact]
+    public void MainHeaderCanSurfaceGitHubUpdate()
+    {
+        string root = FindRepositoryRoot();
+        string xaml = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml"));
+        string code = File.ReadAllText(Path.Combine(root, "src", "SoundType.App", "MainWindow.xaml.cs"));
+
+        Assert.Contains("x:Name=\"UpdateAvailableButton\"", xaml);
+        Assert.Contains("Click=\"UpdateAvailableButton_Click\"", xaml);
+        Assert.Contains("Visibility=\"Collapsed\"", xaml);
+        Assert.Contains("ToolTip=\"Update available\"", xaml);
+        Assert.Contains("private async Task CheckForUpdatesAsync", code);
+        Assert.Contains("UpdateAvailableButton.Visibility = Visibility.Visible", code);
+        Assert.Contains("private async void UpdateAvailableButton_Click", code);
+        Assert.Contains("await StartPortableUpdateAsync", code);
+        Assert.Contains("PortableZipUrl", code);
+        Assert.Contains("Open update page", code);
+    }
+
+    [Fact]
     public void GitHubIssueTemplatesCoverMainReportPaths()
     {
         string root = FindRepositoryRoot();

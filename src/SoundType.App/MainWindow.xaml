@@ -1643,6 +1643,21 @@
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,172,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="UpdateAvailableButton"
+                                    Width="44"
+                                    Height="38"
+                                    Padding="0"
+                                    Margin="0,0,12,0"
+                                    Visibility="Collapsed"
+                                    ToolTip="Update available"
+                                    Click="UpdateAvailableButton_Click">
+                                <TextBlock Text="&#xE895;"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="16"
+                                           Foreground="{StaticResource WarningBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Button>
                             <StackPanel x:Name="LibraryHeaderActions" Orientation="Horizontal" Visibility="Collapsed">
                                 <Button Width="136" Margin="0,0,12,0" Click="ImportSoundPack_Click">
                                     <StackPanel Orientation="Horizontal">
