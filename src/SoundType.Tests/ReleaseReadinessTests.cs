@@ -287,7 +287,7 @@ public sealed class ReleaseReadinessTests
         Assert.Contains("private async void UpdateAvailableButton_Click", code);
         Assert.Contains("await StartPortableUpdateAsync", code);
         Assert.Contains("PortableZipUrl", code);
-        Assert.Contains("Open update page", code);
+        Assert.Contains("Install update", code);
     }
 
     [Fact]

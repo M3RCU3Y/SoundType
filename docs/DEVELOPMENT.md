@@ -53,7 +53,7 @@ For quick repo orientation, use [REPO_GUIDE.md](REPO_GUIDE.md). The WPF shell is
 
 ## Branch Policy
 
-The repository is currently cleaned back to `main` only. If future feature branches are needed, delete merged branches after the PR lands so Codex and humans both start from an obvious base.
+The repository is currently cleaned back to `main` only. If future feature branches are needed, delete merged branches after the PR lands so contributors start from an obvious base.
 
 ## Verification
 
