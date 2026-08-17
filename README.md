@@ -64,9 +64,17 @@ more natural typing feel.
 The bundled audio uses sourced material and attribution where required. See
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details.
 
+## License
+
+SoundType's source code is licensed under the [MIT License](LICENSE).
+Bundled audio and other third-party material may have separate terms and are
+not relicensed by the source-code license. See
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance and applicable
+notices.
+
 ## For Developers
 
-SoundType is a WPF desktop app built with .NET.
+SoundType is a WPF desktop app built with .NET 10 LTS.
 
 Run it locally:
 
